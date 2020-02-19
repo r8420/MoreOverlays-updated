@@ -80,6 +80,7 @@ public class ConfigScreen extends Screen {
     }
     
     private void back() {    	    	
+    	this.save();
         if(!this.optionList.getCurrentPath().isEmpty()){
             this.optionList.pop();           
         }

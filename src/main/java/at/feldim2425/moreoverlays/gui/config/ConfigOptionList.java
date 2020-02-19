@@ -242,7 +242,9 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public void save() {
         for(final OptionEntry entry : this.children()){
-            entry.save();
+        	if (entry.isValid()) {
+        		entry.save();
+        	}
         }
 	}
 
