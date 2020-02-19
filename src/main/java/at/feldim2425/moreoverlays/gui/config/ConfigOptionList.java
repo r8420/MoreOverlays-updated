@@ -31,7 +31,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     public static final String RESET_CHAR = "\u2604";
     public static final String VALID = "\u2714";
     public static final String INVALID = "\u2715";
-    private static final int ITEM_HEIGHT = 20;
+    private static final int ITEM_HEIGHT = 22;
 
     private final ConfigScreen parent;
     private final String modId;
