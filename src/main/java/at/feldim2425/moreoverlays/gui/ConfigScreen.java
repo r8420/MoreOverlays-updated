@@ -6,6 +6,7 @@ import java.util.List;
 import at.feldim2425.moreoverlays.MoreOverlays;
 import at.feldim2425.moreoverlays.gui.config.ConfigOptionList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
@@ -22,6 +23,7 @@ public class ConfigScreen extends Screen {
     private Button btnReset;
     private Button btnUndo;
     private Button btnSave;
+    private Button btnBack;
 
     private List<String> pathCache = new ArrayList<>();
     private String txtUndo = "";
@@ -43,6 +45,9 @@ public class ConfigScreen extends Screen {
     protected void init() {
         this.optionList = new ConfigOptionList(this.minecraft, this.modId, this);
 
+        FontRenderer font = Minecraft.getInstance().fontRenderer;
+        String doneString = I18n.format("gui.done");
+        int doneWidth = Math.max(font.getStringWidth(doneString) + 20, 100);
         final int buttonY = this.height - 32 + (32-20)/2;
 
         this.btnReset = new Button(this.width-40, buttonY, 20, 20, ConfigOptionList.RESET_CHAR,
@@ -52,10 +57,14 @@ public class ConfigScreen extends Screen {
         this.btnSave = new Button(this.width-110, buttonY, 40, 20, I18n.format("gui.config." + MoreOverlays.MOD_ID + ".save"),
             (btn) -> this.save());
 
+        this.btnBack = new Button(20, buttonY, doneWidth, 20, doneString,
+                (btn) -> this.back());
+        
         this.children.add(this.optionList);
         this.children.add(this.btnReset);
         this.children.add(this.btnUndo);
         this.children.add(this.btnSave);
+        this.children.add(this.btnBack);
 
         this.btnReset.active = false;
         this.btnUndo.active = false;
@@ -86,6 +95,7 @@ public class ConfigScreen extends Screen {
         this.btnReset.render(mouseX, mouseY, partialTick);
         this.btnUndo.render(mouseX, mouseY, partialTick); 
         this.btnSave.render(mouseX, mouseY, partialTick);
+        this.btnBack.render(mouseX, mouseY, partialTick);
         this.drawCenteredString(this.font, this.title.getFormattedText(), this.width / 2, 8, 16777215);
         if(this.categoryTitle != null){
             this.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 16777215);
