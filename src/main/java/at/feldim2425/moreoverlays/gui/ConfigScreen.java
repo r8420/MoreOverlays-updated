@@ -22,7 +22,6 @@ public class ConfigScreen extends Screen {
 
     private Button btnReset;
     private Button btnUndo;
-    private Button btnSave;
     private Button btnBack;
 
     private List<String> pathCache = new ArrayList<>();
@@ -54,8 +53,6 @@ public class ConfigScreen extends Screen {
             (btn) -> this.optionList.reset());
         this.btnUndo = new Button(this.width-65, buttonY, 20, 20, ConfigOptionList.UNDO_CHAR,
             (btn) -> this.optionList.undo());
-        this.btnSave = new Button(this.width-110, buttonY, 40, 20, I18n.format("gui.config." + MoreOverlays.MOD_ID + ".save"),
-            (btn) -> this.save());
 
         this.btnBack = new Button(20, buttonY, doneWidth, 20, doneString,
                 (btn) -> this.back());
@@ -63,12 +60,10 @@ public class ConfigScreen extends Screen {
         this.children.add(this.optionList);
         this.children.add(this.btnReset);
         this.children.add(this.btnUndo);
-        this.children.add(this.btnSave);
         this.children.add(this.btnBack);
 
         this.btnReset.active = false;
         this.btnUndo.active = false;
-        this.btnSave.active = false;
 
 
         if(pathCache.isEmpty()){
@@ -95,7 +90,6 @@ public class ConfigScreen extends Screen {
         this.optionList.render(mouseX, mouseY, partialTick);
         this.btnReset.render(mouseX, mouseY, partialTick);
         this.btnUndo.render(mouseX, mouseY, partialTick); 
-        this.btnSave.render(mouseX, mouseY, partialTick);
         this.btnBack.render(mouseX, mouseY, partialTick);
         this.drawCenteredString(this.font, this.title.getFormattedText(), this.width / 2, 8, 16777215);
         if(this.categoryTitle != null){
@@ -122,7 +116,6 @@ public class ConfigScreen extends Screen {
         super.tick();
         this.btnReset.active = this.optionList.isResettable();
         this.btnUndo.active = this.optionList.isUndoable();
-        this.btnSave.active = this.optionList.isSaveable();
     }
     
     public void updatePath(final List<String> newPath){
