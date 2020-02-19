@@ -12,6 +12,8 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton;
+
 
 public class ConfigScreen extends Screen {
 
@@ -27,6 +29,7 @@ public class ConfigScreen extends Screen {
     private List<String> pathCache = new ArrayList<>();
     private String txtUndo = "";
     private String txtReset = "";
+    private String txtDone = "";
     
     private Screen modListScreen;
 
@@ -38,23 +41,39 @@ public class ConfigScreen extends Screen {
 
         this.txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
         this.txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
+        this.txtDone = I18n.format("gui.done");
     }
 
     @Override
     protected void init() {
         this.optionList = new ConfigOptionList(this.minecraft, this.modId, this);
-
+        
         FontRenderer font = Minecraft.getInstance().fontRenderer;
-        String doneString = I18n.format("gui.done");
-        int doneWidth = Math.max(font.getStringWidth(doneString) + 20, 100);
+        
+        int undoGlyphWidth = font.getStringWidth(ConfigOptionList.UNDO_CHAR) * 2;
+        int resetGlyphWidth = font.getStringWidth(ConfigOptionList.RESET_CHAR) * 2;
+                
+        int undoWidth = font.getStringWidth(" " + this.txtUndo) + undoGlyphWidth + 20;
+        int resetWidth = font.getStringWidth(" " + this.txtReset) + resetGlyphWidth + 20;
+        int doneWidth = Math.max(font.getStringWidth(this.txtDone) + 20, 100);
+        
         final int buttonY = this.height - 32 + (32-20)/2;
-
-        this.btnReset = new Button(this.width-40, buttonY, 20, 20, ConfigOptionList.RESET_CHAR,
+        final int buttonHeight = 20;
+        
+        int pad = 10;
+        final int xBack = pad;
+        final int xDefaultAll = this.width - resetWidth;        
+        final int xUndoAll = xDefaultAll - undoWidth;
+                        
+        this.btnReset = new GuiUnicodeGlyphButton(xDefaultAll, buttonY, 100, buttonHeight, 
+        		" " + this.txtReset, ConfigOptionList.RESET_CHAR, 1.0f, 
             (btn) -> this.optionList.reset());
-        this.btnUndo = new Button(this.width-65, buttonY, 20, 20, ConfigOptionList.UNDO_CHAR,
-            (btn) -> this.optionList.undo());
-
-        this.btnBack = new Button(20, buttonY, doneWidth, 20, doneString,
+        
+        this.btnUndo = new GuiUnicodeGlyphButton(xUndoAll, buttonY, 100, buttonHeight, 
+        		" " + this.txtUndo, ConfigOptionList.UNDO_CHAR, 1.0f,
+        		(btn) -> this.optionList.undo());
+        
+        this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight, this.txtDone,
                 (btn) -> this.back());
         
         this.children.add(this.optionList);
@@ -96,13 +115,6 @@ public class ConfigScreen extends Screen {
             this.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 16777215);
         }
         super.render(mouseX, mouseY, partialTick);
-
-        if(btnReset.isHovered()){
-            this.renderTooltip(this.txtReset, mouseX, mouseY);
-        }
-        else if(btnUndo.isHovered()){
-            this.renderTooltip(this.txtUndo, mouseX , mouseY);
-        }
     }
 
     private void save(){
