@@ -17,9 +17,9 @@ public abstract class LightScannerBase implements ILightScanner {
 
 	@Override
 	public void update(PlayerEntity player) {
-		int px = (int) Math.floor(player.posX);
-		int py = (int) Math.floor(player.posY);
-		int pz = (int) Math.floor(player.posZ);
+		int px = (int) Math.floor(player.getPosX());
+		int py = (int) Math.floor(player.getPosY());
+		int pz = (int) Math.floor(player.getPosZ());
 
 		int y1 = py - Config.light_DownRange.get();
 		int y2 = py + Config.light_UpRange.get();
