@@ -12,7 +12,6 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton;
 
 
 public class ConfigScreen extends Screen {
@@ -72,18 +71,19 @@ public class ConfigScreen extends Screen {
         
         int pad = 10;
         final int xBack = pad;
-        final int xDefaultAll = this.width - resetWidth;        
+        final int xDefaultAll = this.width - resetWidth-pad;        
         final int xUndoAll = xDefaultAll - undoWidth;
                         
-        this.btnReset = new GuiUnicodeGlyphButton(xDefaultAll, buttonY, 100, buttonHeight, 
-        		" " + this.txtReset, ConfigOptionList.RESET_CHAR, 1.0f, 
-            (btn) -> this.optionList.reset());
+        this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight, 
+        		ConfigOptionList.RESET_CHAR+ " " + this.txtReset, 
+        		(btn) -> this.optionList.reset());
         
-        this.btnUndo = new GuiUnicodeGlyphButton(xUndoAll, buttonY, 100, buttonHeight, 
-        		" " + this.txtUndo, ConfigOptionList.UNDO_CHAR, 1.0f,
+        this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight, 
+        		ConfigOptionList.UNDO_CHAR + " " + this.txtUndo,
         		(btn) -> this.optionList.undo());
         
-        this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight, this.txtDone,
+        this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight, 
+        		" " + this.txtDone,
                 (btn) -> this.back());
         
         this.children.add(this.optionList);
