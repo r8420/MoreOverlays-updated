@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -25,11 +26,14 @@ public class LightOverlayRenderer implements ILightRenderer {
 
 
 	public void renderOverlays(ILightScanner scanner) {
+		PlayerEntity player = Minecraft.getInstance().player;
 		Minecraft.getInstance().getTextureManager().bindTexture(BLANK_TEX);
 		GlStateManager.pushMatrix();
 		GL11.glLineWidth((float)(double)Config.render_spawnLineWidth.get());
 
 		final Vec3d view = render.info.getProjectedView();
+		GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
+		GlStateManager.rotatef(player.getYaw(0) + 180, 0, 1, 0); // Fixes camera rotation.
 		GlStateManager.translated(-view.x, -view.y, -view.z);
 
 		float ar = ((float) ((Config.render_spawnAColor.get() >> 16) & 0xFF)) / 255F;

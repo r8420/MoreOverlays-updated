@@ -28,6 +28,8 @@ public class ChunkBoundsRenderer {
 		GL11.glLineWidth((float)(double)Config.render_chunkLineWidth.get());
 
 		final Vec3d view = render.info.getProjectedView();
+		GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
+		GlStateManager.rotatef(player.getYaw(0) + 180, 0, 1, 0); // Fixes camera rotation.
 		GlStateManager.translated(-view.x, -view.y, -view.z);
 
 		final int h = player.world.getHeight();
