@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.17.0-mc1.15.2'
+version = '1.17.2-mc1.15.2'
 group = 'at.feldim2425.moreoverlays' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'moreoverlays'
 
