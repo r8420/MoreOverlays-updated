@@ -5,11 +5,15 @@ import java.util.List;
 
 import at.feldim2425.moreoverlays.MoreOverlays;
 import at.feldim2425.moreoverlays.gui.config.ConfigOptionList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton;
+
 
 public class ConfigScreen extends Screen {
 
@@ -20,72 +24,101 @@ public class ConfigScreen extends Screen {
 
     private Button btnReset;
     private Button btnUndo;
-    private Button btnSave;
+    private Button btnBack;
 
     private List<String> pathCache = new ArrayList<>();
     private String txtUndo = "";
     private String txtReset = "";
+    private String txtDone = "";
     
+    private Screen modListScreen;
 
-    public ConfigScreen(ForgeConfigSpec spec, String modId) {
+    public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
         super(new TranslationTextComponent("gui.config."+modId+".tile"));
+        this.modListScreen = modListScreen;
         this.configSpec = spec;
-        this.modId = modId;
+        this.modId = modId;        
 
         this.txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
         this.txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
+        this.txtDone = I18n.format("gui.done");
     }
 
     @Override
     protected void init() {
-        this.optionList = new ConfigOptionList(this.minecraft, this.modId, this);
-
+    	
+    	if (this.optionList == null) {
+    		this.optionList = new ConfigOptionList(this.minecraft, this.modId, this);
+    		
+    		if(pathCache.isEmpty()){
+                this.optionList.setConfiguration(configSpec);
+            }
+            else {
+                this.optionList.setConfiguration(configSpec, this.pathCache);
+            }            
+    	}
+        
+        FontRenderer font = Minecraft.getInstance().fontRenderer;
+        
+        int undoGlyphWidth = font.getStringWidth(ConfigOptionList.UNDO_CHAR) * 2;
+        int resetGlyphWidth = font.getStringWidth(ConfigOptionList.RESET_CHAR) * 2;
+                
+        int undoWidth = font.getStringWidth(" " + this.txtUndo) + undoGlyphWidth + 20;
+        int resetWidth = font.getStringWidth(" " + this.txtReset) + resetGlyphWidth + 20;
+        int doneWidth = Math.max(font.getStringWidth(this.txtDone) + 20, 100);
+        
         final int buttonY = this.height - 32 + (32-20)/2;
-
-        this.btnReset = new Button(this.width-40, buttonY, 20, 20, ConfigOptionList.RESET_CHAR,
+        final int buttonHeight = 20;
+        
+        int pad = 10;
+        final int xBack = pad;
+        final int xDefaultAll = this.width - resetWidth;        
+        final int xUndoAll = xDefaultAll - undoWidth;
+                        
+        this.btnReset = new GuiUnicodeGlyphButton(xDefaultAll, buttonY, 100, buttonHeight, 
+        		" " + this.txtReset, ConfigOptionList.RESET_CHAR, 1.0f, 
             (btn) -> this.optionList.reset());
-        this.btnUndo = new Button(this.width-65, buttonY, 20, 20, ConfigOptionList.UNDO_CHAR,
-            (btn) -> this.optionList.undo());
-        this.btnSave = new Button(this.width-110, buttonY, 40, 20, I18n.format("gui.config." + MoreOverlays.MOD_ID + ".save"),
-            (btn) -> this.save());
-
+        
+        this.btnUndo = new GuiUnicodeGlyphButton(xUndoAll, buttonY, 100, buttonHeight, 
+        		" " + this.txtUndo, ConfigOptionList.UNDO_CHAR, 1.0f,
+        		(btn) -> this.optionList.undo());
+        
+        this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight, this.txtDone,
+                (btn) -> this.back());
+        
         this.children.add(this.optionList);
         this.children.add(this.btnReset);
         this.children.add(this.btnUndo);
-        this.children.add(this.btnSave);
+        this.children.add(this.btnBack);
 
         this.btnReset.active = false;
         this.btnUndo.active = false;
-        this.btnSave.active = false;
 
-
-        if(pathCache.isEmpty()){
-            this.optionList.setConfiguration(configSpec);
-        }
-        else {
-            this.optionList.setConfiguration(configSpec, this.pathCache);
-        }
+        this.optionList.updateGui();
     }
     
-    @Override
+    private void back() {    	    	
+    	this.save();
+        if(!this.optionList.getCurrentPath().isEmpty()){
+            this.optionList.pop();           
+        }
+        else {
+        	Minecraft.getInstance().displayGuiScreen(modListScreen);
+        }
+	}
+
+	@Override
     public void render(int mouseX, int mouseY, float partialTick) {
         this.renderBackground();
         this.optionList.render(mouseX, mouseY, partialTick);
         this.btnReset.render(mouseX, mouseY, partialTick);
         this.btnUndo.render(mouseX, mouseY, partialTick); 
-        this.btnSave.render(mouseX, mouseY, partialTick);
+        this.btnBack.render(mouseX, mouseY, partialTick);
         this.drawCenteredString(this.font, this.title.getFormattedText(), this.width / 2, 8, 16777215);
         if(this.categoryTitle != null){
             this.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 16777215);
         }
         super.render(mouseX, mouseY, partialTick);
-
-        if(btnReset.isHovered()){
-            this.renderTooltip(this.txtReset, mouseX, mouseY);
-        }
-        else if(btnUndo.isHovered()){
-            this.renderTooltip(this.txtUndo, mouseX , mouseY);
-        }
     }
 
     private void save(){
@@ -99,7 +132,6 @@ public class ConfigScreen extends Screen {
         super.tick();
         this.btnReset.active = this.optionList.isResettable();
         this.btnUndo.active = this.optionList.isUndoable();
-        this.btnSave.active = this.optionList.isSaveable();
     }
     
     public void updatePath(final List<String> newPath){
@@ -117,9 +149,9 @@ public class ConfigScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int p_keyPressed_2_, int p_keyPressed_3_) {
-        if(key == 256 && !this.optionList.getCurrentPath().isEmpty()){
-            this.optionList.pop();
-            return true;
+        if (key == 256) {
+        	this.back();
+        	return true;
         }
         else {
             return super.keyPressed(key, p_keyPressed_2_, p_keyPressed_3_);

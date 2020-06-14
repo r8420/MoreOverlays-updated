@@ -31,7 +31,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     public static final String RESET_CHAR = "\u2604";
     public static final String VALID = "\u2714";
     public static final String INVALID = "\u2715";
-    private static final int ITEM_HEIGHT = 20;
+    private static final int ITEM_HEIGHT = 22;
 
     private final ConfigScreen parent;
     private final String modId;
@@ -65,6 +65,11 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     public int getRowWidth() {
         return super.getRowWidth() + 64;
     }
+    
+    public void updateGui() {
+    	this.updateSize(this.parent.width, this.parent.height, 43, this.parent.height - 32);
+    }
+
 
     @Override
     protected void renderDecorations(int p_renderDecorations_1_, int p_renderDecorations_2_) {
@@ -119,7 +124,24 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             this.refreshEntries();
             this.parent.updatePath(this.getCurrentPath());
         } else {
-            throw new IllegalArgumentException("Path in config list has to point to another config object");
+        	
+        	// There's a bug where we end up with a duplicate path here, 
+        	// which seems to be related to keyboard race conditions allowing
+        	// us to 'double' select a child path. 
+        	// In this event, we attempt to fail gracefully.
+        	int n = path.size();
+        	if (n > 1) {
+        		if (path.get(n-1) == path.get(n-2)) {
+        			MoreOverlays.logger.error("Attempting to load duplicate path:", path);
+                    MoreOverlays.logger.warn("This could be caused by key event race condition");
+                    // Trim and reload
+                    path.remove(n-1);
+                	this.setPath(path);
+                	return;
+        		}
+        	}
+        	
+            throw new IllegalArgumentException("Path in config list has to point to another config object");               
         }
     }
 
@@ -186,6 +208,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
                 this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>)cEntry.getValue(), (ForgeConfigSpec.ValueSpec)rootConfig.getSpec().get(fullPath)));
             }
         }
+        this.setFocused(null);
     }
 
     public List<String> getCurrentPath() {
@@ -241,7 +264,9 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public void save() {
         for(final OptionEntry entry : this.children()){
-            entry.save();
+        	if (entry.isValid()) {
+        		entry.save();
+        	}
         }
 	}
 
