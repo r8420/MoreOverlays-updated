@@ -197,6 +197,9 @@ public class GuiRenderer {
 	}
 
 	private boolean isSearchedItem(ItemStack stack) {
+		if(stack.getDisplayName().getFormattedText().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
+			return true;
+		}
 		if (emptyFilter) return true;
 		else if (stack.isEmpty()) return false;
 		for (Object ingredient : JeiModule.filter.getFilteredIngredients()) {
