@@ -20,6 +20,6 @@ build
 # other
 eclipse
 run
-classes
-libs
-.vscode
+
+# Files from Forge MDK
+forge*changelog.txt

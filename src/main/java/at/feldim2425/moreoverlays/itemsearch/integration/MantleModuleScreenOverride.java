@@ -4,7 +4,7 @@ import at.feldim2425.moreoverlays.api.itemsearch.IOverrideSlotPos;
 import at.feldim2425.moreoverlays.api.itemsearch.IViewSlot;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
 import slimeknights.mantle.client.screen.MultiModuleScreen;
 
 public class MantleModuleScreenOverride implements IOverrideSlotPos {
@@ -33,8 +33,8 @@ public class MantleModuleScreenOverride implements IOverrideSlotPos {
 		}
 
 		@Override
-		public Vec2f getRenderPos(int guiLeft, int guiTop) {
-			return new Vec2f(-guiLeft + gui.cornerX + slot.xPos, -guiTop + gui.cornerY + slot.yPos);
+		public Vector2f getRenderPos(int guiLeft, int guiTop) {
+			return new Vector2f(-guiLeft + gui.cornerX + slot.xPos, -guiTop + gui.cornerY + slot.yPos);
 		}
 
 		@Override

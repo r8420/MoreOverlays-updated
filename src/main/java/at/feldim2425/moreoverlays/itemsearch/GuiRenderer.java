@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
 
 public class GuiRenderer {
 
@@ -151,7 +151,7 @@ public class GuiRenderer {
 
 		for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
 			if (slot.getValue().isEnableOverlay()) {
-				Vec2f posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
+				Vector2f posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
 				float px = posvec.x;
 				float py = posvec.y;
 				renderer.pos(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
@@ -197,7 +197,7 @@ public class GuiRenderer {
 	}
 
 	private boolean isSearchedItem(ItemStack stack) {
-		if(stack.getDisplayName().getFormattedText().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
+		if(stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
 			return true;
 		}
 		if (emptyFilter) return true;

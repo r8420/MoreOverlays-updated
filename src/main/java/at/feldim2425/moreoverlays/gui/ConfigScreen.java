@@ -3,6 +3,8 @@ package at.feldim2425.moreoverlays.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import at.feldim2425.moreoverlays.MoreOverlays;
 import at.feldim2425.moreoverlays.gui.config.ConfigOptionList;
 import net.minecraft.client.Minecraft;
@@ -10,6 +12,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -75,15 +78,15 @@ public class ConfigScreen extends Screen {
         final int xUndoAll = xDefaultAll - undoWidth;
                         
         this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight, 
-        		ConfigOptionList.RESET_CHAR+ " " + this.txtReset, 
+        		ITextComponent.func_241827_a_(ConfigOptionList.RESET_CHAR+ " " + this.txtReset), 
         		(btn) -> this.optionList.reset());
         
         this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight, 
-        		ConfigOptionList.UNDO_CHAR + " " + this.txtUndo,
+        		ITextComponent.func_241827_a_(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
         		(btn) -> this.optionList.undo());
         
         this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight, 
-        		" " + this.txtDone,
+        		ITextComponent.func_241827_a_(" " + this.txtDone),
                 (btn) -> this.back());
         
         this.children.add(this.optionList);
@@ -108,17 +111,17 @@ public class ConfigScreen extends Screen {
 	}
 
 	@Override
-    public void render(int mouseX, int mouseY, float partialTick) {
-        this.renderBackground();
-        this.optionList.render(mouseX, mouseY, partialTick);
-        this.btnReset.render(mouseX, mouseY, partialTick);
-        this.btnUndo.render(mouseX, mouseY, partialTick); 
-        this.btnBack.render(mouseX, mouseY, partialTick);
-        this.drawCenteredString(this.font, this.title.getFormattedText(), this.width / 2, 8, 16777215);
+	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
+        this.optionList.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.btnReset.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.btnUndo.render(matrixStack, mouseX, mouseY, partialTicks); 
+        this.btnBack.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, 8, 16777215);
         if(this.categoryTitle != null){
-            this.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 16777215);
+            this.drawCenteredString(matrixStack, this.font, this.categoryTitle, this.width / 2, 24, 16777215);
         }
-        super.render(mouseX, mouseY, partialTick);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     private void save(){

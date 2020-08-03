@@ -66,7 +66,7 @@ public class ChunkBoundsHandler {
 		}
 		int y = 0;
 		for (String text : regionInfo) {
-			mc.fontRenderer.drawStringWithShadow(text, 10, y += 10, 0xFFFFFF);
+			mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), text, 10, y += 10, 0xFFFFFF);
 		}
 	}
 

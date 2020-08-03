@@ -1,27 +1,28 @@
 modLoader="javafml"
-loaderVersion="[28,)" 
-issueTrackerURL="https://github.com/feldim2425/MoreOverlays/issues"
+loaderVersion="[32,)" 
+issueTrackerURL="https://github.com/r8420/MoreOverlays-1.15/issues"
 [[mods]]
-    modId="moreoverlays"
-    version="${file.jarVersion}"
-    displayName="More Overlays"
-    updateJSONURL="https://raw.githubusercontent.com/feldim2425/Mod_Update-JSONs/master/MoreOverlays.json"
-    displayURL="https://github.com/feldim2425/MoreOverlays"
-    credits="Thanks to all contributors of this project"
-    authors="feldim2425"
+	modId="moreoverlays"
+	version="${file.jarVersion}"
+	displayName="More Overlays Updated"
+	updateJSONURL="https://raw.githubusercontent.com/feldim2425/Mod_Update-JSONs/master/MoreOverlays.json"
+	displayURL="https://www.curseforge.com/minecraft/mc-mods/more-overlays-updated"
+	logoFile="moreoverlays.png"
+	credits="Thanks to all contributors of this project"
+	authors="feldim2425, RiDGo8/R8420"
     description='''
     Adds some overlays from the old (MC 1.7.x) NotEnoughItems Mod:
     * Chunk and Region borders
-    * Mob spawn / Ligh overlay
+    * Mob spawn / Light overlay
     * Item search when JEI (JustEnoughItems by Mezz) is installed
     '''
 
 [[dependencies.moreoverlays]]
     modId="forge"
     mandatory=true 
-    versionRange="[28.1.85,)" 
+    versionRange="[32,)" 
     ordering="NONE"
-    side="BOTH"
+    side="CLIENT"
 [[dependencies.moreoverlays]]
     modId="jei"
     mandatory=false

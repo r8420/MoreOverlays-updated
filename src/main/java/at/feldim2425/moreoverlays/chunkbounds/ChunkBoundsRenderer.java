@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -27,7 +27,7 @@ public class ChunkBoundsRenderer {
 		GlStateManager.pushMatrix();
 		GL11.glLineWidth((float)(double)Config.render_chunkLineWidth.get());
 
-		final Vec3d view = render.info.getProjectedView();
+		final Vector3d view = render.info.getProjectedView();
 		GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
 		GlStateManager.rotatef(player.getYaw(0) + 180, 0, 1, 0); // Fixes camera rotation.
 		GlStateManager.translated(-view.x, -view.y, -view.z);
