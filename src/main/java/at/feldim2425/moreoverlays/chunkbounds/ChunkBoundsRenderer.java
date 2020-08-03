@@ -26,6 +26,7 @@ public class ChunkBoundsRenderer {
 		Minecraft.getInstance().getTextureManager().bindTexture(BLANK_TEX);
 		GlStateManager.pushMatrix();
 		GL11.glLineWidth((float)(double)Config.render_chunkLineWidth.get());
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 		final Vector3d view = render.info.getProjectedView();
 		GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
