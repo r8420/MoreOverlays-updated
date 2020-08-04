@@ -13,8 +13,8 @@ import net.minecraft.util.text.TextFormatting;
 
 public class OptionCategory extends ConfigOptionList.OptionEntry {
 
-    private List<String> tooltip;
-    private Button btnOpen;
+    private final List<String> tooltip;
+    private final Button btnOpen;
 
     public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment){
         super(list);

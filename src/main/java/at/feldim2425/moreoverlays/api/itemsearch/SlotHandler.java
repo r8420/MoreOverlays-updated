@@ -10,7 +10,7 @@ public final class SlotHandler {
 
 	public static final SlotHandler INSTANCE = new SlotHandler();
 
-	private ArrayList<IOverrideSlotPos> overrides = new ArrayList<>();
+	private final ArrayList<IOverrideSlotPos> overrides = new ArrayList<>();
 
 	/*
 	 *  Register a IOverrideSlotPos for non GuiContainers

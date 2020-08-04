@@ -14,7 +14,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class OptionGeneric<V>
         extends OptionValueEntry<V> {
 
-    private TextFieldWidget tfConfigEntry;
+    private final TextFieldWidget tfConfigEntry;
     
     public OptionGeneric(ConfigOptionList list, ForgeConfigSpec.ConfigValue<V> valSpec, ForgeConfigSpec.ValueSpec spec) {
 		super(list, valSpec, spec);

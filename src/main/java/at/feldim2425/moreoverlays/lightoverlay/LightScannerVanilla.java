@@ -20,7 +20,7 @@ public class LightScannerVanilla extends LightScannerBase {
 
 	private final static AxisAlignedBB TEST_BB = new AxisAlignedBB(0.6D / 2D, 0, 0.6D / 2D, 1D - 0.6D / 2D, 1D, 1D - 0.6D / 2D);
 
-	private List<EntityType<?>> typesToCheck;
+	private final List<EntityType<?>> typesToCheck;
 
 	public LightScannerVanilla(){
 		typesToCheck = ForgeRegistries.ENTITIES.getValues().stream().filter((type) -> type.isSummonable() && type.getClassification() == EntityClassification.MONSTER).collect(Collectors.toList());

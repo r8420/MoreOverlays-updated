@@ -205,7 +205,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
                 this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
             }
             else if(cEntry.getValue() instanceof ForgeConfigSpec.BooleanValue){
-                this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue)cEntry.getValue(), (ForgeConfigSpec.ValueSpec)rootConfig.getSpec().get(fullPath)));
+                this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue)cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
             }
             else {
                 this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>)cEntry.getValue(), (ForgeConfigSpec.ValueSpec)rootConfig.getSpec().get(fullPath)));
@@ -274,7 +274,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 	}
 
     public abstract static class OptionEntry extends AbstractOptionList.Entry<ConfigOptionList.OptionEntry> implements INestedGuiEventHandler{
-        private ConfigOptionList optionList;
+        private final ConfigOptionList optionList;
 
         protected int rowTop, rowLeft;
 

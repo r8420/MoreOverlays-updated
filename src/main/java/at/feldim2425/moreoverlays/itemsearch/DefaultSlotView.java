@@ -6,7 +6,7 @@ import net.minecraft.util.math.vector.Vector2f;
 
 public class DefaultSlotView implements IViewSlot {
 
-	private Slot slot;
+	private final Slot slot;
 
 	public DefaultSlotView(Slot slot) {
 		this.slot = slot;

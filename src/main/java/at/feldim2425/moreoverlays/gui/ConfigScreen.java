@@ -20,7 +20,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class ConfigScreen extends Screen {
 
     private final String modId;
-    private ForgeConfigSpec configSpec;
+    private final ForgeConfigSpec configSpec;
     private ConfigOptionList optionList;
     private String categoryTitle = null;
 
@@ -28,12 +28,12 @@ public class ConfigScreen extends Screen {
     private Button btnUndo;
     private Button btnBack;
 
-    private List<String> pathCache = new ArrayList<>();
+    private final List<String> pathCache = new ArrayList<>();
     private String txtUndo = "";
     private String txtReset = "";
     private String txtDone = "";
     
-    private Screen modListScreen;
+    private final Screen modListScreen;
 
     public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
         super(new TranslationTextComponent("gui.config."+modId+".tile"));

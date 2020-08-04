@@ -14,7 +14,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class OptionBoolean
         extends OptionValueEntry<Boolean> {
 
-    private Button btnChange;
+    private final Button btnChange;
     private boolean state;
     
     public OptionBoolean(ConfigOptionList list, ForgeConfigSpec.BooleanValue valSpec, ForgeConfigSpec.ValueSpec spec) {

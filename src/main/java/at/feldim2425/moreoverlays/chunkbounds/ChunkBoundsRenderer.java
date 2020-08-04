@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 public class ChunkBoundsRenderer {
 
 	private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
-	private static EntityRendererManager render = Minecraft.getInstance().getRenderManager();
+	private static final EntityRendererManager render = Minecraft.getInstance().getRenderManager();
 
 	public static void renderOverlays() {
 		PlayerEntity player = Minecraft.getInstance().player;

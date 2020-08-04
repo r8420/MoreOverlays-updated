@@ -25,7 +25,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     public static final int CONTROL_WIDTH_VALIDATOR = 64;
     public static final int TITLE_WIDTH = 80;
 
-    private List<String> tooltip;
+    private final List<String> tooltip;
     private String txtUndo = "";
     private String txtReset = "";
     private String name = "";

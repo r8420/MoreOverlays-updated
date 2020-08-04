@@ -19,8 +19,8 @@ public class MantleModuleScreenOverride implements IOverrideSlotPos {
 
 	public static class ModuleScreenSlotView implements IViewSlot {
 
-		private Slot slot;
-		private MultiModuleScreen<?> gui;
+		private final Slot slot;
+		private final MultiModuleScreen<?> gui;
 
 		public ModuleScreenSlotView(Slot slot, MultiModuleScreen<?> gui) {
 			this.slot = slot;
