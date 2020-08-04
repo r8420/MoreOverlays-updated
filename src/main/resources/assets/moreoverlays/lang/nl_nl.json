@@ -4,8 +4,8 @@
     "key.moreoverlays.lightoverlay.desc": "Tonen/Verbergen Donkere Plekken",
 
     "gui.config.moreoverlays.tile": "MoreOverlays Instellingen",
-    "gui.config.moreoverlays.reset_config": "Instelling Resetten",
-    "gui.config.moreoverlays.undo": "Wijziging resetten",
+    "gui.config.moreoverlays.reset_config": "Instellingen Resetten",
+    "gui.config.moreoverlays.undo": "Wijzigingen resetten",
     "gui.config.moreoverlays.save": "Opslaan",
     
     "config.moreoverlays.category.lightoverlay": "Licht-Overlay",
