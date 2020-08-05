@@ -46,18 +46,24 @@ public class ChunkBoundsRenderer {
 		final int z1 = z0 + 16;
 		final int z2 = z0 + 8;
 
-		int regionX = player.chunkCoordX / ChunkBoundsHandler.REGION_SIZEX;
+		int regionX;
 		int regionY = player.chunkCoordY / ChunkBoundsHandler.REGION_SIZEY_CUBIC;
-		int regionZ = player.chunkCoordZ / ChunkBoundsHandler.REGION_SIZEZ;
+		int regionZ;
 
 		if(player.chunkCoordX < 0){
+			regionX = (player.chunkCoordX+1) / ChunkBoundsHandler.REGION_SIZEX;
 			regionX--;
+		} else{
+			regionX = player.chunkCoordX / ChunkBoundsHandler.REGION_SIZEX;
 		}
 		if(player.chunkCoordY < 0){
 			regionY--;
 		}
 		if(player.chunkCoordZ < 0){
+			regionZ = (player.chunkCoordZ+1) / ChunkBoundsHandler.REGION_SIZEZ;
 			regionZ--;
+		} else{
+			regionZ = player.chunkCoordZ / ChunkBoundsHandler.REGION_SIZEZ;
 		}
 		
 		final int regionBorderX0 = regionX * ChunkBoundsHandler.REGION_SIZEX * 16;
