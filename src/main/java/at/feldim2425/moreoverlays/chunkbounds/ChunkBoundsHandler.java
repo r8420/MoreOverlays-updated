@@ -85,9 +85,12 @@ public class ChunkBoundsHandler {
 		final PlayerEntity player = Minecraft.getInstance().player;
 		boolean updateInfo = regionInfo.isEmpty();
 
-		int newRegionX = player.chunkCoordX / REGION_SIZEX;
+		int newRegionX;
 		if(player.chunkCoordX < 0){
+			newRegionX = (player.chunkCoordX+1) / REGION_SIZEX;
 			newRegionX--;
+		} else {
+			newRegionX = player.chunkCoordX / REGION_SIZEX;
 		}
 		if (playerPrevRegionPosX != newRegionX) {
 			playerPrevRegionPosX = newRegionX;
@@ -105,9 +108,12 @@ public class ChunkBoundsHandler {
 			}
 		}
 
-		int newRegionZ =  player.chunkCoordZ / REGION_SIZEZ;
+		int newRegionZ;
 		if(player.chunkCoordZ < 0){
+			newRegionZ = (player.chunkCoordZ+1) / REGION_SIZEZ;
 			newRegionZ--;
+		} else {
+			newRegionZ = player.chunkCoordZ / REGION_SIZEZ;
 		}
 		if (playerPrevRegionPosZ != newRegionZ) {
 			playerPrevRegionPosZ = newRegionZ;

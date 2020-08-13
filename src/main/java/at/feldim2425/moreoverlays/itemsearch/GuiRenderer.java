@@ -1,7 +1,9 @@
 package at.feldim2425.moreoverlays.itemsearch;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import at.feldim2425.moreoverlays.config.Config;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -197,7 +199,7 @@ public class GuiRenderer {
 	}
 
 	private boolean isSearchedItem(ItemStack stack) {
-		if(stack.getDisplayName().getFormattedText().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
+		if(Config.search_searchCustom.get() && Arrays.stream(JeiModule.getJEITextField().getText().toLowerCase().split(" ", -1)).anyMatch(stack.getDisplayName().getString().toLowerCase()::contains)) {
 			return true;
 		}
 		if (emptyFilter) return true;

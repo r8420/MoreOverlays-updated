@@ -11,5 +11,6 @@
     "config.moreoverlays.category.lightoverlay": "Lightoverlay",
     "config.moreoverlays.category.chunkbounds": "Chunk bounds",
     "config.moreoverlays.category.itemsearch": "Item Search",
+    "config.moreoverlays.category.searchoverlay": "Item Search",
     "config.moreoverlays.category.rendersettings": "Render Settings"
 }
