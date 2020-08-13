@@ -23,6 +23,8 @@ public class Config {
 	public static ForgeConfigSpec.IntValue render_spawnAColor;
 	public static ForgeConfigSpec.IntValue render_spawnNColor;
 	public static ForgeConfigSpec.DoubleValue render_spawnLineWidth;
+	
+	public static ForgeConfigSpec.BooleanValue search_searchCustom;
 
 
 	public static void initialize() {
@@ -51,6 +53,10 @@ public class Config {
 		render_spawnAColor = builder.comment("Color the X that marks \"Spawns always possible\"").defineInRange("spawn_always_color", 0xFF0000, 0, 0xFFFFFF);
 		render_spawnNColor = builder.comment("Color the X that marks \"Spawns at night possible\"").defineInRange("spawn_night_color", 0xFFFF00, 0, 0xFFFFFF);
 		render_spawnLineWidth = builder.comment("Line width for spawn indication").defineInRange("spawn_line_width", 2, 0, Double.MAX_VALUE);
+		builder.pop();
+		
+		builder.comment("Settings for the search overlay").push("searchoverlay");
+		search_searchCustom = builder.comment("Also searches for the custom name of an item in user inventory (for example items named in anvil)\nSetting this to false will increase performance but will not find custom named items.").define("custom_search", true);
 		builder.pop();
 
 		config_client = builder.build();

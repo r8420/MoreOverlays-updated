@@ -1,5 +1,6 @@
 package at.feldim2425.moreoverlays.itemsearch;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import com.google.common.collect.BiMap;
@@ -10,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import at.feldim2425.moreoverlays.api.itemsearch.SlotHandler;
 import at.feldim2425.moreoverlays.api.itemsearch.SlotViewWrapper;
+import at.feldim2425.moreoverlays.config.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -197,7 +199,7 @@ public class GuiRenderer {
 	}
 
 	private boolean isSearchedItem(ItemStack stack) {
-		if(stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
+		if(Config.search_searchCustom.get() && Arrays.stream(JeiModule.getJEITextField().getText().toLowerCase().split(" ", -1)).anyMatch(stack.getDisplayName().getString().toLowerCase()::contains)) {
 			return true;
 		}
 		if (emptyFilter) return true;
