@@ -1,6 +1,5 @@
 package at.feldim2425.moreoverlays.itemsearch;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import at.feldim2425.moreoverlays.config.Config;
