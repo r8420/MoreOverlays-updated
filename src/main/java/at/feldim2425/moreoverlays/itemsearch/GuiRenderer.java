@@ -199,9 +199,6 @@ public class GuiRenderer {
 	}
 
 	private boolean isSearchedItem(ItemStack stack) {
-		if(Config.search_searchCustom.get() && Arrays.stream(JeiModule.getJEITextField().getText().toLowerCase().split(" ", -1)).anyMatch(stack.getDisplayName().getString().toLowerCase()::contains)) {
-			return true;
-		}
 		if (emptyFilter) return true;
 		else if (stack.isEmpty()) return false;
 		for (Object ingredient : JeiModule.filter.getFilteredIngredients()) {
@@ -209,6 +206,9 @@ public class GuiRenderer {
 				return true;
 			}
         }
+		if(Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
+			return true;
+		}
         return false;
     }
 
