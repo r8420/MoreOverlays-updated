@@ -211,7 +211,9 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
                 this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>)cEntry.getValue(), (ForgeConfigSpec.ValueSpec)rootConfig.getSpec().get(fullPath)));
             }
         }
-        this.changeFocus(false);
+        if(this.changeFocus(true)) {
+        	this.changeFocus(true);
+        }
     }
 
     public List<String> getCurrentPath() {
