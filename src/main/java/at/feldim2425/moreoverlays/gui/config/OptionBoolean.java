@@ -21,7 +21,7 @@ public class OptionBoolean
 		super(list, valSpec, spec);
         this.showValidity = false;
         
-        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0,this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR,20, ITextComponent.func_241827_a_(""), this::buttonPressed);
+        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0,this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR,20, ITextComponent.func_244388_a(""), this::buttonPressed);
         this.overrideUnsaved(this.value.get());
 	}
 
@@ -37,10 +37,10 @@ public class OptionBoolean
     protected void overrideUnsaved(Boolean value) {
         this.state = value;
         if(this.state){
-            this.btnChange.setMessage(ITextComponent.func_241827_a_(TextFormatting.GREEN+"TRUE"));
+            this.btnChange.setMessage(ITextComponent.func_244388_a(TextFormatting.GREEN+"TRUE"));
         }
         else {
-            this.btnChange.setMessage(ITextComponent.func_241827_a_(TextFormatting.RED+"FALSE"));
+            this.btnChange.setMessage(ITextComponent.func_244388_a(TextFormatting.RED+"FALSE"));
         }
     }
 

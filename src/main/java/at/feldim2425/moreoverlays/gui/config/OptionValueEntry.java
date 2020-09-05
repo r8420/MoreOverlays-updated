@@ -46,9 +46,9 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         super(list);
         this.value = confValue;
         this.spec = spec;
-        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, ITextComponent.func_241827_a_(ConfigOptionList.RESET_CHAR),
+        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, ITextComponent.func_244388_a(ConfigOptionList.RESET_CHAR),
                 (btn) -> this.reset());
-        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, ITextComponent.func_241827_a_(ConfigOptionList.UNDO_CHAR),
+        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, ITextComponent.func_244388_a(ConfigOptionList.UNDO_CHAR),
                 (btn) -> this.undo());
 
         this.txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
@@ -106,16 +106,19 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         List<ITextComponent> tooltipConverted = new ArrayList<ITextComponent>();
         
         for (String iTextComponent : this.tooltip) {
-        	tooltipConverted.add(ITextComponent.func_241827_a_(iTextComponent));
+        	tooltipConverted.add(ITextComponent.func_244388_a(iTextComponent));
         }
         if(btnReset.isHovered()){
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.func_241827_a_(this.txtReset), mouseX, mouseY);
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.func_244388_a(this.txtReset), mouseX, mouseY);
         }
         else if(btnUndo.isHovered()){
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.func_241827_a_(this.txtUndo), mouseX , mouseY);
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.func_244388_a(this.txtUndo), mouseX , mouseY);
         }
         else if(mouseX < TITLE_WIDTH + rowLeft){
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, tooltipConverted , mouseX , mouseY);
+            for (int i = 0; i < tooltipConverted.size(); i++) {
+        	    this.getConfigOptionList().getScreen().renderTooltip(matrixStack, tooltipConverted.get(i) , mouseX , mouseY+i*15);
+        	}
+            this.getConfigOptionList().getScreen();
         }
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();

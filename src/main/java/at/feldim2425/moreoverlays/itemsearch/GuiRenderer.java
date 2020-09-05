@@ -90,7 +90,7 @@ public class GuiRenderer {
 		float x = textField.x + 2;
 		float y = textField.y + 2;
 		float width = textField.getWidth() - 4;
-		float height = textField.getHeight() - 4;
+		float height = textField.getHeightRealms() - 4;
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 		buffer.pos(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
