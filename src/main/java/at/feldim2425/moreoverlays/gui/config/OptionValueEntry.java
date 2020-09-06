@@ -115,10 +115,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.func_244388_a(this.txtUndo), mouseX , mouseY);
         }
         else if(mouseX < TITLE_WIDTH + rowLeft){
-            for (int i = 0; i < tooltipConverted.size(); i++) {
-        	    this.getConfigOptionList().getScreen().renderTooltip(matrixStack, tooltipConverted.get(i) , mouseX , mouseY+i*15);
-        	}
-            this.getConfigOptionList().getScreen();
+            this.getConfigOptionList().getScreen().func_243308_b(matrixStack, tooltipConverted, mouseX, mouseY);
         }
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();

@@ -31,8 +31,10 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
         }
         
         tooltip.add(TextFormatting.RED + name);
-        for(final String line : lines){
-            tooltip.add(TextFormatting.YELLOW + line);
+        if(lines != null) {
+        	for(final String line : lines){
+                tooltip.add(TextFormatting.YELLOW + line);
+            }
         }
     }
 
