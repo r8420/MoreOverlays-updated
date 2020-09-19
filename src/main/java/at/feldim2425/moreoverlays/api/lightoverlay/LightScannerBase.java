@@ -57,7 +57,7 @@ public abstract class LightScannerBase implements ILightScanner {
 			return true;
 		}
 		Biome biome = world.getBiome(pos);
-		return biome.func_242433_b().func_242557_a() > 0 && !biome.func_242433_b().func_242559_a(EntityClassification.MONSTER).isEmpty();
+		return biome.getMobSpawnInfo().getCreatureSpawnProbability() > 0 && !biome.getMobSpawnInfo().getSpawners(EntityClassification.MONSTER).isEmpty();
 	}
 
 	public abstract byte getSpawnModeAt(BlockPos pos, World world);

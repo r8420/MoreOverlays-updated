@@ -18,7 +18,7 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment){
         super(list);
-        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.func_244388_a(name), (btn) -> {
+        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.getTextComponentOrEmpty(name), (btn) -> {
             list.push(path);
         });
 
@@ -45,7 +45,7 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight,int mouseX, int mouseY){
-        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.func_244388_a(tooltip.toString()), mouseX, mouseY);
+        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(tooltip.toString()), mouseX, mouseY);
     }
 
     @Override

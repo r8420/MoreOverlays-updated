@@ -20,7 +20,7 @@ public class OptionGeneric<V>
 		super(list, valSpec, spec);
         this.showValidity = true;
         
-        this.tfConfigEntry = new TextFieldWidget(Minecraft.getInstance().fontRenderer, OptionValueEntry.TITLE_WIDTH + 5, 2, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 16,ITextComponent.func_244388_a(""));
+        this.tfConfigEntry = new TextFieldWidget(Minecraft.getInstance().fontRenderer, OptionValueEntry.TITLE_WIDTH + 5, 2, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 16,ITextComponent.getTextComponentOrEmpty(""));
         this.overrideUnsaved(this.value.get());
 	}
 

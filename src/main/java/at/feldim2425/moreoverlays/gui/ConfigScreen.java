@@ -78,15 +78,15 @@ public class ConfigScreen extends Screen {
         final int xUndoAll = xDefaultAll - undoWidth;
                         
         this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight, 
-        		ITextComponent.func_244388_a(ConfigOptionList.RESET_CHAR+ " " + this.txtReset), 
+        		ITextComponent.getTextComponentOrEmpty(ConfigOptionList.RESET_CHAR+ " " + this.txtReset), 
         		(btn) -> this.optionList.reset());
         
         this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight, 
-        		ITextComponent.func_244388_a(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
+        		ITextComponent.getTextComponentOrEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
         		(btn) -> this.optionList.undo());
         
         this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight, 
-        		ITextComponent.func_244388_a(" " + this.txtDone),
+        		ITextComponent.getTextComponentOrEmpty(" " + this.txtDone),
                 (btn) -> this.back());
         
         this.children.add(this.optionList);
