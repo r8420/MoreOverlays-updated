@@ -77,7 +77,6 @@ public class LightOverlayHandler {
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (enabled) {
             renderer.renderOverlays(scanner);
-
         }
     }
 
