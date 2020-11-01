@@ -14,78 +14,78 @@ import org.apache.logging.log4j.message.FormattedMessage;
 
 public class LightOverlayHandler {
 
-    private static boolean enabled;
-    private static ILightRenderer renderer;
-    private static ILightScanner scanner;
+    private static boolean enabled = false;
+    private static ILightRenderer renderer = null;
+    private static ILightScanner scanner = null;
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new LightOverlayHandler());
     }
 
     public static boolean isEnabled() {
-        return LightOverlayHandler.enabled;
+        return enabled;
     }
 
-    public static void setEnabled(final boolean enabled) {
+    public static void setEnabled(boolean enabled) {
         if (LightOverlayHandler.enabled == enabled) {
             return;
         }
 
         if (enabled) {
-            LightOverlayHandler.reloadHandlerInternal();
+            reloadHandlerInternal();
         } else {
-            LightOverlayHandler.scanner.clear();
+            scanner.clear();
         }
         LightOverlayHandler.enabled = enabled;
     }
 
     public static void reloadHandler() {
-        if (LightOverlayHandler.enabled) {
+        if (enabled) {
             MoreOverlays.logger.info("Light overlay handlers reloaded");
-            LightOverlayHandler.reloadHandlerInternal();
+            reloadHandlerInternal();
         }
     }
 
     private static void reloadHandlerInternal() {
-        final LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(Config.light_IgnoreSpawnList.get(), LightOverlayRenderer.class, LightScannerVanilla.class);
+        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(Config.light_IgnoreSpawnList.get(), LightOverlayRenderer.class, LightScannerVanilla.class);
         MinecraftForge.EVENT_BUS.post(event);
 
-        if (LightOverlayHandler.renderer == null || LightOverlayHandler.renderer.getClass() != event.getRenderer()) {
+        if (renderer == null || renderer.getClass() != event.getRenderer()) {
             try {
-                LightOverlayHandler.renderer = event.getRenderer().newInstance();
-            } catch (final IllegalAccessException | InstantiationException e) {
+                renderer = event.getRenderer().newInstance();
+            } catch (IllegalAccessException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightRenderer from type \"%s\"!", event.getRenderer().getName()), e);
-                LightOverlayHandler.renderer = new LightOverlayRenderer();
+                renderer = new LightOverlayRenderer();
             }
         }
 
-        if (LightOverlayHandler.scanner == null || LightOverlayHandler.scanner.getClass() != event.getScanner()) {
-            if (LightOverlayHandler.scanner != null && LightOverlayHandler.enabled) {
-                LightOverlayHandler.scanner.clear();
+        if (scanner == null || scanner.getClass() != event.getScanner()) {
+            if (scanner != null && enabled) {
+                scanner.clear();
             }
 
             try {
-                LightOverlayHandler.scanner = event.getScanner().newInstance();
-            } catch (final IllegalAccessException | InstantiationException e) {
+                scanner = event.getScanner().newInstance();
+            } catch (IllegalAccessException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightScanner from type \"%s\"!", event.getScanner().getName()), e);
-                LightOverlayHandler.scanner = new LightScannerVanilla();
+                scanner = new LightScannerVanilla();
             }
         }
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(final RenderWorldLastEvent event) {
-        if (LightOverlayHandler.enabled) {
-            LightOverlayHandler.renderer.renderOverlays(LightOverlayHandler.scanner);
+    public void renderWorldLastEvent(RenderWorldLastEvent event) {
+        if (enabled) {
+            renderer.renderOverlays(scanner);
 
         }
     }
 
     @SubscribeEvent
-    public void onClientTick(final TickEvent.ClientTickEvent event) {
-        if (Minecraft.getInstance().world != null && Minecraft.getInstance().player != null && LightOverlayHandler.enabled && event.phase == TickEvent.Phase.END &&
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (Minecraft.getInstance().world != null && Minecraft.getInstance().player != null && enabled && event.phase == TickEvent.Phase.END &&
                 (Minecraft.getInstance().currentScreen == null || !Minecraft.getInstance().currentScreen.isPauseScreen())) {
-            LightOverlayHandler.scanner.update(Minecraft.getInstance().player);
+            scanner.update(Minecraft.getInstance().player);
         }
 
     }

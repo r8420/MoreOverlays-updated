@@ -23,25 +23,25 @@ public class MoreOverlays {
     //public static final String VERSION = "1.15.1";
     //public static final String UPDATE_JSON = "https://raw.githubusercontent.com/feldim2425/Mod_Update-JSONs/master/MoreOverlays.json";
 
-    public static Logger logger = LogManager.getLogger(MoreOverlays.NAME);
+    public static Logger logger = LogManager.getLogger(NAME);
 
     public MoreOverlays() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModLoadingContext ctx = ModLoadingContext.get();
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final ModLoadingContext ctx = ModLoadingContext.get();
 
         modBus.addListener(this::onClientInit);
 
         Config.initialize();
-        ctx.registerConfig(ModConfig.Type.CLIENT, Config.config_client, MoreOverlays.MOD_ID + ".toml");
+        ctx.registerConfig(ModConfig.Type.CLIENT, Config.config_client, MOD_ID + ".toml");
 
         ctx.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> this::openSettings);
     }
 
-    public void onClientInit(final FMLClientSetupEvent event) {
+    public void onClientInit(FMLClientSetupEvent event) {
         ClientRegistrationHandler.setupClient();
     }
 
-    public Screen openSettings(final Minecraft mc, final Screen modlist) {
-        return new ConfigScreen(modlist, Config.config_client, MoreOverlays.MOD_ID);
+    public Screen openSettings(Minecraft mc, Screen modlist) {
+        return new ConfigScreen(modlist, Config.config_client, MOD_ID);
     }
 }

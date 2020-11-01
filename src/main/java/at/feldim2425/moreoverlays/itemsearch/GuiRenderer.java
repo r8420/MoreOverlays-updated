@@ -28,88 +28,88 @@ public class GuiRenderer {
     private static final float OVERLAY_ZLEVEL = 299F;
     private static final float FRAME_RADIUS = 1.0F;
 
-    private static boolean enabled;
+    private static boolean enabled = false;
 
     private static String lastFilterText = "";
     private static boolean emptyFilter = true;
     private static BiMap<Slot, SlotViewWrapper> views = HashBiMap.create();
 
-    private boolean allowRender;
-    private int guiOffsetX;
-    private int guiOffsetY;
+    private boolean allowRender = false;
+    private int guiOffsetX = 0;
+    private int guiOffsetY = 0;
 
-    public void guiInit(final Screen gui) {
-        if (!this.canShowIn(gui)) {
+    public void guiInit(Screen gui) {
+        if (!canShowIn(gui)) {
             return;
         }
 
-		this.guiOffsetX = GuiUtils.getGuiLeft((ContainerScreen<?>) gui);
-		this.guiOffsetY = GuiUtils.getGuiTop((ContainerScreen<?>) gui);
+        guiOffsetX = GuiUtils.getGuiLeft((ContainerScreen<?>) gui);
+        guiOffsetY = GuiUtils.getGuiTop((ContainerScreen<?>) gui);
 
     }
 
-    public void guiOpen(final Screen gui) {
+    public void guiOpen(Screen gui) {
 
     }
 
     public void preDraw() {
-        final Screen guiscr = Minecraft.getInstance().currentScreen;
+        Screen guiscr = Minecraft.getInstance().currentScreen;
 
-        final TextFieldWidget textField = JeiModule.getJEITextField();
+        TextFieldWidget textField = JeiModule.getJEITextField();
 
-        if (this.canShowIn(guiscr)) {
-			this.allowRender = true;
-            if (textField != null && GuiRenderer.enabled) {
-				this.drawSearchFrame(textField);
+        if (canShowIn(guiscr)) {
+            allowRender = true;
+            if (textField != null && enabled) {
+                drawSearchFrame(textField);
             }
         }
     }
 
     public void postDraw() {
-        final Screen guiscr = Minecraft.getInstance().currentScreen;
+        Screen guiscr = Minecraft.getInstance().currentScreen;
 
-        if (this.allowRender && this.canShowIn(guiscr)) {
-			this.allowRender = false;
-			this.drawSlotOverlay((ContainerScreen<?>) guiscr);
+        if (allowRender && canShowIn(guiscr)) {
+            allowRender = false;
+            drawSlotOverlay((ContainerScreen<?>) guiscr);
         }
     }
 
-    private void drawSearchFrame(final TextFieldWidget textField) {
+    private void drawSearchFrame(TextFieldWidget textField) {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableDepthTest();
         GlStateManager.disableTexture();
         GlStateManager.color4f(1, 1, 1, 1);
         GlStateManager.pushMatrix();
-        final Tessellator tess = Tessellator.getInstance();
-        final BufferBuilder buffer = tess.getBuffer();
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder buffer = tess.getBuffer();
         GlStateManager.color4f(1, 1, 0, 1);
 
-        final float x = textField.x + 2;
-        final float y = textField.y + 2;
-        final float width = textField.getWidth() - 4;
-        final float height = textField.getHeightRealms() - 4;
+        float x = textField.x + 2;
+        float y = textField.y + 2;
+        float width = textField.getWidth() - 4;
+        float height = textField.getHeightRealms() - 4;
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        buffer.pos(x + width + GuiRenderer.FRAME_RADIUS, y - GuiRenderer.FRAME_RADIUS, 1000).endVertex();
-        buffer.pos(x - GuiRenderer.FRAME_RADIUS, y - GuiRenderer.FRAME_RADIUS, 1000).endVertex();
-        buffer.pos(x - GuiRenderer.FRAME_RADIUS, y, 1000).endVertex();
-        buffer.pos(x + width + GuiRenderer.FRAME_RADIUS, y, 1000).endVertex();
+        buffer.pos(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
+        buffer.pos(x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
+        buffer.pos(x - FRAME_RADIUS, y, 1000).endVertex();
+        buffer.pos(x + width + FRAME_RADIUS, y, 1000).endVertex();
 
         buffer.pos(x, y, 1000).endVertex();
-        buffer.pos(x - GuiRenderer.FRAME_RADIUS, y, 1000).endVertex();
-        buffer.pos(x - GuiRenderer.FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.pos(x - FRAME_RADIUS, y, 1000).endVertex();
+        buffer.pos(x - FRAME_RADIUS, y + height, 1000).endVertex();
         buffer.pos(x, y + height, 1000).endVertex();
 
-        buffer.pos(x + width + GuiRenderer.FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.pos(x - GuiRenderer.FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.pos(x - GuiRenderer.FRAME_RADIUS, y + height + GuiRenderer.FRAME_RADIUS, 1000).endVertex();
-        buffer.pos(x + width + GuiRenderer.FRAME_RADIUS, y + height + GuiRenderer.FRAME_RADIUS, 1000).endVertex();
+        buffer.pos(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.pos(x - FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.pos(x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        buffer.pos(x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
 
-        buffer.pos(x + width + GuiRenderer.FRAME_RADIUS, y, 1000).endVertex();
+        buffer.pos(x + width + FRAME_RADIUS, y, 1000).endVertex();
         buffer.pos(x + width, y, 1000).endVertex();
         buffer.pos(x + width, y + height, 1000).endVertex();
-        buffer.pos(x + width + GuiRenderer.FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.pos(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
 
         tess.draw();
         GlStateManager.color4f(1, 1, 1, 1);
@@ -118,28 +118,28 @@ public class GuiRenderer {
         GlStateManager.enableTexture();
     }
 
-    public void renderTooltip(final ItemStack stack) {
-        final Screen guiscr = Minecraft.getInstance().currentScreen;
-        if (this.allowRender && this.canShowIn(guiscr)) {
-            final ContainerScreen<?> gui = (ContainerScreen<?>) guiscr;
+    public void renderTooltip(ItemStack stack) {
+        Screen guiscr = Minecraft.getInstance().currentScreen;
+        if (allowRender && canShowIn(guiscr)) {
+            ContainerScreen<?> gui = (ContainerScreen<?>) guiscr;
             if (gui.getSlotUnderMouse() != null && gui.getSlotUnderMouse().getHasStack()
                     && gui.getSlotUnderMouse().getStack().equals(stack)) {
-				this.allowRender = false;
-				this.drawSlotOverlay((ContainerScreen<?>) guiscr);
+                allowRender = false;
+                drawSlotOverlay((ContainerScreen<?>) guiscr);
             }
         }
     }
 
-    private void drawSlotOverlay(final ContainerScreen<?> gui) {
+    private void drawSlotOverlay(ContainerScreen<?> gui) {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.enableAlphaTest();
         GlStateManager.color4f(1, 1, 1, 1);
 
-        if (!GuiRenderer.enabled || GuiRenderer.views == null || GuiRenderer.views.isEmpty())
+        if (!enabled || views == null || views.isEmpty())
             return;
 
-        final Tessellator tess = Tessellator.getInstance();
-        final BufferBuilder renderer = tess.getBuffer();
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder renderer = tess.getBuffer();
 
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
@@ -148,15 +148,15 @@ public class GuiRenderer {
 
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 
-        for (final Map.Entry<Slot, SlotViewWrapper> slot : GuiRenderer.views.entrySet()) {
+        for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
-                final Vector2f posvec = slot.getValue().getView().getRenderPos(this.guiOffsetX, this.guiOffsetY);
-                final float px = posvec.x;
-                final float py = posvec.y;
-                renderer.pos(px + 16 + this.guiOffsetX, py + this.guiOffsetY, GuiRenderer.OVERLAY_ZLEVEL).endVertex();
-                renderer.pos(px + this.guiOffsetX, py + this.guiOffsetY, GuiRenderer.OVERLAY_ZLEVEL).endVertex();
-                renderer.pos(px + this.guiOffsetX, py + 16 + this.guiOffsetY, GuiRenderer.OVERLAY_ZLEVEL).endVertex();
-                renderer.pos(px + 16 + this.guiOffsetX, py + 16 + this.guiOffsetY, GuiRenderer.OVERLAY_ZLEVEL).endVertex();
+                Vector2f posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
+                float px = posvec.x;
+                float py = posvec.y;
+                renderer.pos(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.pos(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.pos(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.pos(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
             }
         }
 
@@ -169,34 +169,34 @@ public class GuiRenderer {
         GlStateManager.disableBlend();
     }
 
-    public boolean canShowIn(final Screen gui) {
+    public boolean canShowIn(Screen gui) {
         return (gui instanceof ContainerScreen<?>) && ((ContainerScreen<?>) gui).getContainer() != null && !((ContainerScreen<?>) gui).getContainer().inventorySlots.isEmpty();
     }
 
-    private void checkSlots(final ContainerScreen<?> container) {
-        if (GuiRenderer.views == null) {
-			GuiRenderer.views = HashBiMap.create();
+    private void checkSlots(ContainerScreen<?> container) {
+        if (views == null) {
+            views = HashBiMap.create();
         } else {
-			GuiRenderer.views.clear();
+            views.clear();
         }
-        for (final Slot slot : container.getContainer().inventorySlots) {
+        for (Slot slot : container.getContainer().inventorySlots) {
             //System.out.println(slot);
-            final SlotViewWrapper wrapper;
-            if (!GuiRenderer.views.containsKey(slot)) {
+            SlotViewWrapper wrapper;
+            if (!views.containsKey(slot)) {
                 wrapper = new SlotViewWrapper(SlotHandler.INSTANCE.getViewSlot(container, slot));
-				GuiRenderer.views.put(slot, wrapper);
+                views.put(slot, wrapper);
             } else {
-                wrapper = GuiRenderer.views.get(slot);
+                wrapper = views.get(slot);
             }
 
-            wrapper.setEnableOverlay(wrapper.getView().canSearch() && !this.isSearchedItem(slot.getStack()));
+            wrapper.setEnableOverlay(wrapper.getView().canSearch() && !isSearchedItem(slot.getStack()));
         }
     }
 
-    private boolean isSearchedItem(final ItemStack stack) {
-        if (GuiRenderer.emptyFilter) return true;
+    private boolean isSearchedItem(ItemStack stack) {
+        if (emptyFilter) return true;
         else if (stack.isEmpty()) return false;
-        for (final Object ingredient : JeiModule.filter.getFilteredIngredients()) {
+        for (Object ingredient : JeiModule.filter.getFilteredIngredients()) {
             if (ItemUtils.ingredientMatches(ingredient, stack)) {
                 return true;
             }
@@ -205,35 +205,35 @@ public class GuiRenderer {
     }
 
     public void tick() {
-        Screen screen = Minecraft.getInstance().currentScreen;
-        if (!this.canShowIn(screen))
+        final Screen screen = Minecraft.getInstance().currentScreen;
+        if (!canShowIn(screen))
             return;
-        if (GuiRenderer.enabled && !JeiModule.filter.getFilterText().equals(GuiRenderer.lastFilterText)) {
-			GuiRenderer.lastFilterText = JeiModule.filter.getFilterText();
-			GuiRenderer.emptyFilter = GuiRenderer.lastFilterText.replace(" ", "").isEmpty();
+        if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {
+            lastFilterText = JeiModule.filter.getFilterText();
+            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
         }
 
 
-        if (GuiRenderer.enabled && screen instanceof ContainerScreen<?>) {
-			this.checkSlots((ContainerScreen<?>) screen);
-			this.guiOffsetX = GuiUtils.getGuiLeft((ContainerScreen<?>) screen);
-			this.guiOffsetY = GuiUtils.getGuiTop((ContainerScreen<?>) screen);
-        } else if (GuiRenderer.views != null) {
-			GuiRenderer.views.clear();
+        if (enabled && screen instanceof ContainerScreen<?>) {
+            checkSlots((ContainerScreen<?>) screen);
+            guiOffsetX = GuiUtils.getGuiLeft((ContainerScreen<?>) screen);
+            guiOffsetY = GuiUtils.getGuiTop((ContainerScreen<?>) screen);
+        } else if (views != null) {
+            views.clear();
         }
     }
 
     public void toggleMode() {
-		GuiRenderer.enabled = !GuiRenderer.enabled;
-        if (GuiRenderer.enabled) {
-			GuiRenderer.lastFilterText = JeiModule.filter.getFilterText();
-			GuiRenderer.emptyFilter = GuiRenderer.lastFilterText.replace(" ", "").isEmpty();
+        enabled = !enabled;
+        if (enabled) {
+            lastFilterText = JeiModule.filter.getFilterText();
+            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
         } else {
-			GuiRenderer.lastFilterText = "";
+            lastFilterText = "";
         }
     }
 
     public boolean isEnabled() {
-        return GuiRenderer.enabled;
+        return enabled;
     }
 }

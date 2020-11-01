@@ -11,7 +11,7 @@ public class AlternateLightHandler {
     }
 
     @SubscribeEvent
-    public void onLightOverlayEnable(final LightOverlayReloadHandlerEvent event) {
+    public void onLightOverlayEnable(LightOverlayReloadHandlerEvent event) {
         if (event.isIgnoringSpawner()) {
             return;
         }

@@ -19,36 +19,36 @@ public final class ItemUtils {
         //EMPTY
     }
 
-    public static boolean ingredientMatches(final Object ingredient, final ItemStack stack) {
+    public static boolean ingredientMatches(Object ingredient, ItemStack stack) {
         if (ingredient instanceof ItemStack) {
-            final ItemStack stack1 = (ItemStack) ingredient;
+            ItemStack stack1 = (ItemStack) ingredient;
             return stack1.isItemEqualIgnoreDurability(stack) && JeiModule.areItemsEqualInterpreter(stack1, stack);
         } else if (ingredient instanceof EnchantmentData) {
-            final ListNBT tags;
+            ListNBT tags;
             if (stack.getItem() instanceof EnchantedBookItem) {
                 tags = EnchantedBookItem.getEnchantments(stack);
             } else {
                 tags = stack.getEnchantmentTagList();
             }
-            return ItemUtils.getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(((EnchantmentData) ingredient).enchantment) &&
+            return getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(((EnchantmentData) ingredient).enchantment) &&
                     ench.enchantmentLevel == ((EnchantmentData) ingredient).enchantmentLevel);
         }
 
         return false;
     }
 
-    public static Collection<EnchantmentData> getEnchantmentData(@Nullable final ListNBT nbtList) {
+    public static Collection<EnchantmentData> getEnchantmentData(@Nullable ListNBT nbtList) {
         if (nbtList == null) {
             return Collections.emptySet();
         }
 
-        final Collection<EnchantmentData> enchantments = new HashSet<>();
-        for (final INBT nbt : nbtList) {
+        Collection<EnchantmentData> enchantments = new HashSet<>();
+        for (INBT nbt : nbtList) {
             if (nbt instanceof CompoundNBT) {
-                final CompoundNBT nbttagcompound = (CompoundNBT) nbt;
-                final int id = nbttagcompound.getShort("id");
-                final int level = nbttagcompound.getShort("lvl");
-                final Enchantment enchantment = Enchantment.getEnchantmentByID(id);
+                CompoundNBT nbttagcompound = (CompoundNBT) nbt;
+                int id = nbttagcompound.getShort("id");
+                int level = nbttagcompound.getShort("lvl");
+                Enchantment enchantment = Enchantment.getEnchantmentByID(id);
                 if (enchantment != null && level > 0) {
                     enchantments.add(new EnchantmentData(enchantment, level));
                 }
@@ -57,7 +57,7 @@ public final class ItemUtils {
         return enchantments;
     }
 
-    public static boolean matchNBT(final ItemStack a, final ItemStack b) {
+    public static boolean matchNBT(ItemStack a, ItemStack b) {
         return a.hasTag() == b.hasTag() && (!a.hasTag() || a.getTag().equals(b.getTag()));
     }
 }

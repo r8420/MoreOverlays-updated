@@ -15,40 +15,40 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
     private final List<String> tooltip;
     private final Button btnOpen;
 
-    public OptionCategory(final ConfigOptionList list, final List<String> path, final String name, final String comment) {
+    public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment) {
         super(list);
-        this.btnOpen = new Button(0, 0, getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.getTextComponentOrEmpty(name), (btn) -> {
+        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.getTextComponentOrEmpty(name), (btn) -> {
             list.push(path);
         });
 
         String[] lines = null;
         if (comment != null) {
             lines = comment.split("\\n");
-            this.tooltip = new ArrayList<>(lines.length + 1);
+            tooltip = new ArrayList<>(lines.length + 1);
         } else {
-            this.tooltip = new ArrayList<>(1);
+            tooltip = new ArrayList<>(1);
         }
 
-        this.tooltip.add(TextFormatting.RED + name);
+        tooltip.add(TextFormatting.RED + name);
         if (lines != null) {
-            for (String line : lines) {
-                this.tooltip.add(TextFormatting.YELLOW + line);
+            for (final String line : lines) {
+                tooltip.add(TextFormatting.YELLOW + line);
             }
         }
     }
 
     @Override
-    public void renderControls(final MatrixStack matrixStack, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, final int mouseX, final int mouseY, final boolean mouseOver, final float partialTick) {
-        this.btnOpen.render(matrixStack, mouseX, mouseY, partialTick);
+    public void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
+        btnOpen.render(matrixStack, mouseX, mouseY, partialTick);
     }
 
     @Override
-    protected void renderTooltip(final MatrixStack matrixStack, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, final int mouseX, final int mouseY) {
-        getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.tooltip.toString()), mouseX, mouseY);
+    protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(tooltip.toString()), mouseX, mouseY);
     }
 
     @Override
     public List<? extends IGuiEventListener> getEventListeners() {
-        return Arrays.asList(btnOpen);
+        return Arrays.asList(this.btnOpen);
     }
 }

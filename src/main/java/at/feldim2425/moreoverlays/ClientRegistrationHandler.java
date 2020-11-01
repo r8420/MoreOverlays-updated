@@ -11,18 +11,18 @@ import net.minecraftforge.fml.ModList;
 
 public final class ClientRegistrationHandler {
 
-    private static boolean enable_jei;
+    private static boolean enable_jei = false;
 
     private ClientRegistrationHandler() {
         // EMPTY
     }
 
     public static boolean isJeiInstalled() {
-        return ClientRegistrationHandler.enable_jei;
+        return enable_jei;
     }
 
     public static void setupClient() {
-        ClientRegistrationHandler.enable_jei = ModList.get().isLoaded("jei");
+        enable_jei = ModList.get().isLoaded("jei");
         KeyBindings.init();
 
         LightOverlayHandler.init();
@@ -32,7 +32,7 @@ public final class ClientRegistrationHandler {
 
         GuiHandler.init();
 
-        if (ClientRegistrationHandler.enable_jei && ModList.get().isLoaded("mantle")) {
+        if (enable_jei && ModList.get().isLoaded("mantle")) {
             SlotHandler.INSTANCE.addPositionOverride(new MantleModuleScreenOverride());
         }
     }

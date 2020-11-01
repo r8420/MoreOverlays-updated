@@ -8,18 +8,18 @@ public class DefaultSlotView implements IViewSlot {
 
     private final Slot slot;
 
-    public DefaultSlotView(final Slot slot) {
+    public DefaultSlotView(Slot slot) {
         this.slot = slot;
     }
 
     @Override
     public Slot getSlot() {
-        return this.slot;
+        return slot;
     }
 
     @Override
-    public Vector2f getRenderPos(final int guiLeft, final int guiTop) {
-        return new Vector2f(this.slot.xPos, this.slot.yPos);
+    public Vector2f getRenderPos(int guiLeft, int guiTop) {
+        return new Vector2f(slot.xPos, slot.yPos);
     }
 
     @Override

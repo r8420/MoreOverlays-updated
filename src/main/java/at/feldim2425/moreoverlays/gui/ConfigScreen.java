@@ -4,7 +4,6 @@ import at.feldim2425.moreoverlays.MoreOverlays;
 import at.feldim2425.moreoverlays.gui.config.ConfigOptionList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -24,7 +23,7 @@ public class ConfigScreen extends Screen {
     private final List<String> pathCache = new ArrayList<>();
     private final Screen modListScreen;
     private ConfigOptionList optionList;
-    private String categoryTitle;
+    private String categoryTitle = null;
     private Button btnReset;
     private Button btnUndo;
     private Button btnBack;
@@ -32,122 +31,122 @@ public class ConfigScreen extends Screen {
     private String txtReset = "";
     private String txtDone = "";
 
-    public ConfigScreen(final Screen modListScreen, final ForgeConfigSpec spec, final String modId) {
+    public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
         super(new TranslationTextComponent("gui.config." + modId + ".tile"));
         this.modListScreen = modListScreen;
-        configSpec = spec;
+        this.configSpec = spec;
         this.modId = modId;
 
-        txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
-        txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
-        txtDone = I18n.format("gui.done");
+        this.txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
+        this.txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
+        this.txtDone = I18n.format("gui.done");
     }
 
     @Override
     protected void init() {
 
-        if (optionList == null) {
-            optionList = new ConfigOptionList(minecraft, modId, this);
+        if (this.optionList == null) {
+            this.optionList = new ConfigOptionList(this.minecraft, this.modId, this);
 
-            if (this.pathCache.isEmpty()) {
-                optionList.setConfiguration(this.configSpec);
+            if (pathCache.isEmpty()) {
+                this.optionList.setConfiguration(configSpec);
             } else {
-                optionList.setConfiguration(this.configSpec, pathCache);
+                this.optionList.setConfiguration(configSpec, this.pathCache);
             }
         }
 
-        final FontRenderer font = Minecraft.getInstance().fontRenderer;
+        FontRenderer font = Minecraft.getInstance().fontRenderer;
 
-        final int undoGlyphWidth = font.getStringWidth(ConfigOptionList.UNDO_CHAR) * 2;
-        final int resetGlyphWidth = font.getStringWidth(ConfigOptionList.RESET_CHAR) * 2;
+        int undoGlyphWidth = font.getStringWidth(ConfigOptionList.UNDO_CHAR) * 2;
+        int resetGlyphWidth = font.getStringWidth(ConfigOptionList.RESET_CHAR) * 2;
 
-        final int undoWidth = font.getStringWidth(" " + txtUndo) + undoGlyphWidth + 20;
-        final int resetWidth = font.getStringWidth(" " + txtReset) + resetGlyphWidth + 20;
-        final int doneWidth = Math.max(font.getStringWidth(txtDone) + 20, 100);
+        int undoWidth = font.getStringWidth(" " + this.txtUndo) + undoGlyphWidth + 20;
+        int resetWidth = font.getStringWidth(" " + this.txtReset) + resetGlyphWidth + 20;
+        int doneWidth = Math.max(font.getStringWidth(this.txtDone) + 20, 100);
 
-        int buttonY = height - 32 + (32 - 20) / 2;
+        final int buttonY = this.height - 32 + (32 - 20) / 2;
         final int buttonHeight = 20;
 
-        final int pad = 10;
-        int xBack = pad;
-        int xDefaultAll = width - resetWidth - pad;
-        int xUndoAll = xDefaultAll - undoWidth;
+        int pad = 10;
+        final int xBack = pad;
+        final int xDefaultAll = this.width - resetWidth - pad;
+        final int xUndoAll = xDefaultAll - undoWidth;
 
-        btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(ConfigOptionList.RESET_CHAR + " " + txtReset),
-                (btn) -> optionList.reset());
+        this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight,
+                ITextComponent.getTextComponentOrEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
+                (btn) -> this.optionList.reset());
 
-        btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(ConfigOptionList.UNDO_CHAR + " " + txtUndo),
-                (btn) -> optionList.undo());
+        this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight,
+                ITextComponent.getTextComponentOrEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
+                (btn) -> this.optionList.undo());
 
-        btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(" " + txtDone),
-                (btn) -> back());
+        this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight,
+                ITextComponent.getTextComponentOrEmpty(" " + this.txtDone),
+                (btn) -> this.back());
 
-        children.add(optionList);
-        children.add(btnReset);
-        children.add(btnUndo);
-        children.add(btnBack);
+        this.children.add(this.optionList);
+        this.children.add(this.btnReset);
+        this.children.add(this.btnUndo);
+        this.children.add(this.btnBack);
 
-        btnReset.active = false;
-        btnUndo.active = false;
+        this.btnReset.active = false;
+        this.btnUndo.active = false;
 
-        optionList.updateGui();
+        this.optionList.updateGui();
     }
 
     private void back() {
-        save();
-        if (!optionList.getCurrentPath().isEmpty()) {
-            optionList.pop();
+        this.save();
+        if (!this.optionList.getCurrentPath().isEmpty()) {
+            this.optionList.pop();
         } else {
-            Minecraft.getInstance().displayGuiScreen(this.modListScreen);
+            Minecraft.getInstance().displayGuiScreen(modListScreen);
         }
     }
 
     @Override
-    public void render(final MatrixStack matrixStack, final int mouseX, final int mouseY, final float partialTicks) {
-        renderBackground(matrixStack);
-        optionList.render(matrixStack, mouseX, mouseY, partialTicks);
-        btnReset.render(matrixStack, mouseX, mouseY, partialTicks);
-        btnUndo.render(matrixStack, mouseX, mouseY, partialTicks);
-        btnBack.render(matrixStack, mouseX, mouseY, partialTicks);
-        AbstractGui.drawCenteredString(matrixStack, font, getTitle(), width / 2, 8, 16777215);
-        if (categoryTitle != null) {
-            AbstractGui.drawCenteredString(matrixStack, font, categoryTitle, width / 2, 24, 16777215);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
+        this.optionList.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.btnReset.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.btnUndo.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.btnBack.render(matrixStack, mouseX, mouseY, partialTicks);
+        drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, 8, 16777215);
+        if (this.categoryTitle != null) {
+            drawCenteredString(matrixStack, this.font, this.categoryTitle, this.width / 2, 24, 16777215);
         }
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     private void save() {
-        optionList.save();
-        configSpec.save();
-        optionList.undo();
+        this.optionList.save();
+        this.configSpec.save();
+        this.optionList.undo();
     }
 
     @Override
     public void tick() {
         super.tick();
-        btnReset.active = optionList.isResettable();
-        btnUndo.active = optionList.isUndoable();
+        this.btnReset.active = this.optionList.isResettable();
+        this.btnUndo.active = this.optionList.isUndoable();
     }
 
-    public void updatePath(List<String> newPath) {
-        String key = optionList.categoryTitleKey(newPath);
+    public void updatePath(final List<String> newPath) {
+        final String key = this.optionList.categoryTitleKey(newPath);
         if (key == null) {
-            categoryTitle = null;
+            this.categoryTitle = null;
         } else {
-            categoryTitle = I18n.format(key);
+            this.categoryTitle = I18n.format(key);
         }
 
-        this.pathCache.clear();
-        this.pathCache.addAll(newPath);
+        pathCache.clear();
+        pathCache.addAll(newPath);
     }
 
     @Override
-    public boolean keyPressed(final int key, final int p_keyPressed_2_, final int p_keyPressed_3_) {
+    public boolean keyPressed(int key, int p_keyPressed_2_, int p_keyPressed_3_) {
         if (key == 256) {
-            back();
+            this.back();
             return true;
         } else {
             return super.keyPressed(key, p_keyPressed_2_, p_keyPressed_3_);

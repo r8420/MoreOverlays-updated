@@ -15,28 +15,28 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
 
-    public static KeyBinding lightOverlay = new KeyBinding("key." + MoreOverlays.MOD_ID + ".lightoverlay.desc", KeyConflictContext.IN_GAME, KeyBindings.mappedKey(GLFW.GLFW_KEY_F7), "key." + MoreOverlays.MOD_ID + ".category");
-    public static KeyBinding chunkBounds = new KeyBinding("key." + MoreOverlays.MOD_ID + ".chunkbounds.desc", KeyConflictContext.IN_GAME, KeyBindings.mappedKey(GLFW.GLFW_KEY_F9), "key." + MoreOverlays.MOD_ID + ".category");
+    public static KeyBinding lightOverlay = new KeyBinding("key." + MoreOverlays.MOD_ID + ".lightoverlay.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F7), "key." + MoreOverlays.MOD_ID + ".category");
+    public static KeyBinding chunkBounds = new KeyBinding("key." + MoreOverlays.MOD_ID + ".chunkbounds.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F9), "key." + MoreOverlays.MOD_ID + ".category");
 
-    private static InputMappings.Input mappedKey(final int key) {
+    private static InputMappings.Input mappedKey(int key) {
         return InputMappings.Type.KEYSYM.getOrMakeInput(key);
     }
 
     public static void init() {
-        ClientRegistry.registerKeyBinding(KeyBindings.lightOverlay);
-        ClientRegistry.registerKeyBinding(KeyBindings.chunkBounds);
+        ClientRegistry.registerKeyBinding(lightOverlay);
+        ClientRegistry.registerKeyBinding(chunkBounds);
 
         MinecraftForge.EVENT_BUS.register(new KeyBindings());
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
-    public void onKeyEvent(final InputEvent.KeyInputEvent event) {
-        if (KeyBindings.lightOverlay.isPressed()) {
+    public void onKeyEvent(InputEvent.KeyInputEvent event) {
+        if (lightOverlay.isPressed()) {
             LightOverlayHandler.setEnabled(!LightOverlayHandler.isEnabled());
         }
 
-        if (KeyBindings.chunkBounds.isPressed()) {
+        if (chunkBounds.isPressed()) {
             ChunkBoundsHandler.toggleMode();
         }
     }

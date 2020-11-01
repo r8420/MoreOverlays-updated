@@ -2,21 +2,21 @@ package at.feldim2425.moreoverlays.api.itemsearch;
 
 public class SlotViewWrapper {
     private final IViewSlot view;
-    private boolean enableOverlay;
+    private boolean enableOverlay = false;
 
-    public SlotViewWrapper(final IViewSlot view) {
+    public SlotViewWrapper(IViewSlot view) {
         this.view = view;
     }
 
     public boolean isEnableOverlay() {
-        return this.enableOverlay;
+        return enableOverlay;
     }
 
-    public void setEnableOverlay(final boolean enableOverlay) {
+    public void setEnableOverlay(boolean enableOverlay) {
         this.enableOverlay = enableOverlay;
     }
 
     public IViewSlot getView() {
-        return this.view;
+        return view;
     }
 }

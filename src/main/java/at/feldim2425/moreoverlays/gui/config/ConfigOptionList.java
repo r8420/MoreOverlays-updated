@@ -37,19 +37,19 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     private Map<String, Object> currentMap;
     private CommentedConfig comments;
 
-    public ConfigOptionList(final Minecraft minecraft, final String modId, final ConfigScreen configs) {
+    public ConfigOptionList(Minecraft minecraft, String modId, ConfigScreen configs) {
         // Width, Height, Y-Start, Y-End, item_height
-        super(minecraft, configs.width, configs.height, 43, configs.height - 32, ConfigOptionList.ITEM_HEIGHT);
-        parent = configs;
+        super(minecraft, configs.width, configs.height, 43, configs.height - 32, ITEM_HEIGHT);
+        this.parent = configs;
         this.modId = modId;
     }
 
-    public static List<String> splitPath(final String path) {
+    public static List<String> splitPath(String path) {
         return Arrays.asList(path.split("\\."));
     }
 
     public ConfigScreen getScreen() {
-        return parent;
+        return this.parent;
     }
 
     @Override
@@ -63,76 +63,76 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     }
 
     public void updateGui() {
-        updateSize(parent.width, parent.height, 43, parent.height - 32);
+        this.updateSize(this.parent.width, this.parent.height, 43, this.parent.height - 32);
     }
 
 
     @Override
-    protected void renderDecorations(final MatrixStack matrixStack, final int p_renderDecorations_1_, final int p_renderDecorations_2_) {
-        final int i = getItemCount();
+    protected void renderDecorations(MatrixStack matrixStack, int p_renderDecorations_1_, int p_renderDecorations_2_) {
+        int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
-            final int k = getRowTop(j);
-            final int l = getRowTop(j) + ConfigOptionList.ITEM_HEIGHT;
-            if (l >= y0 && k <= y1) {
-                final ConfigOptionList.OptionEntry e = getEntry(j);
+            int k = this.getRowTop(j);
+            int l = this.getRowTop(j) + ITEM_HEIGHT;
+            if (l >= this.y0 && k <= this.y1) {
+                ConfigOptionList.OptionEntry e = this.getEntry(j);
                 e.runRenderTooltip(matrixStack);
             }
         }
     }
 
-    public String categoryTitleKey(final List<String> path) {
+    public String categoryTitleKey(List<String> path) {
         if (path.isEmpty()) {
             return null;
         }
-        return "config." + modId + ".category." + path.stream().collect(Collectors.joining("."));
+        return "config." + this.modId + ".category." + path.stream().collect(Collectors.joining("."));
     }
 
-    public void setConfiguration(final ForgeConfigSpec rootConfig) {
-        setConfiguration(rootConfig, Collections.emptyList());
+    public void setConfiguration(ForgeConfigSpec rootConfig) {
+        this.setConfiguration(rootConfig, Collections.emptyList());
     }
 
-    public void setConfiguration(final ForgeConfigSpec rootConfig, final List<String> path) {
+    public void setConfiguration(ForgeConfigSpec rootConfig, List<String> path) {
         this.rootConfig = rootConfig;
         try {
-            Field forgeconfigspec_childconfig = ForgeConfigSpec.class.getDeclaredField("childConfig");
+            final Field forgeconfigspec_childconfig = ForgeConfigSpec.class.getDeclaredField("childConfig");
             forgeconfigspec_childconfig.setAccessible(true);
-            Object childConfig_raw = forgeconfigspec_childconfig.get(rootConfig);
+            final Object childConfig_raw = forgeconfigspec_childconfig.get(rootConfig);
             if (childConfig_raw instanceof CommentedConfig) {
-                comments = (CommentedConfig) childConfig_raw;
+                this.comments = (CommentedConfig) childConfig_raw;
             }
-        } catch (final NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             MoreOverlays.logger.warn("Couldn't reflect childConfig from ForgeConfigSpec! Comments will be missing.", e);
         }
-        updatePath(path);
+        this.updatePath(path);
     }
 
-    private void setPath(final List<String> path) {
-        final Object val;
+    private void setPath(List<String> path) {
+        Object val;
         if (path.isEmpty()) {
-            val = rootConfig.getValues();
+            val = this.rootConfig.getValues();
         } else {
-            val = rootConfig.getValues().getRaw(path);
+            val = this.rootConfig.getValues().getRaw(path);
         }
 
         if (val instanceof UnmodifiableConfig) {
-            configPath = path;
-            currentMap = ((UnmodifiableConfig) val).valueMap();
-            refreshEntries();
-            parent.updatePath(getCurrentPath());
+            this.configPath = path;
+            this.currentMap = ((UnmodifiableConfig) val).valueMap();
+            this.refreshEntries();
+            this.parent.updatePath(this.getCurrentPath());
         } else {
 
             // There's a bug where we end up with a duplicate path here,
             // which seems to be related to keyboard race conditions allowing
             // us to 'double' select a child path.
             // In this event, we attempt to fail gracefully.
-            final int n = path.size();
+            int n = path.size();
             if (n > 1) {
                 if (path.get(n - 1) == path.get(n - 2)) {
                     MoreOverlays.logger.error("Attempting to load duplicate path:", path);
                     MoreOverlays.logger.warn("This could be caused by key event race condition");
                     // Trim and reload
                     path.remove(n - 1);
-                    setPath(path);
+                    this.setPath(path);
                     return;
                 }
             }
@@ -141,38 +141,38 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
     }
 
-    public void updatePath(final List<String> path) {
-        setPath(new ArrayList<>(path));
+    public void updatePath(List<String> path) {
+        this.setPath(new ArrayList<>(path));
     }
 
-    public void push(final String path) {
-        push(ConfigOptionList.splitPath(path));
+    public void push(String path) {
+        this.push(splitPath(path));
     }
 
-    public void push(final List<String> path) {
-        List<String> tmp = new ArrayList<>(configPath.size() + path.size());
-        tmp.addAll(configPath);
+    public void push(List<String> path) {
+        final List<String> tmp = new ArrayList<>(this.configPath.size() + path.size());
+        tmp.addAll(this.configPath);
         tmp.addAll(path);
-        setPath(tmp);
-    }
-
-    public void pop() {
-        this.pop(1);
-    }
-
-    public void pop(final int amount) {
-        List<String> tmp = new ArrayList<>(configPath);
-        for (int i = 0; i < amount && !tmp.isEmpty(); i++) {
-            tmp.remove(tmp.size() - 1);
-        }
         this.setPath(tmp);
     }
 
+    public void pop() {
+        pop(1);
+    }
+
+    public void pop(int amount) {
+        final List<String> tmp = new ArrayList<>(this.configPath);
+        for (int i = 0; i < amount && !tmp.isEmpty(); i++) {
+            tmp.remove(tmp.size() - 1);
+        }
+        setPath(tmp);
+    }
+
     @Override
-    public boolean mouseClicked(final double p_mouseClicked_1_, final double p_mouseClicked_3_, final int p_mouseClicked_5_) {
-        final boolean flag = super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
-        final OptionEntry selected = getEntryAtPosition(p_mouseClicked_1_, p_mouseClicked_3_);
-        for (OptionEntry entry : getEventListeners()) {
+    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
+        boolean flag = super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
+        OptionEntry selected = this.getEntryAtPosition(p_mouseClicked_1_, p_mouseClicked_3_);
+        for (final OptionEntry entry : this.getEventListeners()) {
             if (entry != selected) {
                 if (entry.changeFocus(true)) {
                     entry.changeFocus(true);
@@ -184,46 +184,46 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     }
 
     public void refreshEntries() {
-        clearEntries();
-        for (Map.Entry<String, Object> cEntry : currentMap.entrySet()) {
-            List<String> fullPath = new ArrayList<>(configPath.size() + 1);
-            fullPath.addAll(configPath);
+        this.clearEntries();
+        for (final Map.Entry<String, Object> cEntry : this.currentMap.entrySet()) {
+            final List<String> fullPath = new ArrayList<>(this.configPath.size() + 1);
+            fullPath.addAll(this.configPath);
             fullPath.add(cEntry.getKey());
 
             String comment = null;
-            if (comments != null) {
-                comment = comments.getComment(fullPath);
+            if (this.comments != null) {
+                comment = this.comments.getComment(fullPath);
             }
 
             if (cEntry.getValue() instanceof UnmodifiableConfig) {
-                String name = I18n.format(this.categoryTitleKey(fullPath));
-                addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
+                final String name = I18n.format(categoryTitleKey(fullPath));
+                this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
             } else if (cEntry.getValue() instanceof ForgeConfigSpec.BooleanValue) {
-                addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue) cEntry.getValue(), this.rootConfig.getSpec().get(fullPath)));
+                this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
             } else {
-                addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) this.rootConfig.getSpec().get(fullPath)));
+                this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }
         }
-        if (changeFocus(true)) {
-            changeFocus(true);
+        if (this.changeFocus(true)) {
+            this.changeFocus(true);
         }
     }
 
     public List<String> getCurrentPath() {
-        return Collections.unmodifiableList(configPath);
+        return Collections.unmodifiableList(this.configPath);
     }
 
     public ForgeConfigSpec getConfig() {
-        return rootConfig;
+        return this.rootConfig;
     }
 
     public String getModId() {
-        return modId;
+        return this.modId;
     }
 
     public boolean isSaveable() {
         boolean hasChanges = false;
-        for (OptionEntry entry : getEventListeners()) {
+        for (final OptionEntry entry : this.getEventListeners()) {
             if (!entry.isValid()) {
                 return false;
             }
@@ -234,7 +234,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public boolean isResettable() {
         boolean resettable = false;
-        for (OptionEntry entry : getEventListeners()) {
+        for (final OptionEntry entry : this.getEventListeners()) {
             resettable = resettable || entry.isResettable();
         }
         return resettable;
@@ -242,33 +242,33 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public boolean isUndoable() {
         boolean hasChanges = false;
-        for (OptionEntry entry : getEventListeners()) {
+        for (final OptionEntry entry : this.getEventListeners()) {
             hasChanges = hasChanges || entry.hasChanges();
         }
         return hasChanges;
     }
 
     public void reset() {
-        for (OptionEntry entry : getEventListeners()) {
+        for (final OptionEntry entry : this.getEventListeners()) {
             entry.reset();
         }
     }
 
     public void undo() {
-        for (OptionEntry entry : getEventListeners()) {
+        for (final OptionEntry entry : this.getEventListeners()) {
             entry.undo();
         }
     }
 
     public void save() {
-        for (OptionEntry entry : getEventListeners()) {
+        for (final OptionEntry entry : this.getEventListeners()) {
             if (entry.isValid()) {
                 entry.save();
             }
         }
     }
 
-    public abstract static class OptionEntry extends AbstractOptionList.Entry<ConfigOptionList.OptionEntry> {
+    public abstract static class OptionEntry extends AbstractOptionList.Entry<ConfigOptionList.OptionEntry> implements INestedGuiEventHandler {
         private final ConfigOptionList optionList;
 
         protected int rowTop, rowLeft;
@@ -276,13 +276,13 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         private int rowWidth, itemHeight, mouseX, mouseY;
         private boolean mouseOver;
 
-        public OptionEntry(final ConfigOptionList list) {
-            optionList = list;
+        public OptionEntry(ConfigOptionList list) {
+            this.optionList = list;
         }
 
         @Override
-        public void render(final MatrixStack matrixStack, final int itemindex, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, int mouseX, int mouseY,
-                           final boolean mouseOver, final float partialTick) {
+        public void render(MatrixStack matrixStack, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+                           boolean mouseOver, float partialTick) {
             this.rowTop = rowTop;
             this.rowLeft = rowLeft;
             this.rowWidth = rowWidth;
@@ -294,7 +294,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             mouseX -= rowLeft;
             mouseY -= rowTop;
             GlStateManager.translatef(rowLeft, rowTop, 0);
-            this.renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
+            renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
 
             GlStateManager.translatef(-rowLeft, -rowTop, 0);
         }
@@ -309,15 +309,15 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
          * Not the best way but AbstractOptionList doesn't seem to have any better hooks to do that.
          * A custom Implementation would be better but I'm too lazy to do that
          */
-        public void runRenderTooltip(final MatrixStack matrixStack) {
-            if (mouseOver) {
-                renderTooltip(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
+        public void runRenderTooltip(MatrixStack matrixStack) {
+            if (this.mouseOver) {
+                this.renderTooltip(matrixStack, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.disableLighting();
             }
         }
 
-        protected void renderTooltip(final MatrixStack matrixStack, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, final int mouseX, final int mouseY) {
+        protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         }
 
         @Override
@@ -326,22 +326,22 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
 
         public ConfigOptionList getConfigOptionList() {
-            return optionList;
+            return this.optionList;
         }
 
         @Override
-        public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
-            return super.mouseClicked(mouseX - rowLeft, mouseY - rowTop, button);
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            return super.mouseClicked(mouseX - this.rowLeft, mouseY - this.rowTop, button);
         }
 
         @Override
-        public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
-            return super.mouseReleased(mouseX - rowLeft, mouseY - rowTop, button);
+        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+            return super.mouseReleased(mouseX - this.rowLeft, mouseY - this.rowTop, button);
         }
 
         @Override
-        public boolean mouseDragged(final double fromX, final double fromY, final int button, final double toX, final double toY) {
-            return super.mouseDragged(fromX - rowLeft, fromY - rowTop, button, toX - rowLeft, toY - rowTop);
+        public boolean mouseDragged(double fromX, double fromY, int button, double toX, double toY) {
+            return super.mouseDragged(fromX - this.rowLeft, fromY - this.rowTop, button, toX - this.rowLeft, toY - this.rowTop);
         }
 
         @Override
@@ -350,13 +350,13 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
 
         @Override
-        public void setDragging(final boolean dragging) {
+        public void setDragging(boolean dragging) {
 
         }
 
         @Override
-        public boolean mouseScrolled(final double mouseX, final double mouseY, final double amount) {
-            return super.mouseScrolled(mouseX - rowLeft, mouseY - rowTop, amount);
+        public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+            return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount);
         }
 
         public boolean isValid() {

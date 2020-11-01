@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class GuiHandler {
 
-    private long firstClick;
+    private long firstClick = 0;
 
     public static void init() {
         if (ClientRegistrationHandler.isJeiInstalled())
@@ -26,56 +26,56 @@ public class GuiHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void onGuiInit(final GuiScreenEvent.InitGuiEvent.Post event) {
+    public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
         JeiModule.updateModule();
         GuiRenderer.INSTANCE.guiInit(event.getGui());
     }
 
     @SubscribeEvent
-    public void onGuiOpen(final GuiOpenEvent event) {
+    public void onGuiOpen(GuiOpenEvent event) {
         GuiRenderer.INSTANCE.guiOpen(event.getGui());
     }
 
     @SubscribeEvent
-    public void onGuiClick(final GuiScreenEvent.MouseClickedEvent.Pre event) {
-        final TextFieldWidget searchField = JeiModule.getJEITextField();
+    public void onGuiClick(GuiScreenEvent.MouseClickedEvent.Pre event) {
+        TextFieldWidget searchField = JeiModule.getJEITextField();
         //Minecraft mc = Minecraft.getInstance();
         if (searchField != null && event.getButton() == 0 && GuiRenderer.INSTANCE.canShowIn(event.getGui())) {
             //Screen guiScreen = event.getGui();
             //int x = event.getMouseX() * guiScreen.width / mc.displayWidth;
             //int y = guiScreen.height - event.getMouseY() * guiScreen.height / mc.displayHeight - 1;
-            final int x = (int) event.getMouseX();
-            final int y = (int) event.getMouseY();
+            int x = (int) event.getMouseX();
+            int y = (int) event.getMouseY();
 
             if (x > searchField.x && x < searchField.x + searchField.getWidth() && y > searchField.y && y < searchField.y + searchField.getHeightRealms()) {
-                final long now = System.currentTimeMillis();
-                if (now - this.firstClick < 1000) {
+                long now = System.currentTimeMillis();
+                if (now - firstClick < 1000) {
                     GuiRenderer.INSTANCE.toggleMode();
-					this.firstClick = 0;
+                    firstClick = 0;
                 } else {
-					this.firstClick = now;
+                    firstClick = now;
                 }
             }
         }
     }
 
     @SubscribeEvent
-    public void onDrawScreen(final GuiScreenEvent.DrawScreenEvent.Pre event) {
+    public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Pre event) {
         GuiRenderer.INSTANCE.preDraw();
     }
 
     @SubscribeEvent
-    public void onDrawScreen(final GuiScreenEvent.DrawScreenEvent.Post event) {
+    public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
         GuiRenderer.INSTANCE.postDraw();
     }
 
     @SubscribeEvent
-    public void onRenderTooltip(final RenderTooltipEvent.Pre event) {
+    public void onRenderTooltip(RenderTooltipEvent.Pre event) {
         GuiRenderer.INSTANCE.renderTooltip(event.getStack());
     }
 
     @SubscribeEvent
-    public void onClientTick(final TickEvent.ClientTickEvent event) {
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END || Minecraft.getInstance().player == null)
             return;
         GuiRenderer.INSTANCE.tick();

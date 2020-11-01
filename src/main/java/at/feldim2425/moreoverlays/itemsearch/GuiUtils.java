@@ -13,40 +13,40 @@ public class GuiUtils {
 
     public static void initUtil() {
         try {
-            GuiUtils.fieldLeft = ObfuscationReflectionHelper.findField(ContainerScreen.class, "field_147003_i");
-            GuiUtils.fieldLeft.setAccessible(true);
+            fieldLeft = ObfuscationReflectionHelper.findField(ContainerScreen.class, "field_147003_i");
+            fieldLeft.setAccessible(true);
 
-            GuiUtils.fieldTop = ObfuscationReflectionHelper.findField(ContainerScreen.class, "field_147009_r");
-            GuiUtils.fieldTop.setAccessible(true);
-        } catch (final ObfuscationReflectionHelper.UnableToFindFieldException e) {
+            fieldTop = ObfuscationReflectionHelper.findField(ContainerScreen.class, "field_147009_r");
+            fieldTop.setAccessible(true);
+        } catch (ObfuscationReflectionHelper.UnableToFindFieldException e) {
             MoreOverlays.logger.error("Tried to load gui coordinate fields for reflection");
             e.printStackTrace();
-            GuiUtils.fieldTop = null;
-            GuiUtils.fieldLeft = null;
+            fieldTop = null;
+            fieldLeft = null;
         }
     }
 
-    public static int getGuiTop(final ContainerScreen<?> container) {
-        if (GuiUtils.fieldTop == null) {
+    public static int getGuiTop(ContainerScreen<?> container) {
+        if (fieldTop == null) {
             return 0;
         }
 
         try {
-            return GuiUtils.fieldTop.getInt(container);
-        } catch (final IllegalAccessException ignore) {
+            return fieldTop.getInt(container);
+        } catch (IllegalAccessException ignore) {
             // EMPTY
         }
         return 0;
     }
 
-    public static int getGuiLeft(final ContainerScreen<?> container) {
-        if (GuiUtils.fieldLeft == null) {
+    public static int getGuiLeft(ContainerScreen<?> container) {
+        if (fieldLeft == null) {
             return 0;
         }
 
         try {
-            return GuiUtils.fieldLeft.getInt(container);
-        } catch (final IllegalAccessException ignore) {
+            return fieldLeft.getInt(container);
+        } catch (IllegalAccessException ignore) {
             // EMPTY
         }
         return 0;

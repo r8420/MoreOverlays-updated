@@ -15,34 +15,34 @@ import org.lwjgl.opengl.GL11;
 
 public class ChunkBoundsRenderer {
 
-    private static final ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
+    private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
     private static final EntityRendererManager render = Minecraft.getInstance().getRenderManager();
 
     public static void renderOverlays() {
-        final PlayerEntity player = Minecraft.getInstance().player;
+        PlayerEntity player = Minecraft.getInstance().player;
 
-        Minecraft.getInstance().getTextureManager().bindTexture(ChunkBoundsRenderer.BLANK_TEX);
+        Minecraft.getInstance().getTextureManager().bindTexture(BLANK_TEX);
         GlStateManager.pushMatrix();
         GL11.glLineWidth((float) (double) Config.render_chunkLineWidth.get());
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        Vector3d view = ChunkBoundsRenderer.render.info.getProjectedView();
+        final Vector3d view = render.info.getProjectedView();
         GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
         GlStateManager.rotatef(player.getYaw(0) + 180, 0, 1, 0); // Fixes camera rotation.
         GlStateManager.translated(-view.x, -view.y, -view.z);
 
-        int h = player.world.getHeight();
-        int h0 = (int) player.getPosY();
-        int h1 = Math.min(h, h0 - 16);
-        int h2 = Math.min(h, h0 + 16);
-        int h3 = Math.min(h1, 0);
+        final int h = player.world.getHeight();
+        final int h0 = (int) player.getPosY();
+        final int h1 = Math.min(h, h0 - 16);
+        final int h2 = Math.min(h, h0 + 16);
+        final int h3 = Math.min(h1, 0);
 
-        int x0 = player.chunkCoordX * 16;
-        int x1 = x0 + 16;
-        int x2 = x0 + 8;
-        int z0 = player.chunkCoordZ * 16;
-        int z1 = z0 + 16;
-        int z2 = z0 + 8;
+        final int x0 = player.chunkCoordX * 16;
+        final int x1 = x0 + 16;
+        final int x2 = x0 + 8;
+        final int z0 = player.chunkCoordZ * 16;
+        final int z1 = z0 + 16;
+        final int z2 = z0 + 8;
 
         int regionX;
         int regionY = player.chunkCoordY / ChunkBoundsHandler.REGION_SIZEY_CUBIC;
@@ -64,48 +64,48 @@ public class ChunkBoundsRenderer {
             regionZ = player.chunkCoordZ / ChunkBoundsHandler.REGION_SIZEZ;
         }
 
-        int regionBorderX0 = regionX * ChunkBoundsHandler.REGION_SIZEX * 16;
-        int regionBorderY0 = regionY * ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16;
-        int regionBorderZ0 = regionZ * ChunkBoundsHandler.REGION_SIZEZ * 16;
-        int regionBorderX1 = regionBorderX0 + (ChunkBoundsHandler.REGION_SIZEX * 16);
-        int regionBorderY1 = regionBorderY0 + (ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16);
-        int regionBorderZ1 = regionBorderZ0 + (ChunkBoundsHandler.REGION_SIZEZ * 16);
+        final int regionBorderX0 = regionX * ChunkBoundsHandler.REGION_SIZEX * 16;
+        final int regionBorderY0 = regionY * ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16;
+        final int regionBorderZ0 = regionZ * ChunkBoundsHandler.REGION_SIZEZ * 16;
+        final int regionBorderX1 = regionBorderX0 + (ChunkBoundsHandler.REGION_SIZEX * 16);
+        final int regionBorderY1 = regionBorderY0 + (ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16);
+        final int regionBorderZ1 = regionBorderZ0 + (ChunkBoundsHandler.REGION_SIZEZ * 16);
 
-        int radius = Config.chunk_EdgeRadius.get() * 16;
-        int renderColorEdge = Config.render_chunkEdgeColor.get();
-        int renderColorMiddle = Config.render_chunkMiddleColor.get();
-        int renderColorGrid = Config.render_chunkGridColor.get();
+        final int radius = Config.chunk_EdgeRadius.get() * 16;
+        final int renderColorEdge = Config.render_chunkEdgeColor.get();
+        final int renderColorMiddle = Config.render_chunkMiddleColor.get();
+        final int renderColorGrid = Config.render_chunkGridColor.get();
 
         GlStateManager.color4f(((float) ((renderColorEdge >> 16) & 0xFF)) / 255F, ((float) ((renderColorEdge >> 8) & 0xFF)) / 255F, ((float) (renderColorEdge & 0xFF)) / 255F, 1);
         for (int xo = -16 - radius; xo <= radius; xo += 16) {
             for (int yo = -16 - radius; yo <= radius; yo += 16) {
-				ChunkBoundsRenderer.renderEdge(x0 - xo, z0 - yo, h3, h);
+                renderEdge(x0 - xo, z0 - yo, h3, h);
             }
         }
 
         if (Config.chunk_ShowMiddle.get()) {
             GlStateManager.color4f(((float) ((renderColorMiddle >> 16) & 0xFF)) / 255F, ((float) ((renderColorMiddle >> 8) & 0xFF)) / 255F, ((float) (renderColorMiddle & 0xFF)) / 255F, 1);
-			ChunkBoundsRenderer.renderEdge(x2, z2, h3, h);
+            renderEdge(x2, z2, h3, h);
         }
 
         if (ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.GRID) {
             GlStateManager.color4f(((float) ((renderColorGrid >> 16) & 0xFF)) / 255F, ((float) ((renderColorGrid >> 8) & 0xFF)) / 255F, ((float) (renderColorGrid & 0xFF)) / 255F, 1);
-			ChunkBoundsRenderer.renderGrid(x0, h1, z0 - 0.005, x0, h2, z1 + 0.005, 1.0);
-			ChunkBoundsRenderer.renderGrid(x1, h1, z0 - 0.005, x1, h2, z1 + 0.005, 1.0);
-			ChunkBoundsRenderer.renderGrid(x0 - 0.005, h1, z0, x1 + 0.005, h2, z0, 1.0);
-			ChunkBoundsRenderer.renderGrid(x0 - 0.005, h1, z1, x1 + 0.005, h2, z1, 1.0);
+            renderGrid(x0, h1, z0 - 0.005, x0, h2, z1 + 0.005, 1.0);
+            renderGrid(x1, h1, z0 - 0.005, x1, h2, z1 + 0.005, 1.0);
+            renderGrid(x0 - 0.005, h1, z0, x1 + 0.005, h2, z0, 1.0);
+            renderGrid(x0 - 0.005, h1, z1, x1 + 0.005, h2, z1, 1.0);
         } else if (ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.REGIONS) {
             GlStateManager.color4f(((float) ((renderColorGrid >> 16) & 0xFF)) / 255F, ((float) ((renderColorGrid >> 8) & 0xFF)) / 255F, ((float) (renderColorGrid & 0xFF)) / 255F, 1);
-			ChunkBoundsRenderer.renderGrid(regionBorderX0 - 0.005, regionBorderY0 - 0.005, regionBorderZ0 - 0.005, regionBorderX1 + 0.005,
+            renderGrid(regionBorderX0 - 0.005, regionBorderY0 - 0.005, regionBorderZ0 - 0.005, regionBorderX1 + 0.005,
                     regionBorderY1 + 0.005, regionBorderZ1 + 0.005, 16.0);
         }
         GlStateManager.enableDepthTest();
         GlStateManager.popMatrix();
     }
 
-    public static void renderEdge(final double x, final double z, final double h3, final double h) {
-        final Tessellator tess = Tessellator.getInstance();
-        final BufferBuilder renderer = tess.getBuffer();
+    public static void renderEdge(double x, double z, double h3, double h) {
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder renderer = tess.getBuffer();
 
         renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 
@@ -115,9 +115,9 @@ public class ChunkBoundsRenderer {
         tess.draw();
     }
 
-    public static void renderGrid(final double x0, final double y0, final double z0, final double x1, final double y1, final double z1, final double step) {
-        final Tessellator tess = Tessellator.getInstance();
-        final BufferBuilder renderer = tess.getBuffer();
+    public static void renderGrid(double x0, double y0, double z0, double x1, double y1, double z1, double step) {
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder renderer = tess.getBuffer();
 
         renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
         for (double x = x0; x <= x1; x += step) {

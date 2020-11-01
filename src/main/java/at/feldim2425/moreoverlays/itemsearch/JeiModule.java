@@ -26,31 +26,31 @@ public class JeiModule implements IModPlugin {
     private static TextFieldWidget textField;
 
     public static void updateModule() {
-        if (JeiModule.overlay instanceof IngredientListOverlay) {
-			JeiModule.overlayInternal = ((IngredientListOverlay) JeiModule.overlay);
+        if (overlay instanceof IngredientListOverlay) {
+            overlayInternal = ((IngredientListOverlay) overlay);
             try {
-                final Field searchField = IngredientListOverlay.class.getDeclaredField("searchField");
+                Field searchField = IngredientListOverlay.class.getDeclaredField("searchField");
                 searchField.setAccessible(true);
-				JeiModule.textField = (TextFieldWidget) searchField.get(JeiModule.overlayInternal);
-            } catch (final NoSuchFieldException | IllegalAccessException e) {
+                textField = (TextFieldWidget) searchField.get(overlayInternal);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 MoreOverlays.logger.error("Something went wrong. Tried to load JEI Search Text Field object");
                 e.printStackTrace();
             }
         } else {
-			JeiModule.overlayInternal = null;
-			JeiModule.textField = null;
+            overlayInternal = null;
+            textField = null;
         }
     }
 
     public static TextFieldWidget getJEITextField() {
-        return JeiModule.textField;
+        return textField;
     }
 
-    public static boolean areItemsEqualInterpreter(final ItemStack stack1, final ItemStack stack2) {
-        if (JeiModule.jeiHelpers == null) {
+    public static boolean areItemsEqualInterpreter(ItemStack stack1, ItemStack stack2) {
+        if (jeiHelpers == null) {
             return ItemUtils.matchNBT(stack1, stack2);
         }
-        return JeiModule.jeiHelpers.getStackHelper().isEquivalent(stack1, stack2);
+        return jeiHelpers.getStackHelper().isEquivalent(stack1, stack2);
 
 		/*
 		String info1 = subtypes.getSubtypeInfo(stack1);
@@ -63,15 +63,15 @@ public class JeiModule implements IModPlugin {
     }
 
     @Override
-    public void onRuntimeAvailable(@Nonnull final IJeiRuntime jeiRuntime) {
-		JeiModule.overlay = jeiRuntime.getIngredientListOverlay();
-		JeiModule.filter = jeiRuntime.getIngredientFilter();
-		JeiModule.updateModule();
+    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+        overlay = jeiRuntime.getIngredientListOverlay();
+        filter = jeiRuntime.getIngredientFilter();
+        updateModule();
     }
 
     @Override
-    public void registerAdvanced(final IAdvancedRegistration registration) {
-		JeiModule.jeiHelpers = registration.getJeiHelpers();
+    public void registerAdvanced(IAdvancedRegistration registration) {
+        jeiHelpers = registration.getJeiHelpers();
     }
 
     @Override
