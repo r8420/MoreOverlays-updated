@@ -205,11 +205,8 @@ public class GuiRenderer {
 				return true;
 			}
         }
-		if(Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase())) {
-			return true;
-		}
-        return false;
-    }
+		return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase());
+	}
 
 	public void tick() {
 		final Screen screen = Minecraft.getInstance().currentScreen;

@@ -22,7 +22,7 @@ public class ChunkBoundsHandler {
 
 	private static RenderMode mode = RenderMode.NONE;
 
-	private final List<String> regionInfo = new ArrayList<String>();;
+	private final List<String> regionInfo = new ArrayList<String>();
 
 	private int playerPrevRegionPosX = Integer.MIN_VALUE;
 	private int playerPrevRegionPosZ = Integer.MIN_VALUE;

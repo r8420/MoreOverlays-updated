@@ -11,6 +11,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import at.feldim2425.moreoverlays.MoreOverlays;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
@@ -84,16 +85,16 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     @Override
     protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
             int mouseY, boolean mouseOver, float partialTick){
-        this.getConfigOptionList().getScreen().drawString(matrixStack, Minecraft.getInstance().fontRenderer, this.name, 60-TITLE_WIDTH, 6, 0xFFFFFF);
+        AbstractGui.drawString(matrixStack, Minecraft.getInstance().fontRenderer, this.name, 60-TITLE_WIDTH, 6, 0xFFFFFF);
         this.btnReset.render(matrixStack, mouseX, mouseY, partialTick);
         this.btnUndo.render(matrixStack, mouseX, mouseY, partialTick);
 
         if(this.showValidity){
             if(this.valid){
-                this.getConfigOptionList().getScreen().drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
             }
             else {
-                this.getConfigOptionList().getScreen().drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
             }
         }
     }   

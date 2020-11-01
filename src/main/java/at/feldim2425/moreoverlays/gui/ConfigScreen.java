@@ -8,6 +8,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import at.feldim2425.moreoverlays.MoreOverlays;
 import at.feldim2425.moreoverlays.gui.config.ConfigOptionList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -117,9 +118,9 @@ public class ConfigScreen extends Screen {
         this.btnReset.render(matrixStack, mouseX, mouseY, partialTicks);
         this.btnUndo.render(matrixStack, mouseX, mouseY, partialTicks); 
         this.btnBack.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, 8, 16777215);
+        drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, 8, 16777215);
         if(this.categoryTitle != null){
-            this.drawCenteredString(matrixStack, this.font, this.categoryTitle, this.width / 2, 24, 16777215);
+            drawCenteredString(matrixStack, this.font, this.categoryTitle, this.width / 2, 24, 16777215);
         }
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
