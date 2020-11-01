@@ -7,14 +7,14 @@ import net.minecraft.world.biome.Biome;
 
 public class CustomSpawnerLightScanner extends LightScannerVanilla {
 
-	/*
-	 * DrZharky Custom Spawner integration disabled until that mod get's updated to 1.14
-	 */
+    /*
+     * DrZharky Custom Spawner integration disabled until that mod get's updated to 1.14
+     */
 
-	@Override
-	public boolean shouldCheck(BlockPos pos, World world) {
-		Biome biome = world.getBiome(pos);
-		return biome.getMobSpawnInfo().getCreatureSpawnProbability() <= 0;
+    @Override
+    public boolean shouldCheck(BlockPos pos, World world) {
+        Biome biome = world.getBiome(pos);
+        return biome.getMobSpawnInfo().getCreatureSpawnProbability() <= 0;
         
 		/*
 		EnvironmentSettings environment = CMSUtils.getEnvironment(world);
@@ -24,5 +24,5 @@ public class CustomSpawnerLightScanner extends LightScannerVanilla {
 		List<Biome.SpawnListEntry> possibleSpawns = CustomSpawner.instance().getPossibleCustomCreatures(world, environment.entitySpawnTypes.get("MONSTER"), pos.getX(), pos.getY(), pos.getZ());
 
 		return !possibleSpawns.isEmpty();*/
-	}
+    }
 }

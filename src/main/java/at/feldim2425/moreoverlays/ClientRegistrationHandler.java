@@ -11,29 +11,29 @@ import net.minecraftforge.fml.ModList;
 
 public final class ClientRegistrationHandler {
 
-	private static boolean enable_jei = false;
+    private static boolean enable_jei = false;
 
-	public static boolean isJeiInstalled() {
-		return enable_jei;
-	}
+    private ClientRegistrationHandler() {
+        // EMPTY
+    }
 
-	public static void setupClient() {
-		enable_jei = ModList.get().isLoaded("jei");
-		KeyBindings.init();
+    public static boolean isJeiInstalled() {
+        return enable_jei;
+    }
 
-		LightOverlayHandler.init();
-		ChunkBoundsHandler.init();
-		GuiUtils.initUtil();
-		AlternateLightHandler.init();
+    public static void setupClient() {
+        enable_jei = ModList.get().isLoaded("jei");
+        KeyBindings.init();
 
-		GuiHandler.init();
+        LightOverlayHandler.init();
+        ChunkBoundsHandler.init();
+        GuiUtils.initUtil();
+        AlternateLightHandler.init();
 
-		if (enable_jei && ModList.get().isLoaded("mantle")) {
-			SlotHandler.INSTANCE.addPositionOverride(new MantleModuleScreenOverride());
-		}
-	}
+        GuiHandler.init();
 
-	private ClientRegistrationHandler() {
-		// EMPTY
-	}
+        if (enable_jei && ModList.get().isLoaded("mantle")) {
+            SlotHandler.INSTANCE.addPositionOverride(new MantleModuleScreenOverride());
+        }
+    }
 }
