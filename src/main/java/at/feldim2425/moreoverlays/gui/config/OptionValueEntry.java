@@ -1,16 +1,10 @@
 package at.feldim2425.moreoverlays.gui.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import at.feldim2425.moreoverlays.MoreOverlays;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-
-import at.feldim2425.moreoverlays.MoreOverlays;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
@@ -19,25 +13,27 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     public static final int CONTROL_WIDTH_NOVALIDATOR = 44;
     public static final int CONTROL_WIDTH_VALIDATOR = 64;
     public static final int TITLE_WIDTH = 80;
-
-    private final List<String> tooltip;
-    private String txtUndo = "";
-    private String txtReset = "";
-    private String name = "";
-
     protected final ForgeConfigSpec.ConfigValue<V> value;
     protected final ForgeConfigSpec.ValueSpec spec;
+    private final List<String> tooltip;
     protected Button btnReset;
     protected Button btnUndo;
     protected V defaultValue;
     protected V newValue;
-
     protected boolean showValidity = false;
+    private String txtUndo = "";
+    private String txtReset = "";
+    private String name = "";
     private boolean valid = false;
     private boolean changes = false;
 
@@ -55,26 +51,25 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         this.txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
 
         final Object defaultVal = this.spec.getDefault();
-        if(defaultVal != null && spec.getClazz().isAssignableFrom(defaultVal.getClass())){
+        if (defaultVal != null && spec.getClazz().isAssignableFrom(defaultVal.getClass())) {
             this.defaultValue = (V) defaultVal;
-        }
-        else {
+        } else {
             btnReset.active = false;
         }
 
-        this.name = this.value.getPath().get(this.value.getPath().size()-1);
+        this.name = this.value.getPath().get(this.value.getPath().size() - 1);
 
         String[] lines = null;
-        if(this.spec.getComment() != null){
+        if (this.spec.getComment() != null) {
             lines = this.spec.getComment().split("\\n");
             tooltip = new ArrayList<>(lines.length + 1);
         } else {
-        	tooltip = new ArrayList<>(1);
+            tooltip = new ArrayList<>(1);
         }
 
-        
+
         tooltip.add(TextFormatting.RED + this.name);
-        for(final String line : lines){
+        for (final String line : lines) {
             tooltip.add(TextFormatting.YELLOW + line);
         }
 
@@ -83,38 +78,35 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
-            int mouseY, boolean mouseOver, float partialTick){
-        this.getConfigOptionList().getScreen().drawString(matrixStack, Minecraft.getInstance().fontRenderer, this.name, 60-TITLE_WIDTH, 6, 0xFFFFFF);
+                                  int mouseY, boolean mouseOver, float partialTick) {
+        AbstractGui.drawString(matrixStack, Minecraft.getInstance().fontRenderer, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
         this.btnReset.render(matrixStack, mouseX, mouseY, partialTick);
         this.btnUndo.render(matrixStack, mouseX, mouseY, partialTick);
 
-        if(this.showValidity){
-            if(this.valid){
-                this.getConfigOptionList().getScreen().drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
-            }
-            else {
-                this.getConfigOptionList().getScreen().drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+        if (this.showValidity) {
+            if (this.valid) {
+                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+            } else {
+                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
             }
         }
-    }   
+    }
 
 
     @Override
-    protected void renderTooltip(MatrixStack matrixStack,int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+    protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         super.renderTooltip(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
-        
+
         List<ITextComponent> tooltipConverted = new ArrayList<ITextComponent>();
-        
+
         for (String iTextComponent : this.tooltip) {
-        	tooltipConverted.add(ITextComponent.getTextComponentOrEmpty(iTextComponent));
+            tooltipConverted.add(ITextComponent.getTextComponentOrEmpty(iTextComponent));
         }
-        if(btnReset.isHovered()){
+        if (btnReset.isHovered()) {
             this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.txtReset), mouseX, mouseY);
-        }
-        else if(btnUndo.isHovered()){
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.txtUndo), mouseX , mouseY);
-        }
-        else if(mouseX < TITLE_WIDTH + rowLeft){
+        } else if (btnUndo.isHovered()) {
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.txtUndo), mouseX, mouseY);
+        } else if (mouseX < TITLE_WIDTH + rowLeft) {
             this.getConfigOptionList().getScreen().func_243308_b(matrixStack, tooltipConverted, mouseX, mouseY);
         }
         RenderHelper.disableStandardItemLighting();
@@ -123,11 +115,11 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     protected abstract void overrideUnsaved(V value);
 
-    protected boolean isUndoable(V current){
-        return  current == null || !current.equals(this.value.get()) || !this.valid;
+    protected boolean isUndoable(V current) {
+        return current == null || !current.equals(this.value.get()) || !this.valid;
     }
 
-    protected void updateValue(@Nullable V value){
+    protected void updateValue(@Nullable V value) {
         this.valid = value != null && this.spec.test(value);
         btnReset.active = isResettable();
         this.changes = isUndoable(value);
@@ -136,14 +128,14 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public void undo(){
+    public void undo() {
         this.overrideUnsaved(this.value.get());
         this.updateValue(this.value.get());
     }
 
     @Override
     public void reset() {
-        if(this.defaultValue != null){
+        if (this.defaultValue != null) {
             this.value.set(this.defaultValue);
             this.overrideUnsaved(this.defaultValue);
             this.updateValue(this.defaultValue);
@@ -156,17 +148,17 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public boolean isValid(){
+    public boolean isValid() {
         return this.valid;
     }
 
     @Override
-    public boolean hasChanges(){
+    public boolean hasChanges() {
         return this.changes;
     }
 
     @Override
-    public boolean isResettable(){
+    public boolean isResettable() {
         return this.defaultValue != null && (this.value.get() == null || !this.value.get().equals(this.defaultValue));
     }
 

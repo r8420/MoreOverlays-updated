@@ -10,9 +10,9 @@ import net.minecraft.inventory.container.Slot;
  */
 public interface IOverrideSlotPos {
 
-	/*
-	 * Get the override
-	 * if the Handler cannot handle this Slot/Gui just return null
-	 */
-	IViewSlot getSlot(ContainerScreen<?> gui, Slot slot);
+    /*
+     * Get the override
+     * if the Handler cannot handle this Slot/Gui just return null
+     */
+    IViewSlot getSlot(ContainerScreen<?> gui, Slot slot);
 }

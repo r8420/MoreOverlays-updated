@@ -1,20 +1,11 @@
 package at.feldim2425.moreoverlays.gui.config;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import at.feldim2425.moreoverlays.MoreOverlays;
+import at.feldim2425.moreoverlays.gui.ConfigScreen;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-
-import at.feldim2425.moreoverlays.MoreOverlays;
-import at.feldim2425.moreoverlays.gui.ConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.INestedGuiEventHandler;
@@ -22,6 +13,10 @@ import net.minecraft.client.gui.widget.list.AbstractOptionList;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO: As I wrote this system I noticed, that the way AbstractOptionList renders items and passes events is not optimal for this purpose
 // Rendering is done in one pass therefore Tooltips will usually be rendered below other items further down and events are only passed
@@ -42,15 +37,15 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     private Map<String, Object> currentMap;
     private CommentedConfig comments;
 
-    public static List<String> splitPath(String path) {
-        return Arrays.asList(path.split("\\."));
-    }
-
     public ConfigOptionList(Minecraft minecraft, String modId, ConfigScreen configs) {
         // Width, Height, Y-Start, Y-End, item_height
         super(minecraft, configs.width, configs.height, 43, configs.height - 32, ITEM_HEIGHT);
         this.parent = configs;
         this.modId = modId;
+    }
+
+    public static List<String> splitPath(String path) {
+        return Arrays.asList(path.split("\\."));
     }
 
     public ConfigScreen getScreen() {
@@ -66,16 +61,16 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     public int getRowWidth() {
         return super.getRowWidth() + 64;
     }
-    
+
     public void updateGui() {
-    	this.updateSize(this.parent.width, this.parent.height, 43, this.parent.height - 32);
+        this.updateSize(this.parent.width, this.parent.height, 43, this.parent.height - 32);
     }
 
 
     @Override
     protected void renderDecorations(MatrixStack matrixStack, int p_renderDecorations_1_, int p_renderDecorations_2_) {
         int i = this.getItemCount();
-        for(int j = 0; j < i; ++j) {
+        for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
             int l = this.getRowTop(j) + ITEM_HEIGHT;
             if (l >= this.y0 && k <= this.y1) {
@@ -102,7 +97,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             final Field forgeconfigspec_childconfig = ForgeConfigSpec.class.getDeclaredField("childConfig");
             forgeconfigspec_childconfig.setAccessible(true);
             final Object childConfig_raw = forgeconfigspec_childconfig.get(rootConfig);
-            if(childConfig_raw instanceof CommentedConfig){
+            if (childConfig_raw instanceof CommentedConfig) {
                 this.comments = (CommentedConfig) childConfig_raw;
             }
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -125,24 +120,24 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             this.refreshEntries();
             this.parent.updatePath(this.getCurrentPath());
         } else {
-        	
-        	// There's a bug where we end up with a duplicate path here, 
-        	// which seems to be related to keyboard race conditions allowing
-        	// us to 'double' select a child path. 
-        	// In this event, we attempt to fail gracefully.
-        	int n = path.size();
-        	if (n > 1) {
-        		if (path.get(n-1) == path.get(n-2)) {
-        			MoreOverlays.logger.error("Attempting to load duplicate path:", path);
+
+            // There's a bug where we end up with a duplicate path here,
+            // which seems to be related to keyboard race conditions allowing
+            // us to 'double' select a child path.
+            // In this event, we attempt to fail gracefully.
+            int n = path.size();
+            if (n > 1) {
+                if (path.get(n - 1) == path.get(n - 2)) {
+                    MoreOverlays.logger.error("Attempting to load duplicate path:", path);
                     MoreOverlays.logger.warn("This could be caused by key event race condition");
                     // Trim and reload
-                    path.remove(n-1);
-                	this.setPath(path);
-                	return;
-        		}
-        	}
-        	
-            throw new IllegalArgumentException("Path in config list has to point to another config object");               
+                    path.remove(n - 1);
+                    this.setPath(path);
+                    return;
+                }
+            }
+
+            throw new IllegalArgumentException("Path in config list has to point to another config object");
         }
     }
 
@@ -177,14 +172,14 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
         boolean flag = super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
         OptionEntry selected = this.getEntryAtPosition(p_mouseClicked_1_, p_mouseClicked_3_);
-        for(final OptionEntry entry : this.getEventListeners()){
-            if(entry != selected){
-                if(entry.changeFocus(true)) {
-                	entry.changeFocus(true);
+        for (final OptionEntry entry : this.getEventListeners()) {
+            if (entry != selected) {
+                if (entry.changeFocus(true)) {
+                    entry.changeFocus(true);
                 }
             }
         }
-        
+
         return flag;
     }
 
@@ -196,23 +191,21 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             fullPath.add(cEntry.getKey());
 
             String comment = null;
-            if(this.comments != null){
+            if (this.comments != null) {
                 comment = this.comments.getComment(fullPath);
             }
 
             if (cEntry.getValue() instanceof UnmodifiableConfig) {
                 final String name = I18n.format(categoryTitleKey(fullPath));
                 this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
-            }
-            else if(cEntry.getValue() instanceof ForgeConfigSpec.BooleanValue){
-                this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue)cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
-            }
-            else {
-                this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>)cEntry.getValue(), (ForgeConfigSpec.ValueSpec)rootConfig.getSpec().get(fullPath)));
+            } else if (cEntry.getValue() instanceof ForgeConfigSpec.BooleanValue) {
+                this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
+            } else {
+                this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }
         }
-        if(this.changeFocus(true)) {
-        	this.changeFocus(true);
+        if (this.changeFocus(true)) {
+            this.changeFocus(true);
         }
     }
 
@@ -220,18 +213,18 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         return Collections.unmodifiableList(this.configPath);
     }
 
-    public ForgeConfigSpec getConfig(){
+    public ForgeConfigSpec getConfig() {
         return this.rootConfig;
     }
 
-    public String getModId(){
+    public String getModId() {
         return this.modId;
     }
 
-    public boolean isSaveable(){
+    public boolean isSaveable() {
         boolean hasChanges = false;
-        for(final OptionEntry entry : this.getEventListeners()){
-            if(!entry.isValid()){
+        for (final OptionEntry entry : this.getEventListeners()) {
+            if (!entry.isValid()) {
                 return false;
             }
             hasChanges = hasChanges || entry.hasChanges();
@@ -239,48 +232,48 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         return hasChanges;
     }
 
-    public boolean isResettable(){
+    public boolean isResettable() {
         boolean resettable = false;
-        for(final OptionEntry entry : this.getEventListeners()){
+        for (final OptionEntry entry : this.getEventListeners()) {
             resettable = resettable || entry.isResettable();
         }
         return resettable;
     }
 
-    public boolean isUndoable(){
+    public boolean isUndoable() {
         boolean hasChanges = false;
-        for(final OptionEntry entry : this.getEventListeners()){
+        for (final OptionEntry entry : this.getEventListeners()) {
             hasChanges = hasChanges || entry.hasChanges();
         }
         return hasChanges;
     }
 
-    public void reset(){
-        for(final OptionEntry entry : this.getEventListeners()){
+    public void reset() {
+        for (final OptionEntry entry : this.getEventListeners()) {
             entry.reset();
         }
     }
 
-    public void undo(){
-        for(final OptionEntry entry : this.getEventListeners()){
+    public void undo() {
+        for (final OptionEntry entry : this.getEventListeners()) {
             entry.undo();
         }
     }
 
     public void save() {
-        for(final OptionEntry entry : this.getEventListeners()){
-        	if (entry.isValid()) {
-        		entry.save();
-        	}
+        for (final OptionEntry entry : this.getEventListeners()) {
+            if (entry.isValid()) {
+                entry.save();
+            }
         }
-	}
+    }
 
-    public abstract static class OptionEntry extends AbstractOptionList.Entry<ConfigOptionList.OptionEntry> implements INestedGuiEventHandler{
+    public abstract static class OptionEntry extends AbstractOptionList.Entry<ConfigOptionList.OptionEntry> implements INestedGuiEventHandler {
         private final ConfigOptionList optionList;
 
         protected int rowTop, rowLeft;
 
-        private int rowWidth, itemHeight, mouseX,  mouseY;
+        private int rowWidth, itemHeight, mouseX, mouseY;
         private boolean mouseOver;
 
         public OptionEntry(ConfigOptionList list) {
@@ -289,7 +282,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
         @Override
         public void render(MatrixStack matrixStack, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
-                boolean mouseOver, float partialTick) {
+                           boolean mouseOver, float partialTick) {
             this.rowTop = rowTop;
             this.rowLeft = rowLeft;
             this.rowWidth = rowWidth;
@@ -302,12 +295,12 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             mouseY -= rowTop;
             GlStateManager.translatef(rowLeft, rowTop, 0);
             renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
-            
+
             GlStateManager.translatef(-rowLeft, -rowTop, 0);
         }
 
         protected abstract void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
-        boolean mouseOver, float partialTick);
+                                               boolean mouseOver, float partialTick);
 
         /*
          * This is part of the "hacky" way to render tooltips above the other entries.
@@ -316,15 +309,15 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
          * Not the best way but AbstractOptionList doesn't seem to have any better hooks to do that.
          * A custom Implementation would be better but I'm too lazy to do that
          */
-        public void runRenderTooltip(MatrixStack matrixStack){
-            if(this.mouseOver){
+        public void runRenderTooltip(MatrixStack matrixStack) {
+            if (this.mouseOver) {
                 this.renderTooltip(matrixStack, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.disableLighting();
             }
         }
 
-        protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight,int mouseX, int mouseY){
+        protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         }
 
         @Override
@@ -352,12 +345,12 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
 
         @Override
-        public boolean isDragging(){
+        public boolean isDragging() {
             return false;
         }
 
         @Override
-        public void setDragging(boolean dragging){
+        public void setDragging(boolean dragging) {
 
         }
 
@@ -366,24 +359,24 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount);
         }
 
-        public boolean isValid(){
+        public boolean isValid() {
             return true;
         }
-    
-        public boolean hasChanges(){
+
+        public boolean hasChanges() {
             return false;
         }
 
-        public boolean isResettable(){
+        public boolean isResettable() {
             return false;
         }
 
-        public void reset(){
+        public void reset() {
         }
 
-        public void undo(){
+        public void undo() {
         }
-        
+
         public void save() {
         }
     }

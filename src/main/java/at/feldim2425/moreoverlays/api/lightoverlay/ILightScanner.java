@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ILightScanner {
 
-	void update(PlayerEntity player);
+    void update(PlayerEntity player);
 
-	void clear();
+    void clear();
 
-	List<Pair<BlockPos, Byte>> getLightModes();
+    List<Pair<BlockPos, Byte>> getLightModes();
 }
