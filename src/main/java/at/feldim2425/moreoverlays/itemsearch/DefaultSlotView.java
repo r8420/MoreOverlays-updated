@@ -6,24 +6,24 @@ import net.minecraft.util.math.vector.Vector2f;
 
 public class DefaultSlotView implements IViewSlot {
 
-	private final Slot slot;
+    private final Slot slot;
 
-	public DefaultSlotView(Slot slot) {
-		this.slot = slot;
-	}
+    public DefaultSlotView(final Slot slot) {
+        this.slot = slot;
+    }
 
-	@Override
-	public Slot getSlot() {
-		return slot;
-	}
+    @Override
+    public Slot getSlot() {
+        return this.slot;
+    }
 
-	@Override
-	public Vector2f getRenderPos(int guiLeft, int guiTop) {
-		return new Vector2f(slot.xPos,slot.yPos);
-	}
+    @Override
+    public Vector2f getRenderPos(final int guiLeft, final int guiTop) {
+        return new Vector2f(this.slot.xPos, this.slot.yPos);
+    }
 
-	@Override
-	public boolean canSearch() {
-		return true;
-	}
+    @Override
+    public boolean canSearch() {
+        return true;
+    }
 }

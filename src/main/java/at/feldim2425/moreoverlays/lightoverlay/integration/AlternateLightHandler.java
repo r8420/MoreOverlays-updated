@@ -6,21 +6,21 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class AlternateLightHandler {
 
-	public static void init() {
-		MinecraftForge.EVENT_BUS.register(new AlternateLightHandler());
-	}
+    public static void init() {
+        MinecraftForge.EVENT_BUS.register(new AlternateLightHandler());
+    }
 
-	@SubscribeEvent
-	public void onLightOverlayEnable(LightOverlayReloadHandlerEvent event){
-		if(event.isIgnoringSpawner()){
-			return;
-		}
+    @SubscribeEvent
+    public void onLightOverlayEnable(final LightOverlayReloadHandlerEvent event) {
+        if (event.isIgnoringSpawner()) {
+            return;
+        }
 
 		/*
 		if(ModList.get().isLoaded("customspawner")){
 			event.setScanner(CustomSpawnerLightScanner.class);
 		}
 		*/
-	}
+    }
 
 }

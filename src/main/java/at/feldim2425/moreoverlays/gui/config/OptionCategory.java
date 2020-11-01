@@ -1,55 +1,54 @@
 package at.feldim2425.moreoverlays.gui.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
-
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     private final List<String> tooltip;
     private final Button btnOpen;
 
-    public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment){
+    public OptionCategory(final ConfigOptionList list, final List<String> path, final String name, final String comment) {
         super(list);
-        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.getTextComponentOrEmpty(name), (btn) -> {
+        this.btnOpen = new Button(0, 0, getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.getTextComponentOrEmpty(name), (btn) -> {
             list.push(path);
         });
 
         String[] lines = null;
-        if(comment != null){
+        if (comment != null) {
             lines = comment.split("\\n");
-            tooltip = new ArrayList<>(lines.length + 1);
+            this.tooltip = new ArrayList<>(lines.length + 1);
         } else {
-        	tooltip = new ArrayList<>(1);
+            this.tooltip = new ArrayList<>(1);
         }
-        
-        tooltip.add(TextFormatting.RED + name);
-        if(lines != null) {
-        	for(final String line : lines){
-                tooltip.add(TextFormatting.YELLOW + line);
+
+        this.tooltip.add(TextFormatting.RED + name);
+        if (lines != null) {
+            for (String line : lines) {
+                this.tooltip.add(TextFormatting.YELLOW + line);
             }
         }
     }
 
     @Override
-    public void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight,int mouseX, int mouseY, boolean mouseOver, float partialTick) {
-        btnOpen.render(matrixStack, mouseX, mouseY, partialTick);
+    public void renderControls(final MatrixStack matrixStack, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, final int mouseX, final int mouseY, final boolean mouseOver, final float partialTick) {
+        this.btnOpen.render(matrixStack, mouseX, mouseY, partialTick);
     }
 
     @Override
-    protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight,int mouseX, int mouseY){
-        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(tooltip.toString()), mouseX, mouseY);
+    protected void renderTooltip(final MatrixStack matrixStack, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, final int mouseX, final int mouseY) {
+        getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.tooltip.toString()), mouseX, mouseY);
     }
 
     @Override
     public List<? extends IGuiEventListener> getEventListeners() {
-        return Arrays.asList(this.btnOpen);
+        return Arrays.asList(btnOpen);
     }
 }

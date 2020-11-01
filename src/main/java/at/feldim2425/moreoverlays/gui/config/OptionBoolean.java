@@ -1,59 +1,57 @@
 package at.feldim2425.moreoverlays.gui.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
-
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OptionBoolean
         extends OptionValueEntry<Boolean> {
 
     private final Button btnChange;
     private boolean state;
-    
-    public OptionBoolean(ConfigOptionList list, ForgeConfigSpec.BooleanValue valSpec, ForgeConfigSpec.ValueSpec spec) {
-		super(list, valSpec, spec);
-        this.showValidity = false;
-        
-        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0,this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR,20, ITextComponent.getTextComponentOrEmpty(""), this::buttonPressed);
-        this.overrideUnsaved(this.value.get());
-	}
 
-	@Override
-    protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
-            boolean mouseOver, float partialTick) {
+    public OptionBoolean(final ConfigOptionList list, final ForgeConfigSpec.BooleanValue valSpec, final ForgeConfigSpec.ValueSpec spec) {
+        super(list, valSpec, spec);
+        showValidity = false;
+
+        this.btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0, getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20, ITextComponent.getTextComponentOrEmpty(""), this::buttonPressed);
+        overrideUnsaved(value.get());
+    }
+
+    @Override
+    protected void renderControls(final MatrixStack matrixStack, final int rowTop, final int rowLeft, final int rowWidth, final int itemHeight, final int mouseX, final int mouseY,
+                                  final boolean mouseOver, final float partialTick) {
         super.renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
-        this.btnChange.render(matrixStack, mouseX, mouseY, 0);
+        btnChange.render(matrixStack, mouseX, mouseY, 0);
 
     }
 
     @Override
-    protected void overrideUnsaved(Boolean value) {
-        this.state = value;
-        if(this.state){
-            this.btnChange.setMessage(ITextComponent.getTextComponentOrEmpty(TextFormatting.GREEN+"TRUE"));
-        }
-        else {
-            this.btnChange.setMessage(ITextComponent.getTextComponentOrEmpty(TextFormatting.RED+"FALSE"));
+    protected void overrideUnsaved(final Boolean value) {
+        state = value;
+        if (state) {
+            btnChange.setMessage(ITextComponent.getTextComponentOrEmpty(TextFormatting.GREEN + "TRUE"));
+        } else {
+            btnChange.setMessage(ITextComponent.getTextComponentOrEmpty(TextFormatting.RED + "FALSE"));
         }
     }
 
     @Override
     public List<? extends IGuiEventListener> getEventListeners() {
-        List<IGuiEventListener> childs = new ArrayList<>(super.getEventListeners());
-        childs.add(this.btnChange);
+        final List<IGuiEventListener> childs = new ArrayList<>(super.getEventListeners());
+        childs.add(btnChange);
         return childs;
     }
 
-    private void buttonPressed(Button btn){
-        this.overrideUnsaved(!this.state);
-        this.updateValue(this.state);
+    private void buttonPressed(final Button btn) {
+        overrideUnsaved(!state);
+        updateValue(state);
     }
-    
+
 }
