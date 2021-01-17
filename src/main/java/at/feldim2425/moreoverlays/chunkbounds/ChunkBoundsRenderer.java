@@ -13,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import org.lwjgl.opengl.GL11;
 
+import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_FRONT;
+
 public class ChunkBoundsRenderer {
 
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
@@ -20,7 +22,9 @@ public class ChunkBoundsRenderer {
 
     public static void renderOverlays() {
         PlayerEntity player = Minecraft.getInstance().player;
-
+        if(Minecraft.getInstance().gameSettings.getPointOfView() == THIRD_PERSON_FRONT){
+            return;
+        }
         Minecraft.getInstance().getTextureManager().bindTexture(BLANK_TEX);
         GlStateManager.pushMatrix();
         GL11.glLineWidth((float) (double) Config.render_chunkLineWidth.get());
