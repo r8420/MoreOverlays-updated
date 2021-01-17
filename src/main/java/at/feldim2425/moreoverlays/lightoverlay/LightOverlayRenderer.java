@@ -23,7 +23,9 @@ public class LightOverlayRenderer implements ILightRenderer {
     private static final EntityRendererManager render = Minecraft.getInstance().getRenderManager();
 
     private static void renderCross(BlockPos pos, float r, float g, float b) {
-        double y = pos.getY() + 0.005D;
+        PlayerEntity player = Minecraft.getInstance().player;
+        double y = 0.005D + pos.getY() + 0.01D * -(pos.getY()-player.getPosY()-1);
+
 
         double x0 = pos.getX();
         double x1 = x0 + 1;
