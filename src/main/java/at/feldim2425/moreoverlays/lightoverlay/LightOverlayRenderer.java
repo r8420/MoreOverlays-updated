@@ -5,6 +5,9 @@ import at.feldim2425.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.feldim2425.moreoverlays.api.lightoverlay.ILightScanner;
 import at.feldim2425.moreoverlays.config.Config;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.SnowBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -24,7 +27,14 @@ public class LightOverlayRenderer implements ILightRenderer {
 
     private static void renderCross(BlockPos pos, float r, float g, float b) {
         PlayerEntity player = Minecraft.getInstance().player;
-        double y = 0.005D + pos.getY() + 0.01D * -(pos.getY()-player.getPosY()-1);
+
+        BlockState blockStateBelow = player.world.getBlockState(pos);
+        double y = 0;
+        if(blockStateBelow.getMaterial() == Material.SNOW){
+            y = 0.005D + (pos.getY()+0.125D) + 0.01D * -(pos.getY()-player.getPosY()-1);
+        } else{
+            y = 0.005D + pos.getY() + 0.01D * -(pos.getY()-player.getPosY()-1);
+        }
 
 
         double x0 = pos.getX();
