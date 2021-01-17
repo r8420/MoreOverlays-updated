@@ -20,6 +20,8 @@ import net.minecraft.util.math.vector.Vector3d;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_FRONT;
+
 public class LightOverlayRenderer implements ILightRenderer {
 
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
@@ -56,6 +58,9 @@ public class LightOverlayRenderer implements ILightRenderer {
 
     public void renderOverlays(ILightScanner scanner) {
         PlayerEntity player = Minecraft.getInstance().player;
+        if(Minecraft.getInstance().gameSettings.getPointOfView() == THIRD_PERSON_FRONT){
+            return;
+        }
         Minecraft.getInstance().getTextureManager().bindTexture(BLANK_TEX);
         GlStateManager.pushMatrix();
         GL11.glLineWidth((float) (double) Config.render_spawnLineWidth.get());
