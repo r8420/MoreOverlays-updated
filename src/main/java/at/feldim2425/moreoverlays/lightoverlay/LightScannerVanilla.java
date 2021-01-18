@@ -12,6 +12,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class LightScannerVanilla extends LightScannerBase {
 
     private final static AxisAlignedBB TEST_BB = new AxisAlignedBB(0.6D / 2D, 0, 0.6D / 2D, 1D - 0.6D / 2D, 1D, 1D - 0.6D / 2D);
+    private static boolean ChiselsAndBits = false;
+    private static boolean ChiselsAndBitsCheckDone = false;
 
     private final List<EntityType<?>> typesToCheck;
 
@@ -47,6 +50,15 @@ public class LightScannerVanilla extends LightScannerBase {
         return false;
     }
 
+    private static boolean isChiselsAndBitsLoaded(){
+        if(!ChiselsAndBitsCheckDone) {
+            ChiselsAndBits = ModList.get().isLoaded("chiselsandbits");
+            ChiselsAndBitsCheckDone = true;
+        }
+        return ChiselsAndBits;
+
+    }
+
     @Override
     public byte getSpawnModeAt(BlockPos pos, World world) {
         if (world.getLightFor(LightType.BLOCK, pos) >= Config.light_SaveLevel.get())
@@ -60,7 +72,9 @@ public class LightScannerVanilla extends LightScannerBase {
         if(world.containsAnyLiquid(new AxisAlignedBB(blockPos)) || world.getBlockState(pos).getMaterial() == Material.WATER){
             return 0;
         }
-
+        if(isChiselsAndBitsLoaded() && world.getBlockState(blockPos).getBlock().getTranslatedName().getString().contains("chiselsandbits")){
+            return 0;
+        }
         if (!checkCollision(pos, world))
             return 0;
 
