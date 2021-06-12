@@ -1,3 +1,47 @@
+Build: 1.16.5-36.1.0 - Mon Mar 15 22:11:58 GMT 2021
+	lexmanos:
+		Fix AT order, missed exec line and bump for RB.
+
+=========
+Build: 1.16.5-36.0.63 - Mon Mar 15 21:08:56 GMT 2021
+	diesieben07:
+		Fix wrong eye height when entity size changes (esp. baby animals) (#7628)
+
+=========
+Build: 1.16.5-36.0.62 - Mon Mar 15 21:02:36 GMT 2021
+	diesieben07:
+		Allow ITeleporter to override the vanilla teleport sound (#7682)
+
+=========
+Build: 1.16.5-36.0.61 - Mon Mar 15 20:20:21 GMT 2021
+	29855886+SizableShrimp:
+		Fix datapack exception related to EnumArgument with siblings (#7686)
+		
+		Invalid enum constants are now properly thrown as a CommandSyntaxException
+
+=========
+Build: 1.16.5-36.0.60 - Mon Mar 15 19:29:01 GMT 2021
+	42383791+kaydogz:
+		Add support for custom WoodTypes (#7623)
+
+=========
+Build: 1.16.5-36.0.59 - Mon Mar 15 19:19:16 GMT 2021
+	lexmanos:
+		Use JGit instead of GrGit now that jcenter is going away.
+		Update missed mapped name in MDK.
+
+=========
+Build: 1.16.5-36.0.58 - Sat Mar 13 19:07:24 GMT 2021
+	diesieben07:
+		Fix incorrectly replaced SRG names
+
+	gigaherz:
+		Fix yet another copypasta.
+
+	gigaherz:
+		Bump nashorn wrapper version.
+
+=========
 Build: 1.16.5-36.0.55 - Fri Mar 12 18:51:48 GMT 2021
 	AterAnimAvis:
 		Fix potential Deadlock when using custom Item entities. (#7532)
