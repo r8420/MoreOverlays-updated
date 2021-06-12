@@ -47,7 +47,7 @@ public class GuiHandler {
             int x = (int) event.getMouseX();
             int y = (int) event.getMouseY();
 
-            if (x > searchField.x && x < searchField.x + searchField.getWidth() && y > searchField.y && y < searchField.y + searchField.getHeightRealms()) {
+            if (x > searchField.x && x < searchField.x + searchField.getWidth() && y > searchField.y && y < searchField.y + searchField.getHeight()) {
                 long now = System.currentTimeMillis();
                 if (now - firstClick < 1000) {
                     GuiRenderer.INSTANCE.toggleMode();

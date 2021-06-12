@@ -39,12 +39,12 @@ public class LightScannerVanilla extends LightScannerBase {
             return true;
 
         AxisAlignedBB bb = TEST_BB.offset(pos.getX(), pos.getY(), pos.getZ());
-        if (world.getCollisionShapes(null, bb).count() == 0 && !world.containsAnyLiquid(bb)) {
+        if (world.getBlockCollisionShapes(null, bb).count() == 0 && !world.containsAnyLiquid(bb)) {
             if (Config.light_IgnoreLayer.get())
                 return true;
             else {
                 AxisAlignedBB bb2 = bb.offset(0, 1, 0);
-                return world.getCollisionShapes(null, bb2).count() == 0 && !world.containsAnyLiquid(bb2);
+                return world.getBlockCollisionShapes(null, bb2).count() == 0 && !world.containsAnyLiquid(bb2);
             }
         }
         return false;
