@@ -23,10 +23,35 @@ public abstract class LightScannerBase implements ILightScanner {
 
         int y1 = py - Config.light_DownRange.get();
         int y2 = py + Config.light_UpRange.get();
+        int HRange = Config.light_HRange.get();
 
         overlayCache.clear();
-        for (int xo = -Config.light_HRange.get(); xo <= Config.light_HRange.get(); xo++) {
-            for (int zo = -Config.light_HRange.get(); zo <= Config.light_HRange.get(); zo++) {
+
+        int HRangeNorth = HRange;
+        int HRangeEast = HRange;
+        int HRangeSouth = HRange;
+        int HRangeWest = HRange;
+
+        // Show fewer light overlays behind player
+        if(HRange > 5 && player.getLookVec().y > -0.5 && player.getLookVec().y < 0.5){
+            switch (player.getHorizontalFacing()){
+                case NORTH:
+                    HRangeSouth = 5;
+                    break;
+                case EAST:
+                    HRangeWest = 5;
+                    break;
+                case SOUTH:
+                    HRangeNorth = 5;
+                    break;
+                case WEST:
+                    HRangeEast = 5;
+                    break;
+            }
+        }
+
+        for (int xo = -HRangeWest; xo <= HRangeEast; xo++) {
+            for (int zo = -HRangeNorth; zo <= HRangeSouth; zo++) {
                 BlockPos pos1 = new BlockPos(px + xo, py, pz + zo);
                 if (!shouldCheck(pos1, player.world)) {
                     continue;

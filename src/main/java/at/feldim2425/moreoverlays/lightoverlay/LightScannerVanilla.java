@@ -69,7 +69,7 @@ public class LightScannerVanilla extends LightScannerBase {
         if (world.isAirBlock(blockPos)) {
             return 0;
         }
-        if(world.containsAnyLiquid(new AxisAlignedBB(blockPos)) || world.getBlockState(pos).getMaterial() == Material.WATER){
+        if(world.containsAnyLiquid(new AxisAlignedBB(blockPos))){
             return 0;
         }
         if(isChiselsAndBitsLoaded() && world.getBlockState(blockPos).getBlock().getTranslatedName().getString().contains("chiselsandbits")){
