@@ -37,9 +37,9 @@ public class ConfigScreen extends Screen {
         this.configSpec = spec;
         this.modId = modId;
 
-        this.txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
-        this.txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
-        this.txtDone = I18n.format("gui.done");
+        this.txtReset = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
+        this.txtUndo = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".undo");
+        this.txtDone = I18n.get("gui.done");
     }
 
     @Override
@@ -55,14 +55,14 @@ public class ConfigScreen extends Screen {
             }
         }
 
-        FontRenderer font = Minecraft.getInstance().fontRenderer;
+        FontRenderer font = Minecraft.getInstance().font;
 
-        int undoGlyphWidth = font.getStringWidth(ConfigOptionList.UNDO_CHAR) * 2;
-        int resetGlyphWidth = font.getStringWidth(ConfigOptionList.RESET_CHAR) * 2;
+        int undoGlyphWidth = font.width(ConfigOptionList.UNDO_CHAR) * 2;
+        int resetGlyphWidth = font.width(ConfigOptionList.RESET_CHAR) * 2;
 
-        int undoWidth = font.getStringWidth(" " + this.txtUndo) + undoGlyphWidth + 20;
-        int resetWidth = font.getStringWidth(" " + this.txtReset) + resetGlyphWidth + 20;
-        int doneWidth = Math.max(font.getStringWidth(this.txtDone) + 20, 100);
+        int undoWidth = font.width(" " + this.txtUndo) + undoGlyphWidth + 20;
+        int resetWidth = font.width(" " + this.txtReset) + resetGlyphWidth + 20;
+        int doneWidth = Math.max(font.width(this.txtDone) + 20, 100);
 
         final int buttonY = this.height - 32 + (32 - 20) / 2;
         final int buttonHeight = 20;
@@ -73,15 +73,15 @@ public class ConfigScreen extends Screen {
         final int xUndoAll = xDefaultAll - undoWidth;
 
         this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
+                ITextComponent.nullToEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
                 (btn) -> this.optionList.reset());
 
         this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
+                ITextComponent.nullToEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
                 (btn) -> this.optionList.undo());
 
         this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(" " + this.txtDone),
+                ITextComponent.nullToEmpty(" " + this.txtDone),
                 (btn) -> this.back());
 
         this.children.add(this.optionList);
@@ -100,7 +100,8 @@ public class ConfigScreen extends Screen {
         if (!this.optionList.getCurrentPath().isEmpty()) {
             this.optionList.pop();
         } else {
-            Minecraft.getInstance().displayGuiScreen(modListScreen);
+            //Minecraft.getInstance().forceSetScreen(modListScreen);
+            Minecraft.getInstance().setScreen(modListScreen);
         }
     }
 
@@ -136,7 +137,7 @@ public class ConfigScreen extends Screen {
         if (key == null) {
             this.categoryTitle = null;
         } else {
-            this.categoryTitle = I18n.format(key);
+            this.categoryTitle = I18n.get(key);
         }
 
         pathCache.clear();

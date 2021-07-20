@@ -42,13 +42,13 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         super(list);
         this.value = confValue;
         this.spec = spec;
-        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, ITextComponent.getTextComponentOrEmpty(ConfigOptionList.RESET_CHAR),
+        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, ITextComponent.nullToEmpty(ConfigOptionList.RESET_CHAR),
                 (btn) -> this.reset());
-        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, ITextComponent.getTextComponentOrEmpty(ConfigOptionList.UNDO_CHAR),
+        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, ITextComponent.nullToEmpty(ConfigOptionList.UNDO_CHAR),
                 (btn) -> this.undo());
 
-        this.txtReset = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
-        this.txtUndo = I18n.format("gui.config." + MoreOverlays.MOD_ID + ".undo");
+        this.txtReset = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
+        this.txtUndo = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".undo");
 
         final Object defaultVal = this.spec.getDefault();
         if (defaultVal != null && spec.getClazz().isAssignableFrom(defaultVal.getClass())) {
@@ -79,15 +79,15 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     @Override
     protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
                                   int mouseY, boolean mouseOver, float partialTick) {
-        AbstractGui.drawString(matrixStack, Minecraft.getInstance().fontRenderer, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
+        AbstractGui.drawString(matrixStack, Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
         this.btnReset.render(matrixStack, mouseX, mouseY, partialTick);
         this.btnUndo.render(matrixStack, mouseX, mouseY, partialTick);
 
         if (this.showValidity) {
             if (this.valid) {
-                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
             } else {
-                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
             }
         }
     }
@@ -100,17 +100,17 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         List<ITextComponent> tooltipConverted = new ArrayList<ITextComponent>();
 
         for (String iTextComponent : this.tooltip) {
-            tooltipConverted.add(ITextComponent.getTextComponentOrEmpty(iTextComponent));
+            tooltipConverted.add(ITextComponent.nullToEmpty(iTextComponent));
         }
         if (btnReset.isHovered()) {
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.txtReset), mouseX, mouseY);
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.nullToEmpty(this.txtReset), mouseX, mouseY);
         } else if (btnUndo.isHovered()) {
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(this.txtUndo), mouseX, mouseY);
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.nullToEmpty(this.txtUndo), mouseX, mouseY);
         } else if (mouseX < TITLE_WIDTH + rowLeft) {
-            this.getConfigOptionList().getScreen().func_243308_b(matrixStack, tooltipConverted, mouseX, mouseY);
+            this.getConfigOptionList().getScreen().renderComponentTooltip(matrixStack, tooltipConverted, mouseX, mouseY);
         }
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableLighting();
+        RenderHelper.setupForFlatItems();
+        GlStateManager._disableLighting();
     }
 
     protected abstract void overrideUnsaved(V value);
@@ -143,7 +143,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public List<? extends IGuiEventListener> getEventListeners() {
+    public List<? extends IGuiEventListener> children() {
         return Arrays.asList(this.btnReset, this.btnUndo);
     }
 

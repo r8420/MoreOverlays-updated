@@ -58,12 +58,12 @@ public class ChunkBoundsHandler {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.gameSettings.showDebugInfo) {
+        if (mc.options.renderDebug) {
             return;
         }
         int y = 0;
         for (String text : regionInfo) {
-            mc.fontRenderer.drawString(event.getMatrixStack(), text, 10, y += 10, 0xFFFFFF);
+            mc.font.draw(event.getMatrixStack(), text, 10, y += 10, 0xFFFFFF);
         }
     }
 
@@ -84,11 +84,11 @@ public class ChunkBoundsHandler {
         boolean updateInfo = regionInfo.isEmpty();
 
         int newRegionX;
-        if (player.chunkCoordX < 0) {
-            newRegionX = (player.chunkCoordX + 1) / REGION_SIZEX;
+        if (player.xChunk < 0) {
+            newRegionX = (player.xChunk + 1) / REGION_SIZEX;
             newRegionX--;
         } else {
-            newRegionX = player.chunkCoordX / REGION_SIZEX;
+            newRegionX = player.xChunk / REGION_SIZEX;
         }
         if (playerPrevRegionPosX != newRegionX) {
             playerPrevRegionPosX = newRegionX;
@@ -96,11 +96,11 @@ public class ChunkBoundsHandler {
         }
 
         int newRegionZ;
-        if (player.chunkCoordZ < 0) {
-            newRegionZ = (player.chunkCoordZ + 1) / REGION_SIZEZ;
+        if (player.zChunk < 0) {
+            newRegionZ = (player.zChunk + 1) / REGION_SIZEZ;
             newRegionZ--;
         } else {
-            newRegionZ = player.chunkCoordZ / REGION_SIZEZ;
+            newRegionZ = player.zChunk / REGION_SIZEZ;
         }
         if (playerPrevRegionPosZ != newRegionZ) {
             playerPrevRegionPosZ = newRegionZ;

@@ -17,9 +17,9 @@ public abstract class LightScannerBase implements ILightScanner {
 
     @Override
     public void update(PlayerEntity player) {
-        int px = (int) Math.floor(player.getPosX());
-        int py = (int) Math.floor(player.getPosY());
-        int pz = (int) Math.floor(player.getPosZ());
+        int px = (int) Math.floor(player.getX());
+        int py = (int) Math.floor(player.getY());
+        int pz = (int) Math.floor(player.getZ());
 
         int y1 = py - Config.light_DownRange.get();
         int y2 = py + Config.light_UpRange.get();
@@ -33,8 +33,8 @@ public abstract class LightScannerBase implements ILightScanner {
         int HRangeWest = HRange;
 
         // Show fewer light overlays behind player
-        if(HRange > 5 && player.getLookVec().y > -0.5 && player.getLookVec().y < 0.5){
-            switch (player.getHorizontalFacing()){
+        if(HRange > 5 && player.getRotationVector().y > -0.5 && player.getRotationVector().y < 0.5){
+            switch (player.getDirection()){
                 case NORTH:
                     HRangeSouth = 5;
                     break;
@@ -53,12 +53,12 @@ public abstract class LightScannerBase implements ILightScanner {
         for (int xo = -HRangeWest; xo <= HRangeEast; xo++) {
             for (int zo = -HRangeNorth; zo <= HRangeSouth; zo++) {
                 BlockPos pos1 = new BlockPos(px + xo, py, pz + zo);
-                if (!shouldCheck(pos1, player.world)) {
+                if (!shouldCheck(pos1, player.level)) {
                     continue;
                 }
                 for (int y = y1; y <= y2; y++) {
                     BlockPos pos = new BlockPos(px + xo, y, pz + zo);
-                    byte mode = getSpawnModeAt(pos, player.world);
+                    byte mode = getSpawnModeAt(pos, player.level);
                     if (mode != 0) {
                         overlayCache.add(Pair.of(pos, mode));
                     }
@@ -78,14 +78,14 @@ public abstract class LightScannerBase implements ILightScanner {
     }
 
     public boolean shouldCheck(BlockPos pos, World world) {
-        if(world.isRemote){
+        if(world.isClientSide){
             return true;
         }
         if (Config.light_IgnoreSpawnList.get()) {
             return true;
         }
         Biome biome = world.getBiome(pos);
-        return biome.getMobSpawnInfo().getCreatureSpawnProbability() > 0 && !biome.getMobSpawnInfo().getSpawners(EntityClassification.MONSTER).isEmpty();
+        return biome.getMobSettings().getCreatureProbability() > 0 && !biome.getMobSettings().getMobs(EntityClassification.MONSTER).isEmpty();
     }
 
     public abstract byte getSpawnModeAt(BlockPos pos, World world);

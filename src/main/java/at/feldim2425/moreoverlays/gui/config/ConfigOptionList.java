@@ -172,7 +172,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
     public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
         boolean flag = super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
         OptionEntry selected = this.getEntryAtPosition(p_mouseClicked_1_, p_mouseClicked_3_);
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             if (entry != selected) {
                 if (entry.changeFocus(true)) {
                     entry.changeFocus(true);
@@ -196,7 +196,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             }
 
             if (cEntry.getValue() instanceof UnmodifiableConfig) {
-                final String name = I18n.format(categoryTitleKey(fullPath));
+                final String name = I18n.get(categoryTitleKey(fullPath));
                 this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
             } else if (cEntry.getValue() instanceof ForgeConfigSpec.BooleanValue) {
                 this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
@@ -223,7 +223,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public boolean isSaveable() {
         boolean hasChanges = false;
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             if (!entry.isValid()) {
                 return false;
             }
@@ -234,7 +234,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public boolean isResettable() {
         boolean resettable = false;
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             resettable = resettable || entry.isResettable();
         }
         return resettable;
@@ -242,26 +242,26 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
     public boolean isUndoable() {
         boolean hasChanges = false;
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             hasChanges = hasChanges || entry.hasChanges();
         }
         return hasChanges;
     }
 
     public void reset() {
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             entry.reset();
         }
     }
 
     public void undo() {
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             entry.undo();
         }
     }
 
     public void save() {
-        for (final OptionEntry entry : this.getEventListeners()) {
+        for (final OptionEntry entry : this.children()) {
             if (entry.isValid()) {
                 entry.save();
             }
@@ -293,10 +293,10 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
             mouseX -= rowLeft;
             mouseY -= rowTop;
-            GlStateManager.translatef(rowLeft, rowTop, 0);
+            GlStateManager._translatef(rowLeft, rowTop, 0);
             renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
 
-            GlStateManager.translatef(-rowLeft, -rowTop, 0);
+            GlStateManager._translatef(-rowLeft, -rowTop, 0);
         }
 
         protected abstract void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
@@ -312,8 +312,8 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         public void runRenderTooltip(MatrixStack matrixStack) {
             if (this.mouseOver) {
                 this.renderTooltip(matrixStack, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
-                RenderHelper.disableStandardItemLighting();
-                GlStateManager.disableLighting();
+                RenderHelper.setupForFlatItems();;
+                GlStateManager._disableLighting();
             }
         }
 
@@ -321,7 +321,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
 
         @Override
-        public List<? extends IGuiEventListener> getEventListeners() {
+        public List<? extends IGuiEventListener> children() {
             return Collections.emptyList();
         }
 
