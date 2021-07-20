@@ -20,7 +20,7 @@ public class OptionBoolean
         super(list, valSpec, spec);
         this.showValidity = false;
 
-        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20, ITextComponent.getTextComponentOrEmpty(""), this::buttonPressed);
+        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20, ITextComponent.nullToEmpty(""), this::buttonPressed);
         this.overrideUnsaved(this.value.get());
     }
 
@@ -36,15 +36,15 @@ public class OptionBoolean
     protected void overrideUnsaved(Boolean value) {
         this.state = value;
         if (this.state) {
-            this.btnChange.setMessage(ITextComponent.getTextComponentOrEmpty(TextFormatting.GREEN + "TRUE"));
+            this.btnChange.setMessage(ITextComponent.nullToEmpty(TextFormatting.GREEN + "TRUE"));
         } else {
-            this.btnChange.setMessage(ITextComponent.getTextComponentOrEmpty(TextFormatting.RED + "FALSE"));
+            this.btnChange.setMessage(ITextComponent.nullToEmpty(TextFormatting.RED + "FALSE"));
         }
     }
 
     @Override
-    public List<? extends IGuiEventListener> getEventListeners() {
-        List<IGuiEventListener> childs = new ArrayList<>(super.getEventListeners());
+    public List<? extends IGuiEventListener> children() {
+        List<IGuiEventListener> childs = new ArrayList<>(super.children());
         childs.add(this.btnChange);
         return childs;
     }

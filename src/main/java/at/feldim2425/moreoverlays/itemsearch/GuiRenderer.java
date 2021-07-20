@@ -53,7 +53,7 @@ public class GuiRenderer {
     }
 
     public void preDraw() {
-        Screen guiscr = Minecraft.getInstance().currentScreen;
+        Screen guiscr = Minecraft.getInstance().screen;
 
         TextFieldWidget textField = JeiModule.getJEITextField();
 
@@ -66,7 +66,7 @@ public class GuiRenderer {
     }
 
     public void postDraw() {
-        Screen guiscr = Minecraft.getInstance().currentScreen;
+        Screen guiscr = Minecraft.getInstance().screen;
 
         if (allowRender && canShowIn(guiscr)) {
             allowRender = false;
@@ -75,15 +75,15 @@ public class GuiRenderer {
     }
 
     private void drawSearchFrame(TextFieldWidget textField) {
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableDepthTest();
-        GlStateManager.disableTexture();
-        GlStateManager.color4f(1, 1, 1, 1);
-        GlStateManager.pushMatrix();
+        RenderHelper.setupForFlatItems();
+        GlStateManager._enableAlphaTest();
+        GlStateManager._enableDepthTest();
+        GlStateManager._disableTexture();
+        GlStateManager._color4f(1, 1, 1, 1);
+        GlStateManager._pushMatrix();
         Tessellator tess = Tessellator.getInstance();
-        BufferBuilder buffer = tess.getBuffer();
-        GlStateManager.color4f(1, 1, 0, 1);
+        BufferBuilder buffer = tess.getBuilder();
+        GlStateManager._color4f(1, 1, 0, 1);
 
         float x = textField.x + 2;
         float y = textField.y + 2;
@@ -91,39 +91,39 @@ public class GuiRenderer {
         float height = textField.getHeight() - 4;
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        buffer.pos(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        buffer.pos(x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        buffer.pos(x - FRAME_RADIUS, y, 1000).endVertex();
-        buffer.pos(x + width + FRAME_RADIUS, y, 1000).endVertex();
+        buffer.vertex(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
+        buffer.vertex(x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
+        buffer.vertex(x - FRAME_RADIUS, y, 1000).endVertex();
+        buffer.vertex(x + width + FRAME_RADIUS, y, 1000).endVertex();
 
-        buffer.pos(x, y, 1000).endVertex();
-        buffer.pos(x - FRAME_RADIUS, y, 1000).endVertex();
-        buffer.pos(x - FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.pos(x, y + height, 1000).endVertex();
+        buffer.vertex(x, y, 1000).endVertex();
+        buffer.vertex(x - FRAME_RADIUS, y, 1000).endVertex();
+        buffer.vertex(x - FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.vertex(x, y + height, 1000).endVertex();
 
-        buffer.pos(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.pos(x - FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.pos(x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
-        buffer.pos(x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        buffer.vertex(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.vertex(x - FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.vertex(x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        buffer.vertex(x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
 
-        buffer.pos(x + width + FRAME_RADIUS, y, 1000).endVertex();
-        buffer.pos(x + width, y, 1000).endVertex();
-        buffer.pos(x + width, y + height, 1000).endVertex();
-        buffer.pos(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        buffer.vertex(x + width + FRAME_RADIUS, y, 1000).endVertex();
+        buffer.vertex(x + width, y, 1000).endVertex();
+        buffer.vertex(x + width, y + height, 1000).endVertex();
+        buffer.vertex(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
 
-        tess.draw();
-        GlStateManager.color4f(1, 1, 1, 1);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
-        GlStateManager.enableTexture();
+        tess.end();
+        GlStateManager._color4f(1, 1, 1, 1);
+        GlStateManager._disableBlend();
+        GlStateManager._popMatrix();
+        GlStateManager._enableTexture();
     }
 
     public void renderTooltip(ItemStack stack) {
-        Screen guiscr = Minecraft.getInstance().currentScreen;
+        Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
             ContainerScreen<?> gui = (ContainerScreen<?>) guiscr;
-            if (gui.getSlotUnderMouse() != null && gui.getSlotUnderMouse().getHasStack()
-                    && gui.getSlotUnderMouse().getStack().equals(stack)) {
+            if (gui.getSlotUnderMouse() != null && gui.getSlotUnderMouse().hasItem()
+                    && gui.getSlotUnderMouse().getItem().equals(stack)) {
                 allowRender = false;
                 drawSlotOverlay((ContainerScreen<?>) guiscr);
             }
@@ -131,20 +131,20 @@ public class GuiRenderer {
     }
 
     private void drawSlotOverlay(ContainerScreen<?> gui) {
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderHelper.setupForFlatItems();
+        GlStateManager._enableAlphaTest();
+        GlStateManager._color4f(1, 1, 1, 1);
 
         if (!enabled || views == null || views.isEmpty())
             return;
 
         Tessellator tess = Tessellator.getInstance();
-        BufferBuilder renderer = tess.getBuffer();
+        BufferBuilder renderer = tess.getBuilder();
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture();
-        GlStateManager.color4f(0, 0, 0, 0.5F);
+        GlStateManager._pushMatrix();
+        GlStateManager._enableBlend();
+        GlStateManager._disableTexture();
+        GlStateManager._color4f(0, 0, 0, 0.5F);
 
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 
@@ -153,24 +153,24 @@ public class GuiRenderer {
                 Vector2f posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
                 float px = posvec.x;
                 float py = posvec.y;
-                renderer.pos(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
-                renderer.pos(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
-                renderer.pos(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
-                renderer.pos(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
             }
         }
 
-        tess.draw();
+        tess.end();
 
-        GlStateManager.enableTexture();
-        GlStateManager.popMatrix();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager._enableTexture();
+        GlStateManager._popMatrix();
+        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        GlStateManager.disableBlend();
+        GlStateManager._disableBlend();
     }
 
     public boolean canShowIn(Screen gui) {
-        return (gui instanceof ContainerScreen<?>) && ((ContainerScreen<?>) gui).getContainer() != null && !((ContainerScreen<?>) gui).getContainer().inventorySlots.isEmpty();
+        return (gui instanceof ContainerScreen<?>) && ((ContainerScreen<?>) gui).getMenu() != null && !((ContainerScreen<?>) gui).getMenu().slots.isEmpty();
     }
 
     private void checkSlots(ContainerScreen<?> container) {
@@ -179,7 +179,7 @@ public class GuiRenderer {
         } else {
             views.clear();
         }
-        for (Slot slot : container.getContainer().inventorySlots) {
+        for (Slot slot : container.getMenu().slots) {
             //System.out.println(slot);
             SlotViewWrapper wrapper;
             if (!views.containsKey(slot)) {
@@ -189,7 +189,7 @@ public class GuiRenderer {
                 wrapper = views.get(slot);
             }
 
-            wrapper.setEnableOverlay(wrapper.getView().canSearch() && !isSearchedItem(slot.getStack()));
+            wrapper.setEnableOverlay(wrapper.getView().canSearch() && !isSearchedItem(slot.getItem()));
         }
     }
 
@@ -201,11 +201,11 @@ public class GuiRenderer {
                 return true;
             }
         }
-        return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getText().toLowerCase());
+        return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
     }
 
     public void tick() {
-        final Screen screen = Minecraft.getInstance().currentScreen;
+        final Screen screen = Minecraft.getInstance().screen;
         if (!canShowIn(screen))
             return;
         if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {

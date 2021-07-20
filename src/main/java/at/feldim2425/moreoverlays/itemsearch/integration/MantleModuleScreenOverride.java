@@ -34,12 +34,12 @@ public class MantleModuleScreenOverride implements IOverrideSlotPos {
 
         @Override
         public Vector2f getRenderPos(int guiLeft, int guiTop) {
-            return new Vector2f(-guiLeft + gui.cornerX + slot.xPos, -guiTop + gui.cornerY + slot.yPos);
+            return new Vector2f(-guiLeft + gui.cornerX + slot.x, -guiTop + gui.cornerY + slot.y);
         }
 
         @Override
         public boolean canSearch() {
-            return slot.inventory.getSizeInventory() > slot.getSlotIndex();
+            return slot.container.getContainerSize() > slot.getSlotIndex();
         }
     }
 }

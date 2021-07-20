@@ -31,8 +31,8 @@ public class ChunkBoundsRenderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         final Vector3d view = render.camera.getPosition();
-        GlStateManager._rotatef(player.getViewYRot(0), 1, 0, 0); // Fixes camera rotation.
-        GlStateManager._rotatef(player.getViewXRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
+        GlStateManager._rotatef(player.getViewXRot(0), 1, 0, 0); // Fixes camera rotation.
+        GlStateManager._rotatef(player.getViewYRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
         GlStateManager._translated(-view.x, -view.y, -view.z);
 
         final int h = player.level.getHeight();

@@ -14,7 +14,7 @@ public class CustomSpawnerLightScanner extends LightScannerVanilla {
     @Override
     public boolean shouldCheck(BlockPos pos, World world) {
         Biome biome = world.getBiome(pos);
-        return biome.getMobSpawnInfo().getCreatureSpawnProbability() <= 0;
+        return biome.getMobSettings().getCreatureProbability() <= 0;
         
 		/*
 		EnvironmentSettings environment = CMSUtils.getEnvironment(world);

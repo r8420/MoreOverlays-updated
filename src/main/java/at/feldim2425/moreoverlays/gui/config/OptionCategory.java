@@ -17,7 +17,7 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment) {
         super(list);
-        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.getTextComponentOrEmpty(name), (btn) -> {
+        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.nullToEmpty(name), (btn) -> {
             list.push(path);
         });
 
@@ -44,11 +44,11 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
-        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.getTextComponentOrEmpty(tooltip.toString()), mouseX, mouseY);
+        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.nullToEmpty(tooltip.toString()), mouseX, mouseY);
     }
 
     @Override
-    public List<? extends IGuiEventListener> getEventListeners() {
+    public List<? extends IGuiEventListener> children() {
         return Arrays.asList(this.btnOpen);
     }
 }

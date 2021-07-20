@@ -19,7 +19,7 @@ public class OptionGeneric<V>
         super(list, valSpec, spec);
         this.showValidity = true;
 
-        this.tfConfigEntry = new TextFieldWidget(Minecraft.getInstance().fontRenderer, OptionValueEntry.TITLE_WIDTH + 5, 2, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 16, ITextComponent.getTextComponentOrEmpty(""));
+        this.tfConfigEntry = new TextFieldWidget(Minecraft.getInstance().font, OptionValueEntry.TITLE_WIDTH + 5, 2, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 16, ITextComponent.nullToEmpty(""));
         this.overrideUnsaved(this.value.get());
     }
 
@@ -32,20 +32,20 @@ public class OptionGeneric<V>
 
     @Override
     protected void overrideUnsaved(V value) {
-        this.tfConfigEntry.setText(value.toString());
+        this.tfConfigEntry.setValue(value.toString());
     }
 
     @Override
-    public List<? extends IGuiEventListener> getEventListeners() {
-        List<IGuiEventListener> childs = new ArrayList<>(super.getEventListeners());
+    public List<? extends IGuiEventListener> children() {
+        List<IGuiEventListener> childs = new ArrayList<>(super.children());
         childs.add(this.tfConfigEntry);
         return childs;
     }
 
     @Override
-    public void setFocusedDefault(IGuiEventListener focused) {
+    public void setFocused(IGuiEventListener focused) {
         if (focused == null) {
-            this.tfConfigEntry.setFocused2(false);
+            this.tfConfigEntry.setFocus(false);
         }
     }
 
@@ -56,13 +56,13 @@ public class OptionGeneric<V>
 
         try {
             if (this.spec.getClazz() == String.class) {
-                this.updateValue((V) this.tfConfigEntry.getText());
+                this.updateValue((V) this.tfConfigEntry.getValue());
             } else if (this.value instanceof ForgeConfigSpec.IntValue) {
-                this.updateValue((V) Integer.valueOf(this.tfConfigEntry.getText()));
+                this.updateValue((V) Integer.valueOf(this.tfConfigEntry.getValue()));
             } else if (this.value instanceof ForgeConfigSpec.DoubleValue) {
-                this.updateValue((V) Double.valueOf(this.tfConfigEntry.getText()));
+                this.updateValue((V) Double.valueOf(this.tfConfigEntry.getValue()));
             } else if (this.value instanceof ForgeConfigSpec.BooleanValue) {
-                this.updateValue((V) Boolean.valueOf(this.tfConfigEntry.getText()));
+                this.updateValue((V) Boolean.valueOf(this.tfConfigEntry.getValue()));
             }
         } catch (NumberFormatException e) {
             this.updateValue(null);

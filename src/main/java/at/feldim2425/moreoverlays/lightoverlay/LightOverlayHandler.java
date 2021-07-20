@@ -46,12 +46,12 @@ public class LightOverlayHandler {
             detectOptifine();
         }
         if(OPTIFINE){
-            GameSettings settings = Minecraft.getInstance().gameSettings;
+            GameSettings settings = Minecraft.getInstance().options;
             if(enabled){
-                setBobbing = settings.viewBobbing;
-                settings.viewBobbing = false;
+                setBobbing = settings.bobView;
+                settings.bobView = false;
             } else{
-                settings.viewBobbing = setBobbing;
+                settings.bobView = setBobbing;
             }
         }
     }
@@ -103,8 +103,8 @@ public class LightOverlayHandler {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (Minecraft.getInstance().world != null && Minecraft.getInstance().player != null && enabled && event.phase == TickEvent.Phase.END &&
-                (Minecraft.getInstance().currentScreen == null || !Minecraft.getInstance().currentScreen.isPauseScreen())) {
+        if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null && enabled && event.phase == TickEvent.Phase.END &&
+                (Minecraft.getInstance().screen == null || !Minecraft.getInstance().screen.isPauseScreen())) {
             scanner.update(Minecraft.getInstance().player);
         }
 

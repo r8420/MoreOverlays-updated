@@ -19,7 +19,7 @@ public class DefaultSlotView implements IViewSlot {
 
     @Override
     public Vector2f getRenderPos(int guiLeft, int guiTop) {
-        return new Vector2f(slot.xPos, slot.yPos);
+        return new Vector2f(slot.x, slot.y);
     }
 
     @Override

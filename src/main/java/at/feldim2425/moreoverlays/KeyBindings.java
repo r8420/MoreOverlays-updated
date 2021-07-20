@@ -19,7 +19,7 @@ public class KeyBindings {
     public static KeyBinding chunkBounds = new KeyBinding("key." + MoreOverlays.MOD_ID + ".chunkbounds.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F9), "key." + MoreOverlays.MOD_ID + ".category");
 
     private static InputMappings.Input mappedKey(int key) {
-        return InputMappings.Type.KEYSYM.getOrMakeInput(key);
+        return InputMappings.Type.KEYSYM.getOrCreate(key);
     }
 
     public static void init() {
@@ -32,11 +32,11 @@ public class KeyBindings {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
     public void onKeyEvent(InputEvent.KeyInputEvent event) {
-        if (lightOverlay.isPressed()) {
+        if (lightOverlay.isDown()) {
             LightOverlayHandler.setEnabled(!LightOverlayHandler.isEnabled());
         }
 
-        if (chunkBounds.isPressed()) {
+        if (chunkBounds.isDown()) {
             ChunkBoundsHandler.toggleMode();
         }
     }

@@ -22,16 +22,16 @@ public final class ItemUtils {
     public static boolean ingredientMatches(Object ingredient, ItemStack stack) {
         if (ingredient instanceof ItemStack) {
             ItemStack stack1 = (ItemStack) ingredient;
-            return stack1.isItemEqualIgnoreDurability(stack) && JeiModule.areItemsEqualInterpreter(stack1, stack);
+            return stack1.sameItemStackIgnoreDurability(stack) && JeiModule.areItemsEqualInterpreter(stack1, stack);
         } else if (ingredient instanceof EnchantmentData) {
             ListNBT tags;
             if (stack.getItem() instanceof EnchantedBookItem) {
                 tags = EnchantedBookItem.getEnchantments(stack);
             } else {
-                tags = stack.getEnchantmentTagList();
+                tags = stack.getEnchantmentTags();
             }
             return getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(((EnchantmentData) ingredient).enchantment) &&
-                    ench.enchantmentLevel == ((EnchantmentData) ingredient).enchantmentLevel);
+                    ench.level == ((EnchantmentData) ingredient).level);
         }
 
         return false;
@@ -48,7 +48,7 @@ public final class ItemUtils {
                 CompoundNBT nbttagcompound = (CompoundNBT) nbt;
                 int id = nbttagcompound.getShort("id");
                 int level = nbttagcompound.getShort("lvl");
-                Enchantment enchantment = Enchantment.getEnchantmentByID(id);
+                Enchantment enchantment = Enchantment.byId(id);
                 if (enchantment != null && level > 0) {
                     enchantments.add(new EnchantmentData(enchantment, level));
                 }

@@ -27,24 +27,24 @@ public class LightScannerVanilla extends LightScannerBase {
     private final List<EntityType<?>> typesToCheck;
 
     public LightScannerVanilla() {
-        typesToCheck = ForgeRegistries.ENTITIES.getValues().stream().filter((type) -> type.isSummonable() && type.getClassification() == EntityClassification.MONSTER).collect(Collectors.toList());
+        typesToCheck = ForgeRegistries.ENTITIES.getValues().stream().filter((type) -> type.canSummon() && type.getCategory() == EntityClassification.MONSTER).collect(Collectors.toList());
     }
 
     private static boolean checkCollision(BlockPos pos, World world) {
         BlockState block1 = world.getBlockState(pos);
-
-        if (block1.isNormalCube(world, pos) || (!Config.light_IgnoreLayer.get() && world.getBlockState(pos.up()).isNormalCube(world, pos.up()))) //Don't check because a check on normal Cubes will/should return false ( 99% collide ).
+        // POSSIBLE CHANGE: isNormalCube to isCollisionShapeFullBlock
+        if (block1.isCollisionShapeFullBlock(world, pos) || (!Config.light_IgnoreLayer.get() && world.getBlockState(pos.above()).isCollisionShapeFullBlock(world, pos.above()))) //Don't check because a check on normal Cubes will/should return false ( 99% collide ).
             return false;
-        else if (world.isAirBlock(pos) && (Config.light_IgnoreLayer.get() || world.isAirBlock(pos.up())))  //Don't check because Air has no Collision Box
+        else if (world.isEmptyBlock(pos) && (Config.light_IgnoreLayer.get() || world.isEmptyBlock(pos.above())))  //Don't check because Air has no Collision Box
             return true;
 
-        AxisAlignedBB bb = TEST_BB.offset(pos.getX(), pos.getY(), pos.getZ());
-        if (world.getBlockCollisionShapes(null, bb).count() == 0 && !world.containsAnyLiquid(bb)) {
+        AxisAlignedBB bb = TEST_BB.move(pos.getX(), pos.getY(), pos.getZ());
+        if (world.getBlockCollisions(null, bb).count() == 0 && !world.containsAnyLiquid(bb)) {
             if (Config.light_IgnoreLayer.get())
                 return true;
             else {
-                AxisAlignedBB bb2 = bb.offset(0, 1, 0);
-                return world.getBlockCollisionShapes(null, bb2).count() == 0 && !world.containsAnyLiquid(bb2);
+                AxisAlignedBB bb2 = bb.move(0, 1, 0);
+                return world.getBlockCollisions(null, bb2).count() == 0 && !world.containsAnyLiquid(bb2);
             }
         }
         return false;
@@ -61,18 +61,18 @@ public class LightScannerVanilla extends LightScannerBase {
 
     @Override
     public byte getSpawnModeAt(BlockPos pos, World world) {
-        if (world.getLightFor(LightType.BLOCK, pos) >= Config.light_SaveLevel.get())
+        if (world.getBrightness(LightType.BLOCK, pos) >= Config.light_SaveLevel.get())
             return 0;
 
-        final BlockPos blockPos = pos.down();
+        final BlockPos blockPos = pos.below();
 
-        if (world.isAirBlock(blockPos)) {
+        if (world.isEmptyBlock(blockPos)) {
             return 0;
         }
         if(world.containsAnyLiquid(new AxisAlignedBB(blockPos))){
             return 0;
         }
-        if(isChiselsAndBitsLoaded() && world.getBlockState(blockPos).getBlock().getTranslatedName().getString().contains("chiselsandbits")){
+        if(isChiselsAndBitsLoaded() && world.getBlockState(blockPos).getBlock().getName().getString().contains("chiselsandbits")){
             return 0;
         }
         if (!checkCollision(pos, world))
@@ -96,7 +96,7 @@ public class LightScannerVanilla extends LightScannerBase {
             return 0;
         }
 
-        if (world.getLightFor(LightType.SKY, pos) >= Config.light_SaveLevel.get())
+        if (world.getBrightness(LightType.SKY, pos) >= Config.light_SaveLevel.get())
             return 1;
 
         return 2;
