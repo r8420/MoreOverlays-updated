@@ -33,9 +33,21 @@ public class LightOverlayRenderer implements ILightRenderer {
         BlockState blockStateBelow = player.world.getBlockState(pos);
         double y = 0;
         if(blockStateBelow.getMaterial() == Material.SNOW){
-            y = 0.005D + (pos.getY()+0.125D) + 0.01D * -(pos.getY()-player.getPosY()-1);
+            if(pos.getY() > player.getPosY()){
+                // Block is above player
+                y = 0.005D + (pos.getY()+0.125D);
+            } else{
+                // Block is below player
+                y = 0.005D + (pos.getY()+0.125D) + 0.01D * -(pos.getY()-player.getPosY()-1);
+            }
         } else{
-            y = 0.005D + pos.getY() + 0.01D * -(pos.getY()-player.getPosY()-1);
+            if(pos.getY() > player.getPosY()){
+                // Block is above player
+                y = 0.005D + pos.getY();
+            } else{
+                // Block is below player
+                y = 0.005D + pos.getY() + 0.01D * -(pos.getY()-player.getPosY()-1);
+            }
         }
 
 
