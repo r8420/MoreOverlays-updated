@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[33,)"
+loaderVersion="[37,)"
 issueTrackerURL="https://github.com/r8420/MoreOverlays-1.15/issues"
 license="The MIT License (MIT)"
 [[mods]]
@@ -21,7 +21,7 @@ license="The MIT License (MIT)"
 [[dependencies.moreoverlays]]
     modId="forge"
     mandatory=true 
-    versionRange="[33,)"
+    versionRange="[37,)"
     ordering="NONE"
     side="CLIENT"
 [[dependencies.moreoverlays]]
