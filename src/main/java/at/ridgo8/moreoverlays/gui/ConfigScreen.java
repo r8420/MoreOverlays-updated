@@ -84,10 +84,10 @@ public class ConfigScreen extends Screen {
                 Component.nullToEmpty(" " + this.txtDone),
                 (btn) -> this.back());
 
-        this.children.add(this.optionList);
-        this.children.add(this.btnReset);
-        this.children.add(this.btnUndo);
-        this.children.add(this.btnBack);
+        this.addWidget(this.optionList);
+        this.addWidget(this.btnReset);
+        this.addWidget(this.btnUndo);
+        this.addWidget(this.btnBack);
 
         this.btnReset.active = false;
         this.btnUndo.active = false;

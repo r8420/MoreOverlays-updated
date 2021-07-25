@@ -110,7 +110,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             this.getConfigOptionList().getScreen().renderComponentTooltip(matrixStack, tooltipConverted, mouseX, mouseY);
         }
         Lighting.setupForFlatItems();
-        GlStateManager._disableLighting();
+        GlStateManager._disableBlend(); // TODO: Replace this
     }
 
     protected abstract void overrideUnsaved(V value);

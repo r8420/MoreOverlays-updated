@@ -3,6 +3,7 @@ package at.ridgo8.moreoverlays.gui.config;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -54,4 +55,8 @@ public class OptionBoolean
         this.updateValue(this.state);
     }
 
+    @Override
+    public List<? extends NarratableEntry> narratables() {
+        return null;
+    }
 }

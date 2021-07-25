@@ -9,9 +9,9 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 //import mezz.jei.api.runtime.IIngredientListOverlay;
 //import mezz.jei.api.runtime.IJeiRuntime;
 //import mezz.jei.gui.overlay.IngredientListOverlay;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+//import net.minecraft.client.gui.widget.TextFieldWidget;
+//import net.minecraft.item.ItemStack;
+//import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;

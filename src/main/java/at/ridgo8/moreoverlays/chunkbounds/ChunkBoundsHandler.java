@@ -84,11 +84,11 @@ public class ChunkBoundsHandler {
         boolean updateInfo = regionInfo.isEmpty();
 
         int newRegionX;
-        if (player.xChunk < 0) {
-            newRegionX = (player.xChunk + 1) / REGION_SIZEX;
+        if (player.chunkPosition().x < 0) {
+            newRegionX = (player.chunkPosition().x + 1) / REGION_SIZEX;
             newRegionX--;
         } else {
-            newRegionX = player.xChunk / REGION_SIZEX;
+            newRegionX = player.chunkPosition().x / REGION_SIZEX;
         }
         if (playerPrevRegionPosX != newRegionX) {
             playerPrevRegionPosX = newRegionX;
@@ -96,11 +96,11 @@ public class ChunkBoundsHandler {
         }
 
         int newRegionZ;
-        if (player.zChunk < 0) {
-            newRegionZ = (player.zChunk + 1) / REGION_SIZEZ;
+        if (player.chunkPosition().z < 0) {
+            newRegionZ = (player.chunkPosition().z + 1) / REGION_SIZEZ;
             newRegionZ--;
         } else {
-            newRegionZ = player.zChunk / REGION_SIZEZ;
+            newRegionZ = player.chunkPosition().z / REGION_SIZEZ;
         }
         if (playerPrevRegionPosZ != newRegionZ) {
             playerPrevRegionPosZ = newRegionZ;

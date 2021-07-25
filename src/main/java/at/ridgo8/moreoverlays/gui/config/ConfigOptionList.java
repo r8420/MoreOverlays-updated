@@ -13,6 +13,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -293,10 +294,10 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
             mouseX -= rowLeft;
             mouseY -= rowTop;
-            GlStateManager._translatef(rowLeft, rowTop, 0);
+            GL11.glTranslatef(rowLeft, rowTop, 0);
             renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
 
-            GlStateManager._translatef(-rowLeft, -rowTop, 0);
+            GL11.glTranslatef(-rowLeft, -rowTop, 0);
         }
 
         protected abstract void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
@@ -313,7 +314,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             if (this.mouseOver) {
                 this.renderTooltip(matrixStack, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
                 Lighting.setupForFlatItems();;
-                GlStateManager._disableLighting();
+                GlStateManager._disableBlend(); // TODO: Replace this
             }
         }
 

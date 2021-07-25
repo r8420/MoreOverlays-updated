@@ -5,8 +5,8 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.SnowBlock;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -19,10 +19,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
+import static net.minecraft.client.CameraType.THIRD_PERSON_FRONT;
 
-import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_FRONT;
 
-public clasnet.minecraft.client.CameraTypeenderer {
+public class LightOverlayRenderer implements ILightRenderer {
 
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
     private static final EntityRenderDispatcher render = Minecraft.getInstance().getEntityRenderDispatcher();
@@ -59,7 +59,7 @@ public clasnet.minecraft.client.CameraTypeenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        renderer.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION_COLOR);
+        renderer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
         renderer.vertex(x0, y, z0).color(r, g, b, 1).endVertex();
         renderer.vertex(x1, y, z1).color(r, g, b, 1).endVertex();
 
@@ -73,15 +73,15 @@ public clasnet.minecraft.client.CameraTypeenderer {
         if(Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT){
             return;
         }
-        Minecraft.getInstance().getTextureManager().bind(BLANK_TEX);
-        GlStateManager._pushMatrix();
+        Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
+        GL11.glPushMatrix();
         GL11.glLineWidth((float) (double) Config.render_spawnLineWidth.get());
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         final Vec3 view = render.camera.getPosition();
-        GlStateManager._rotatef(player.getViewXRot(0), 1, 0, 0); // Fixes camera rotation.
-        GlStateManager._rotatef(player.getViewYRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
-        GlStateManager._translated(-view.x, -view.y, -view.z);
+        GL11.glRotatef(player.getViewXRot(0), 1, 0, 0); // Fixes camera rotation.
+        GL11.glRotatef(player.getViewYRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
+        GL11.glTranslated(-view.x, -view.y, -view.z);
 
         float ar = ((float) ((Config.render_spawnAColor.get() >> 16) & 0xFF)) / 255F;
         float ag = ((float) ((Config.render_spawnAColor.get() >> 8) & 0xFF)) / 255F;
@@ -103,6 +103,6 @@ public clasnet.minecraft.client.CameraTypeenderer {
         }
 
 
-        GlStateManager._popMatrix();
+        GL11.glPopMatrix();
     }
 }

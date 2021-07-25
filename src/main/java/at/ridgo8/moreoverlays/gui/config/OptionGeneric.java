@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -47,6 +48,11 @@ public class OptionGeneric<V>
         if (focused == null) {
             this.tfConfigEntry.setFocus(false);
         }
+    }
+
+    @Override
+    public List<? extends NarratableEntry> narratables() {
+        return null;
     }
 
     @Override

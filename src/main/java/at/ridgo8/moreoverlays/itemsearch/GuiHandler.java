@@ -2,7 +2,6 @@ package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.ClientRegistrationHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
