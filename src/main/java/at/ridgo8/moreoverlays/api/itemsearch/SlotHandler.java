@@ -1,8 +1,8 @@
 package at.ridgo8.moreoverlays.api.itemsearch;
 
 import at.ridgo8.moreoverlays.itemsearch.DefaultSlotView;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.inventory.Slot;
 
 import java.util.ArrayList;
 
@@ -16,12 +16,12 @@ public final class SlotHandler {
      *  Register a IOverrideSlotPos for non GuiContainers
      */
     public void addPositionOverride(IOverrideSlotPos slotPos) {
-        if (overrides.contains(slotPos) || slotPos instanceof ContainerScreen<?>)
+        if (overrides.contains(slotPos) || slotPos instanceof AbstractContainerScreen<?>)
             return;
         overrides.add(slotPos);
     }
 
-    public IViewSlot getViewSlot(ContainerScreen<?> container, Slot slot) {
+    public IViewSlot getViewSlot(AbstractContainerScreen<?> container, Slot slot) {
         if (container instanceof IOverrideSlotPos) {
             IViewSlot slot1 = ((IOverrideSlotPos) container).getSlot(container, slot);
             if (slot1 != null)

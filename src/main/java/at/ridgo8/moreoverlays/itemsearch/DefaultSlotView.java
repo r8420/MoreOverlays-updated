@@ -1,8 +1,8 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.api.itemsearch.IViewSlot;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.phys.Vec2;
 
 public class DefaultSlotView implements IViewSlot {
 
@@ -18,8 +18,8 @@ public class DefaultSlotView implements IViewSlot {
     }
 
     @Override
-    public Vector2f getRenderPos(int guiLeft, int guiTop) {
-        return new Vector2f(slot.x, slot.y);
+    public Vec2 getRenderPos(int guiLeft, int guiTop) {
+        return new Vec2(slot.x, slot.y);
     }
 
     @Override

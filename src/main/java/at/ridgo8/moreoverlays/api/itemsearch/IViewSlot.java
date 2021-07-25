@@ -1,7 +1,7 @@
 package at.ridgo8.moreoverlays.api.itemsearch;
 
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.phys.Vec2;
 
 public interface IViewSlot {
 
@@ -13,7 +13,7 @@ public interface IViewSlot {
     /*
      * Position offset for the Gui
      */
-    Vector2f getRenderPos(int guiLeft, int guiTop);
+    Vec2 getRenderPos(int guiLeft, int guiTop);
 
     /*
      * false if the ItemSearch should ignore this slot

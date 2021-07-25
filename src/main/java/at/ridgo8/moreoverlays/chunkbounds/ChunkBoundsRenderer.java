@@ -4,24 +4,22 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_FRONT;
 
-public class ChunkBoundsRenderer {
-
-    private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
-    private static final EntityRendererManager render = Minecraft.getInstance().getEntityRenderDispatcher();
+public clasnet.minecraft.client.CameraTypenal static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
+    private static final EntityRenderDispatcher render = Minecraft.getInstance().getEntityRenderDispatcher();
 
     public static void renderOverlays() {
-        PlayerEntity player = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
         if(Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT){
             return;
         }
@@ -30,7 +28,7 @@ public class ChunkBoundsRenderer {
         GL11.glLineWidth((float) (double) Config.render_chunkLineWidth.get());
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        final Vector3d view = render.camera.getPosition();
+        final Vec3 view = render.camera.getPosition();
         GlStateManager._rotatef(player.getViewXRot(0), 1, 0, 0); // Fixes camera rotation.
         GlStateManager._rotatef(player.getViewYRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
         GlStateManager._translated(-view.x, -view.y, -view.z);
@@ -108,10 +106,10 @@ public class ChunkBoundsRenderer {
     }
 
     public static void renderEdge(double x, double z, double h3, double h) {
-        Tessellator tess = Tessellator.getInstance();
+        Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        renderer.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION);
 
         renderer.vertex(x, h3, z).endVertex(); // POSSIBLE CHANGE renderer.pos to something else
         renderer.vertex(x, h, z).endVertex();
@@ -120,10 +118,10 @@ public class ChunkBoundsRenderer {
     }
 
     public static void renderGrid(double x0, double y0, double z0, double x1, double y1, double z1, double step) {
-        Tessellator tess = Tessellator.getInstance();
+        Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        renderer.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION);
         for (double x = x0; x <= x1; x += step) {
             renderer.vertex(x, y0, z0).endVertex(); // POSSIBLE CHANGE renderer.pos to something else
             renderer.vertex(x, y1, z0).endVertex();

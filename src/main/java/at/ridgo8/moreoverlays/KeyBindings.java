@@ -2,8 +2,8 @@ package at.ridgo8.moreoverlays;
 
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -15,11 +15,11 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
 
-    public static KeyBinding lightOverlay = new KeyBinding("key." + MoreOverlays.MOD_ID + ".lightoverlay.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F7), "key." + MoreOverlays.MOD_ID + ".category");
-    public static KeyBinding chunkBounds = new KeyBinding("key." + MoreOverlays.MOD_ID + ".chunkbounds.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F9), "key." + MoreOverlays.MOD_ID + ".category");
+    public static KeyMapping lightOverlay = new KeyMapping("key." + MoreOverlays.MOD_ID + ".lightoverlay.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F7), "key." + MoreOverlays.MOD_ID + ".category");
+    public static KeyMapping chunkBounds = new KeyMapping("key." + MoreOverlays.MOD_ID + ".chunkbounds.desc", KeyConflictContext.IN_GAME, mappedKey(GLFW.GLFW_KEY_F9), "key." + MoreOverlays.MOD_ID + ".category");
 
-    private static InputMappings.Input mappedKey(int key) {
-        return InputMappings.Type.KEYSYM.getOrCreate(key);
+    private static InputConstants.Key mappedKey(int key) {
+        return InputConstants.Type.KEYSYM.getOrCreate(key);
     }
 
     public static void init() {

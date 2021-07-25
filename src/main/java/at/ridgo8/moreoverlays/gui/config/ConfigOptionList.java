@@ -4,14 +4,14 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.ConfigScreen;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.INestedGuiEventHandler;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.lang.reflect.Field;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 // TODO: As I wrote this system I noticed, that the way AbstractOptionList renders items and passes events is not optimal for this purpose
 // Rendering is done in one pass therefore Tooltips will usually be rendered below other items further down and events are only passed
 // to the hoverd / selected item which makes unfocosing of textfields a challange. Custom system needed.
-public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.OptionEntry> {
+public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionList.OptionEntry> {
 
     public static final String UNDO_CHAR = "\u21B6";
     public static final String RESET_CHAR = "\u2604";
@@ -68,7 +68,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
 
 
     @Override
-    protected void renderDecorations(MatrixStack matrixStack, int p_renderDecorations_1_, int p_renderDecorations_2_) {
+    protected void renderDecorations(PoseStack matrixStack, int p_renderDecorations_1_, int p_renderDecorations_2_) {
         int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
@@ -268,7 +268,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
     }
 
-    public abstract static class OptionEntry extends AbstractOptionList.Entry<ConfigOptionList.OptionEntry> implements INestedGuiEventHandler {
+    public abstract static class OptionEntry extends ContainerObjectSelectionList.Entry<ConfigOptionList.OptionEntry> implements ContainerEventHandler {
         private final ConfigOptionList optionList;
 
         protected int rowTop, rowLeft;
@@ -281,7 +281,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
         }
 
         @Override
-        public void render(MatrixStack matrixStack, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+        public void render(PoseStack matrixStack, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                            boolean mouseOver, float partialTick) {
             this.rowTop = rowTop;
             this.rowLeft = rowLeft;
@@ -299,7 +299,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
             GlStateManager._translatef(-rowLeft, -rowTop, 0);
         }
 
-        protected abstract void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+        protected abstract void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                                boolean mouseOver, float partialTick);
 
         /*
@@ -309,19 +309,19 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
          * Not the best way but AbstractOptionList doesn't seem to have any better hooks to do that.
          * A custom Implementation would be better but I'm too lazy to do that
          */
-        public void runRenderTooltip(MatrixStack matrixStack) {
+        public void runRenderTooltip(PoseStack matrixStack) {
             if (this.mouseOver) {
                 this.renderTooltip(matrixStack, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
-                RenderHelper.setupForFlatItems();;
+                Lighting.setupForFlatItems();;
                 GlStateManager._disableLighting();
             }
         }
 
-        protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        protected void renderTooltip(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         }
 
         @Override
-        public List<? extends IGuiEventListener> children() {
+        public List<? extends GuiEventListener> children() {
             return Collections.emptyList();
         }
 

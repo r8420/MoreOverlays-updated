@@ -1,7 +1,7 @@
 package at.ridgo8.moreoverlays.api.itemsearch;
 
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.inventory.Slot;
 
 /*
  * Can be implemented in the GuiContainer to Override the position of the slots
@@ -14,5 +14,5 @@ public interface IOverrideSlotPos {
      * Get the override
      * if the Handler cannot handle this Slot/Gui just return null
      */
-    IViewSlot getSlot(ContainerScreen<?> gui, Slot slot);
+    IViewSlot getSlot(AbstractContainerScreen<?> gui, Slot slot);
 }

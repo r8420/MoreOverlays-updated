@@ -1,10 +1,10 @@
 package at.ridgo8.moreoverlays.gui.config;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -13,18 +13,18 @@ import java.util.List;
 public class OptionGeneric<V>
         extends OptionValueEntry<V> {
 
-    private final TextFieldWidget tfConfigEntry;
+    private final EditBox tfConfigEntry;
 
     public OptionGeneric(ConfigOptionList list, ForgeConfigSpec.ConfigValue<V> valSpec, ForgeConfigSpec.ValueSpec spec) {
         super(list, valSpec, spec);
         this.showValidity = true;
 
-        this.tfConfigEntry = new TextFieldWidget(Minecraft.getInstance().font, OptionValueEntry.TITLE_WIDTH + 5, 2, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 16, ITextComponent.nullToEmpty(""));
+        this.tfConfigEntry = new EditBox(Minecraft.getInstance().font, OptionValueEntry.TITLE_WIDTH + 5, 2, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 16, Component.nullToEmpty(""));
         this.overrideUnsaved(this.value.get());
     }
 
     @Override
-    protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+    protected void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
         this.tfConfigEntry.render(matrixStack, mouseX, mouseY, 0);
@@ -36,14 +36,14 @@ public class OptionGeneric<V>
     }
 
     @Override
-    public List<? extends IGuiEventListener> children() {
-        List<IGuiEventListener> childs = new ArrayList<>(super.children());
+    public List<? extends GuiEventListener> children() {
+        List<GuiEventListener> childs = new ArrayList<>(super.children());
         childs.add(this.tfConfigEntry);
         return childs;
     }
 
     @Override
-    public void setFocused(IGuiEventListener focused) {
+    public void setFocused(GuiEventListener focused) {
         if (focused == null) {
             this.tfConfigEntry.setFocus(false);
         }

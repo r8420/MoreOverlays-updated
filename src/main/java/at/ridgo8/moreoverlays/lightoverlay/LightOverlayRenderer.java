@@ -5,30 +5,30 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.SnowBlock;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_FRONT;
 
-public class LightOverlayRenderer implements ILightRenderer {
+public clasnet.minecraft.client.CameraTypeenderer {
 
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
-    private static final EntityRendererManager render = Minecraft.getInstance().getEntityRenderDispatcher();
+    private static final EntityRenderDispatcher render = Minecraft.getInstance().getEntityRenderDispatcher();
 
     private static void renderCross(BlockPos pos, float r, float g, float b) {
-        PlayerEntity player = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
 
         BlockState blockStateBelow = player.level.getBlockState(pos);
         double y = 0;
@@ -56,10 +56,10 @@ public class LightOverlayRenderer implements ILightRenderer {
         double z0 = pos.getZ();
         double z1 = z0 + 1;
 
-        Tessellator tess = Tessellator.getInstance();
+        Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        renderer.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION_COLOR);
         renderer.vertex(x0, y, z0).color(r, g, b, 1).endVertex();
         renderer.vertex(x1, y, z1).color(r, g, b, 1).endVertex();
 
@@ -69,7 +69,7 @@ public class LightOverlayRenderer implements ILightRenderer {
     }
 
     public void renderOverlays(ILightScanner scanner) {
-        PlayerEntity player = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
         if(Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT){
             return;
         }
@@ -78,7 +78,7 @@ public class LightOverlayRenderer implements ILightRenderer {
         GL11.glLineWidth((float) (double) Config.render_spawnLineWidth.get());
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        final Vector3d view = render.camera.getPosition();
+        final Vec3 view = render.camera.getPosition();
         GlStateManager._rotatef(player.getViewXRot(0), 1, 0, 0); // Fixes camera rotation.
         GlStateManager._rotatef(player.getViewYRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
         GlStateManager._translated(-view.x, -view.y, -view.z);

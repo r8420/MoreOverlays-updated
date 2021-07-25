@@ -7,16 +7,16 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.EditBox;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec2;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Map;
@@ -43,8 +43,8 @@ public class GuiRenderer {
             return;
         }
 
-        guiOffsetX = GuiUtils.getGuiLeft((ContainerScreen<?>) gui);
-        guiOffsetY = GuiUtils.getGuiTop((ContainerScreen<?>) gui);
+        guiOffsetX = GuiUtils.getGuiLeft((AbstractContainerScreen<?>) gui);
+        guiOffsetY = GuiUtils.getGuiTop((AbstractContainerScreen<?>) gui);
 
     }
 
@@ -70,18 +70,18 @@ public class GuiRenderer {
 
         if (allowRender && canShowIn(guiscr)) {
             allowRender = false;
-            drawSlotOverlay((ContainerScreen<?>) guiscr);
+            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
         }
     }
 
-    private void drawSearchFrame(TextFieldWidget textField) {
-        RenderHelper.setupForFlatItems();
+    private void drawSearchFrame(EditBox textField) {
+        Lighting.setupForFlatItems();
         GlStateManager._enableAlphaTest();
         GlStateManager._enableDepthTest();
         GlStateManager._disableTexture();
         GlStateManager._color4f(1, 1, 1, 1);
         GlStateManager._pushMatrix();
-        Tessellator tess = Tessellator.getInstance();
+        Tesselator tess = Tesselator.getInstance();
         BufferBuilder buffer = tess.getBuilder();
         GlStateManager._color4f(1, 1, 0, 1);
 
@@ -90,7 +90,7 @@ public class GuiRenderer {
         float width = textField.getWidth() - 4;
         float height = textField.getHeight() - 4;
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
         buffer.vertex(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
         buffer.vertex(x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
         buffer.vertex(x - FRAME_RADIUS, y, 1000).endVertex();
@@ -121,24 +121,24 @@ public class GuiRenderer {
     public void renderTooltip(ItemStack stack) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
-            ContainerScreen<?> gui = (ContainerScreen<?>) guiscr;
+            AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) guiscr;
             if (gui.getSlotUnderMouse() != null && gui.getSlotUnderMouse().hasItem()
                     && gui.getSlotUnderMouse().getItem().equals(stack)) {
                 allowRender = false;
-                drawSlotOverlay((ContainerScreen<?>) guiscr);
+                drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
             }
         }
     }
 
-    private void drawSlotOverlay(ContainerScreen<?> gui) {
-        RenderHelper.setupForFlatItems();
+    private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
+        Lighting.setupForFlatItems();
         GlStateManager._enableAlphaTest();
         GlStateManager._color4f(1, 1, 1, 1);
 
         if (!enabled || views == null || views.isEmpty())
             return;
 
-        Tessellator tess = Tessellator.getInstance();
+        Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
         GlStateManager._pushMatrix();
@@ -146,11 +146,11 @@ public class GuiRenderer {
         GlStateManager._disableTexture();
         GlStateManager._color4f(0, 0, 0, 0.5F);
 
-        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
 
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
-                Vector2f posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
+                Vec2 posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
                 float px = posvec.x;
                 float py = posvec.y;
                 renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
@@ -170,10 +170,10 @@ public class GuiRenderer {
     }
 
     public boolean canShowIn(Screen gui) {
-        return (gui instanceof ContainerScreen<?>) && ((ContainerScreen<?>) gui).getMenu() != null && !((ContainerScreen<?>) gui).getMenu().slots.isEmpty();
+        return (gui instanceof AbstractContainerScreen<?>) && ((AbstractContainerScreen<?>) gui).getMenu() != null && !((AbstractContainerScreen<?>) gui).getMenu().slots.isEmpty();
     }
 
-    private void checkSlots(ContainerScreen<?> container) {
+    private void checkSlots(AbstractContainerScreen<?> container) {
         if (views == null) {
             views = HashBiMap.create();
         } else {
@@ -215,10 +215,10 @@ public class GuiRenderer {
 //        }
 
 
-        if (enabled && screen instanceof ContainerScreen<?>) {
-            checkSlots((ContainerScreen<?>) screen);
-            guiOffsetX = GuiUtils.getGuiLeft((ContainerScreen<?>) screen);
-            guiOffsetY = GuiUtils.getGuiTop((ContainerScreen<?>) screen);
+        if (enabled && screen instanceof AbstractContainerScreen<?>) {
+            checkSlots((AbstractContainerScreen<?>) screen);
+            guiOffsetX = GuiUtils.getGuiLeft((AbstractContainerScreen<?>) screen);
+            guiOffsetY = GuiUtils.getGuiTop((AbstractContainerScreen<?>) screen);
         } else if (views != null) {
             views.clear();
         }

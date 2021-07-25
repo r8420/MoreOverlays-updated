@@ -1,7 +1,7 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
@@ -13,10 +13,10 @@ public class GuiUtils {
 
     public static void initUtil() {
         try {
-            fieldLeft = ObfuscationReflectionHelper.findField(ContainerScreen.class, "leftPos");
+            fieldLeft = ObfuscationReflectionHelper.findField(AbstractContainerScreen.class, "leftPos");
             fieldLeft.setAccessible(true);
 
-            fieldTop = ObfuscationReflectionHelper.findField(ContainerScreen.class, "topPos");
+            fieldTop = ObfuscationReflectionHelper.findField(AbstractContainerScreen.class, "topPos");
             fieldTop.setAccessible(true);
         } catch (ObfuscationReflectionHelper.UnableToFindFieldException e) {
             MoreOverlays.logger.error("Tried to load gui coordinate fields for reflection");
@@ -26,7 +26,7 @@ public class GuiUtils {
         }
     }
 
-    public static int getGuiTop(ContainerScreen<?> container) {
+    public static int getGuiTop(AbstractContainerScreen<?> container) {
         if (fieldTop == null) {
             return 0;
         }
@@ -39,7 +39,7 @@ public class GuiUtils {
         return 0;
     }
 
-    public static int getGuiLeft(ContainerScreen<?> container) {
+    public static int getGuiLeft(AbstractContainerScreen<?> container) {
         if (fieldLeft == null) {
             return 0;
         }

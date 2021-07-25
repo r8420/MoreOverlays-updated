@@ -5,7 +5,7 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
-import net.minecraft.client.GameSettings;
+import net.minecraft.client.Options;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,7 +46,7 @@ public class LightOverlayHandler {
             detectOptifine();
         }
         if(OPTIFINE){
-            GameSettings settings = Minecraft.getInstance().options;
+            Options settings = Minecraft.getInstance().options;
             if(enabled){
                 setBobbing = settings.bobView;
                 settings.bobView = false;

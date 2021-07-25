@@ -1,12 +1,12 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -24,34 +24,34 @@ public final class ItemUtils {
             ItemStack stack1 = (ItemStack) ingredient;
 //            return stack1.sameItemStackIgnoreDurability(stack) && JeiModule.areItemsEqualInterpreter(stack1, stack);
             return false;
-        } else if (ingredient instanceof EnchantmentData) {
-            ListNBT tags;
+        } else if (ingredient instanceof EnchantmentInstance) {
+            ListTag tags;
             if (stack.getItem() instanceof EnchantedBookItem) {
                 tags = EnchantedBookItem.getEnchantments(stack);
             } else {
                 tags = stack.getEnchantmentTags();
             }
-            return getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(((EnchantmentData) ingredient).enchantment) &&
-                    ench.level == ((EnchantmentData) ingredient).level);
+            return getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(((EnchantmentInstance) ingredient).enchantment) &&
+                    ench.level == ((EnchantmentInstance) ingredient).level);
         }
 
         return false;
     }
 
-    public static Collection<EnchantmentData> getEnchantmentData(@Nullable ListNBT nbtList) {
+    public static Collection<EnchantmentInstance> getEnchantmentData(@Nullable ListTag nbtList) {
         if (nbtList == null) {
             return Collections.emptySet();
         }
 
-        Collection<EnchantmentData> enchantments = new HashSet<>();
-        for (INBT nbt : nbtList) {
-            if (nbt instanceof CompoundNBT) {
-                CompoundNBT nbttagcompound = (CompoundNBT) nbt;
+        Collection<EnchantmentInstance> enchantments = new HashSet<>();
+        for (Tag nbt : nbtList) {
+            if (nbt instanceof CompoundTag) {
+                CompoundTag nbttagcompound = (CompoundTag) nbt;
                 int id = nbttagcompound.getShort("id");
                 int level = nbttagcompound.getShort("lvl");
                 Enchantment enchantment = Enchantment.byId(id);
                 if (enchantment != null && level > 0) {
-                    enchantments.add(new EnchantmentData(enchantment, level));
+                    enchantments.add(new EnchantmentInstance(enchantment, level));
                 }
             }
         }

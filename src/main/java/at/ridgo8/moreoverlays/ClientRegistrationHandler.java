@@ -10,7 +10,7 @@ import at.ridgo8.moreoverlays.itemsearch.integration.MantleModuleScreenOverride;
 import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import at.ridgo8.moreoverlays.lightoverlay.integration.AlternateLightHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.fml.ModList;
 
 public final class ClientRegistrationHandler {

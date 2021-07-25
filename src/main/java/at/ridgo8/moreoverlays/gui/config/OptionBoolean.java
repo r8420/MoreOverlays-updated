@@ -1,10 +1,10 @@
 package at.ridgo8.moreoverlays.gui.config;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -20,12 +20,12 @@ public class OptionBoolean
         super(list, valSpec, spec);
         this.showValidity = false;
 
-        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20, ITextComponent.nullToEmpty(""), this::buttonPressed);
+        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20, Component.nullToEmpty(""), this::buttonPressed);
         this.overrideUnsaved(this.value.get());
     }
 
     @Override
-    protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+    protected void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
         this.btnChange.render(matrixStack, mouseX, mouseY, 0);
@@ -36,15 +36,15 @@ public class OptionBoolean
     protected void overrideUnsaved(Boolean value) {
         this.state = value;
         if (this.state) {
-            this.btnChange.setMessage(ITextComponent.nullToEmpty(TextFormatting.GREEN + "TRUE"));
+            this.btnChange.setMessage(Component.nullToEmpty(ChatFormatting.GREEN + "TRUE"));
         } else {
-            this.btnChange.setMessage(ITextComponent.nullToEmpty(TextFormatting.RED + "FALSE"));
+            this.btnChange.setMessage(Component.nullToEmpty(ChatFormatting.RED + "FALSE"));
         }
     }
 
     @Override
-    public List<? extends IGuiEventListener> children() {
-        List<IGuiEventListener> childs = new ArrayList<>(super.children());
+    public List<? extends GuiEventListener> children() {
+        List<GuiEventListener> childs = new ArrayList<>(super.children());
         childs.add(this.btnChange);
         return childs;
     }

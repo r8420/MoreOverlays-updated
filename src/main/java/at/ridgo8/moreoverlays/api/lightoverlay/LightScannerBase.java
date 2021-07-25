@@ -1,11 +1,11 @@
 package at.ridgo8.moreoverlays.api.lightoverlay;
 
 import at.ridgo8.moreoverlays.config.Config;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public abstract class LightScannerBase implements ILightScanner {
     protected List<Pair<BlockPos, Byte>> overlayCache = new ArrayList<>();
 
     @Override
-    public void update(PlayerEntity player) {
+    public void update(Player player) {
         int px = (int) Math.floor(player.getX());
         int py = (int) Math.floor(player.getY());
         int pz = (int) Math.floor(player.getZ());
@@ -77,7 +77,7 @@ public abstract class LightScannerBase implements ILightScanner {
         return overlayCache;
     }
 
-    public boolean shouldCheck(BlockPos pos, World world) {
+    public boolean shouldCheck(BlockPos pos, Level world) {
         if(world.isClientSide){
             return true;
         }
@@ -85,8 +85,8 @@ public abstract class LightScannerBase implements ILightScanner {
             return true;
         }
         Biome biome = world.getBiome(pos);
-        return biome.getMobSettings().getCreatureProbability() > 0 && !biome.getMobSettings().getMobs(EntityClassification.MONSTER).isEmpty();
+        return biome.getMobSettings().getCreatureProbability() > 0 && !biome.getMobSettings().getMobs(MobCategory.MONSTER).isEmpty();
     }
 
-    public abstract byte getSpawnModeAt(BlockPos pos, World world);
+    public abstract byte getSpawnModeAt(BlockPos pos, Level world);
 }

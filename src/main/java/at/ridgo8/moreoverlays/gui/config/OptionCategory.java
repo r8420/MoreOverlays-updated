@@ -1,10 +1,10 @@
 package at.ridgo8.moreoverlays.gui.config;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment) {
         super(list);
-        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, ITextComponent.nullToEmpty(name), (btn) -> {
+        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, Component.nullToEmpty(name), (btn) -> {
             list.push(path);
         });
 
@@ -29,26 +29,26 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
             tooltip = new ArrayList<>(1);
         }
 
-        tooltip.add(TextFormatting.RED + name);
+        tooltip.add(ChatFormatting.RED + name);
         if (lines != null) {
             for (final String line : lines) {
-                tooltip.add(TextFormatting.YELLOW + line);
+                tooltip.add(ChatFormatting.YELLOW + line);
             }
         }
     }
 
     @Override
-    public void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
+    public void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
         btnOpen.render(matrixStack, mouseX, mouseY, partialTick);
     }
 
     @Override
-    protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
-        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.nullToEmpty(tooltip.toString()), mouseX, mouseY);
+    protected void renderTooltip(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(tooltip.toString()), mouseX, mouseY);
     }
 
     @Override
-    public List<? extends IGuiEventListener> children() {
+    public List<? extends GuiEventListener> children() {
         return Arrays.asList(this.btnOpen);
     }
 }

@@ -1,16 +1,16 @@
 package at.ridgo8.moreoverlays.gui.config;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.Button;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import javax.annotation.Nullable;
@@ -42,9 +42,9 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         super(list);
         this.value = confValue;
         this.spec = spec;
-        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, ITextComponent.nullToEmpty(ConfigOptionList.RESET_CHAR),
+        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, Component.nullToEmpty(ConfigOptionList.RESET_CHAR),
                 (btn) -> this.reset());
-        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, ITextComponent.nullToEmpty(ConfigOptionList.UNDO_CHAR),
+        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, Component.nullToEmpty(ConfigOptionList.UNDO_CHAR),
                 (btn) -> this.undo());
 
         this.txtReset = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
@@ -68,48 +68,48 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         }
 
 
-        tooltip.add(TextFormatting.RED + this.name);
+        tooltip.add(ChatFormatting.RED + this.name);
         for (final String line : lines) {
-            tooltip.add(TextFormatting.YELLOW + line);
+            tooltip.add(ChatFormatting.YELLOW + line);
         }
 
         this.updateValue(this.value.get());
     }
 
     @Override
-    protected void renderControls(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
+    protected void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
                                   int mouseY, boolean mouseOver, float partialTick) {
-        AbstractGui.drawString(matrixStack, Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
+        GuiComponent.drawString(matrixStack, Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
         this.btnReset.render(matrixStack, mouseX, mouseY, partialTick);
         this.btnUndo.render(matrixStack, mouseX, mouseY, partialTick);
 
         if (this.showValidity) {
             if (this.valid) {
-                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+                GuiComponent.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
             } else {
-                AbstractGui.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+                GuiComponent.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
             }
         }
     }
 
 
     @Override
-    protected void renderTooltip(MatrixStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+    protected void renderTooltip(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         super.renderTooltip(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
 
-        List<ITextComponent> tooltipConverted = new ArrayList<ITextComponent>();
+        List<Component> tooltipConverted = new ArrayList<Component>();
 
         for (String iTextComponent : this.tooltip) {
-            tooltipConverted.add(ITextComponent.nullToEmpty(iTextComponent));
+            tooltipConverted.add(Component.nullToEmpty(iTextComponent));
         }
         if (btnReset.isHovered()) {
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.nullToEmpty(this.txtReset), mouseX, mouseY);
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(this.txtReset), mouseX, mouseY);
         } else if (btnUndo.isHovered()) {
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, ITextComponent.nullToEmpty(this.txtUndo), mouseX, mouseY);
+            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(this.txtUndo), mouseX, mouseY);
         } else if (mouseX < TITLE_WIDTH + rowLeft) {
             this.getConfigOptionList().getScreen().renderComponentTooltip(matrixStack, tooltipConverted, mouseX, mouseY);
         }
-        RenderHelper.setupForFlatItems();
+        Lighting.setupForFlatItems();
         GlStateManager._disableLighting();
     }
 
@@ -143,7 +143,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public List<? extends IGuiEventListener> children() {
+    public List<? extends GuiEventListener> children() {
         return Arrays.asList(this.btnReset, this.btnUndo);
     }
 

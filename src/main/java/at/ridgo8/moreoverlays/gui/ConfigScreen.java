@@ -2,14 +2,14 @@ package at.ridgo8.moreoverlays.gui;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.config.ConfigOptionList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class ConfigScreen extends Screen {
     private String txtDone = "";
 
     public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
-        super(new TranslationTextComponent("gui.config." + modId + ".tile"));
+        super(new TranslatableComponent("gui.config." + modId + ".tile"));
         this.modListScreen = modListScreen;
         this.configSpec = spec;
         this.modId = modId;
@@ -55,7 +55,7 @@ public class ConfigScreen extends Screen {
             }
         }
 
-        FontRenderer font = Minecraft.getInstance().font;
+        Font font = Minecraft.getInstance().font;
 
         int undoGlyphWidth = font.width(ConfigOptionList.UNDO_CHAR) * 2;
         int resetGlyphWidth = font.width(ConfigOptionList.RESET_CHAR) * 2;
@@ -73,15 +73,15 @@ public class ConfigScreen extends Screen {
         final int xUndoAll = xDefaultAll - undoWidth;
 
         this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight,
-                ITextComponent.nullToEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
+                Component.nullToEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
                 (btn) -> this.optionList.reset());
 
         this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight,
-                ITextComponent.nullToEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
+                Component.nullToEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
                 (btn) -> this.optionList.undo());
 
         this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight,
-                ITextComponent.nullToEmpty(" " + this.txtDone),
+                Component.nullToEmpty(" " + this.txtDone),
                 (btn) -> this.back());
 
         this.children.add(this.optionList);
@@ -106,7 +106,7 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         this.optionList.render(matrixStack, mouseX, mouseY, partialTicks);
         this.btnReset.render(matrixStack, mouseX, mouseY, partialTicks);

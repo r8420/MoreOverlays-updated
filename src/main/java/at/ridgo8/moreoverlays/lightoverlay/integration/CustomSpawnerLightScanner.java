@@ -1,9 +1,9 @@
 package at.ridgo8.moreoverlays.lightoverlay.integration;
 
 import at.ridgo8.moreoverlays.lightoverlay.LightScannerVanilla;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 
 public class CustomSpawnerLightScanner extends LightScannerVanilla {
 
@@ -12,7 +12,7 @@ public class CustomSpawnerLightScanner extends LightScannerVanilla {
      */
 
     @Override
-    public boolean shouldCheck(BlockPos pos, World world) {
+    public boolean shouldCheck(BlockPos pos, Level world) {
         Biome biome = world.getBiome(pos);
         return biome.getMobSettings().getCreatureProbability() <= 0;
         

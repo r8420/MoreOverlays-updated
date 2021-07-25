@@ -1,7 +1,7 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -80,7 +80,7 @@ public class ChunkBoundsHandler {
             playerPrevRegionPosZ = 0;
             return;
         }
-        final PlayerEntity player = instance.player;
+        final Player player = instance.player;
         boolean updateInfo = regionInfo.isEmpty();
 
         int newRegionX;
