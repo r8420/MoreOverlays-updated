@@ -55,13 +55,13 @@ public class GuiRenderer {
     public void preDraw() {
         Screen guiscr = Minecraft.getInstance().screen;
 
-        TextFieldWidget textField = JeiModule.getJEITextField();
+//        TextFieldWidget textField = JeiModule.getJEITextField();
 
         if (canShowIn(guiscr)) {
             allowRender = true;
-            if (textField != null && enabled) {
-                drawSearchFrame(textField);
-            }
+//            if (textField != null && enabled) {
+//                drawSearchFrame(textField);
+//            }
         }
     }
 
@@ -196,22 +196,23 @@ public class GuiRenderer {
     private boolean isSearchedItem(ItemStack stack) {
         if (emptyFilter) return true;
         else if (stack.isEmpty()) return false;
-        for (Object ingredient : JeiModule.filter.getFilteredIngredients()) {
-            if (ItemUtils.ingredientMatches(ingredient, stack)) {
-                return true;
-            }
-        }
-        return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
+//        for (Object ingredient : JeiModule.filter.getFilteredIngredients()) {
+//            if (ItemUtils.ingredientMatches(ingredient, stack)) {
+//                return true;
+//            }
+//        }
+//        return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
+        return false;
     }
 
     public void tick() {
         final Screen screen = Minecraft.getInstance().screen;
         if (!canShowIn(screen))
             return;
-        if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {
-            lastFilterText = JeiModule.filter.getFilterText();
-            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
-        }
+//        if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {
+//            lastFilterText = JeiModule.filter.getFilterText();
+//            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
+//        }
 
 
         if (enabled && screen instanceof ContainerScreen<?>) {
@@ -226,7 +227,7 @@ public class GuiRenderer {
     public void toggleMode() {
         enabled = !enabled;
         if (enabled) {
-            lastFilterText = JeiModule.filter.getFilterText();
+//            lastFilterText = JeiModule.filter.getFilterText();
             emptyFilter = lastFilterText.replace(" ", "").isEmpty();
         } else {
             lastFilterText = "";

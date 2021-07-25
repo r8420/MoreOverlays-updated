@@ -22,7 +22,8 @@ public final class ItemUtils {
     public static boolean ingredientMatches(Object ingredient, ItemStack stack) {
         if (ingredient instanceof ItemStack) {
             ItemStack stack1 = (ItemStack) ingredient;
-            return stack1.sameItemStackIgnoreDurability(stack) && JeiModule.areItemsEqualInterpreter(stack1, stack);
+//            return stack1.sameItemStackIgnoreDurability(stack) && JeiModule.areItemsEqualInterpreter(stack1, stack);
+            return false;
         } else if (ingredient instanceof EnchantmentData) {
             ListNBT tags;
             if (stack.getItem() instanceof EnchantedBookItem) {
