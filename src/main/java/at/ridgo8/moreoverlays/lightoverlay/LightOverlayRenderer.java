@@ -4,21 +4,19 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL11;
 import static net.minecraft.client.CameraType.THIRD_PERSON_FRONT;
 
 
@@ -27,61 +25,69 @@ public class LightOverlayRenderer implements ILightRenderer {
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
     private static final EntityRenderDispatcher render = Minecraft.getInstance().getEntityRenderDispatcher();
 
-    private static void renderCross(BlockPos pos, float r, float g, float b) {
+    private static void renderCross(PoseStack matrixstack, BlockPos pos, float r, float g, float b) {
         Player player = Minecraft.getInstance().player;
 
         BlockState blockStateBelow = player.level.getBlockState(pos);
-        double y = 0;
-        if(blockStateBelow.getMaterial() == Material.SNOW){
+        float y = 0;
+        if(blockStateBelow.getMaterial() == Material.TOP_SNOW){
             if(pos.getY() > player.getY()){
                 // Block is above player
-                y = 0.005D + (pos.getY()+0.125D);
+                y = 0.005f + (pos.getY()+0.125f);
             } else{
                 // Block is below player
-                y = 0.005D + (pos.getY()+0.125D) + 0.01D * -(pos.getY()-player.getY()-1);
+                y = (float) (0.005f + (pos.getY()+0.125f) + 0.01f * -(pos.getY()-player.getY()-1));
             }
         } else{
             if(pos.getY() > player.getY()){
                 // Block is above player
-                y = 0.005D + pos.getY();
+                y = 0.005f + pos.getY();
             } else{
                 // Block is below player
-                y = 0.005D + pos.getY() + 0.01D * -(pos.getY()-player.getY()-1);
+                y = (float) (0.005f + pos.getY() + 0.01f * -(pos.getY()-player.getY()-1));
             }
         }
 
 
-        double x0 = pos.getX();
-        double x1 = x0 + 1;
-        double z0 = pos.getZ();
-        double z1 = z0 + 1;
+        float x0 = pos.getX();
+        float x1 = x0 + 1;
+        float z0 = pos.getZ();
+        float z1 = z0 + 1;
 
+        Matrix4f matrix4f = matrixstack.last().pose();
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
+        Minecraft minecraft = Minecraft.getInstance();
 
-        renderer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
-        renderer.vertex(x0, y, z0).color(r, g, b, 1).endVertex();
-        renderer.vertex(x1, y, z1).color(r, g, b, 1).endVertex();
+        Camera camera = minecraft.gameRenderer.getMainCamera();
+        float cameraX = (float) camera.getPosition().x;
+        float cameraY = (float)camera.getPosition().y;
+        float cameraZ = (float)camera.getPosition().z;
 
-        renderer.vertex(x1, y, z0).color(r, g, b, 1).endVertex();
-        renderer.vertex(x0, y, z1).color(r, g, b, 1).endVertex();
+        renderer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+        renderer.vertex(matrix4f, x0-cameraX, y-cameraY, z0-cameraZ).color(r, g, b, 1).endVertex();
+        renderer.vertex(matrix4f, x1-cameraX, y-cameraY, z1-cameraZ).color(r, g, b, 1).endVertex();
+
+        renderer.vertex(matrix4f, x1-cameraX, y-cameraY, z0-cameraZ).color(r, g, b, 1).endVertex();
+        renderer.vertex(matrix4f, x0-cameraX, y-cameraY, z1-cameraZ).color(r, g, b, 1).endVertex();
         tess.end();
     }
 
-    public void renderOverlays(ILightScanner scanner) {
-        Player player = Minecraft.getInstance().player;
+    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
         if(Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT){
             return;
         }
         Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
-        GL11.glPushMatrix();
-        GL11.glLineWidth((float) (double) Config.render_spawnLineWidth.get());
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        final Vec3 view = render.camera.getPosition();
-        GL11.glRotatef(player.getViewXRot(0), 1, 0, 0); // Fixes camera rotation.
-        GL11.glRotatef(player.getViewYRot(0) + 180, 0, 1, 0); // Fixes camera rotation.
-        GL11.glTranslated(-view.x, -view.y, -view.z);
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableTexture();
+        RenderSystem.disableBlend();
+
+        RenderSystem.depthMask(false);
+
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
+        RenderSystem.enableCull();
 
         float ar = ((float) ((Config.render_spawnAColor.get() >> 16) & 0xFF)) / 255F;
         float ag = ((float) ((Config.render_spawnAColor.get() >> 8) & 0xFF)) / 255F;
@@ -97,12 +103,9 @@ public class LightOverlayRenderer implements ILightRenderer {
             if (mode == null || mode == 0)
                 continue;
             else if (mode == 1)
-                renderCross(entry.getKey(), nr, ng, nb);
+                renderCross(matrixstack, entry.getKey(), nr, ng, nb);
             else if (mode == 2)
-                renderCross(entry.getKey(), ar, ag, ab);
+                renderCross(matrixstack, entry.getKey(), ar, ag, ab);
         }
-
-
-        GL11.glPopMatrix();
     }
 }

@@ -97,7 +97,7 @@ public class LightOverlayHandler {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (enabled) {
-            renderer.renderOverlays(scanner);
+            renderer.renderOverlays(scanner, event.getMatrixStack());
         }
     }
 
