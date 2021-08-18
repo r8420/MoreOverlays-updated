@@ -48,7 +48,7 @@ public class ChunkBoundsHandler {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (mode != RenderMode.NONE) {
-            ChunkBoundsRenderer.renderOverlays();
+            ChunkBoundsRenderer.renderOverlays(event.getMatrixStack());
         }
     }
 
