@@ -3,6 +3,7 @@ package at.ridgo8.moreoverlays.gui;
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.config.ConfigOptionList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,7 +33,8 @@ public class ConfigScreen extends Screen {
     private String txtDone = "";
 
     public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
-        super(new TranslatableComponent("gui.config." + modId + ".tile"));
+        //super(new TranslatableComponent("gui.config." + modId + ".tile"));
+        super(new TranslatableComponent("Config screen broken in this version - Edit config/moreoverlays.toml Manually!").withStyle(ChatFormatting.DARK_RED));
         this.modListScreen = modListScreen;
         this.configSpec = spec;
         this.modId = modId;
@@ -84,7 +86,7 @@ public class ConfigScreen extends Screen {
                 Component.nullToEmpty(" " + this.txtDone),
                 (btn) -> this.back());
 
-        this.addWidget(this.optionList);
+//        this.addWidget(this.optionList);
         this.addWidget(this.btnReset);
         this.addWidget(this.btnUndo);
         this.addWidget(this.btnBack);
