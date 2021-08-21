@@ -15,7 +15,6 @@ license="The MIT License (MIT)"
     Adds some overlays from the old (MC 1.7.x) NotEnoughItems Mod:
     * Chunk and Region borders
     * Mob spawn / Light overlay
-    * Item search when JEI (JustEnoughItems by Mezz) is installed
     '''
 
 [[dependencies.moreoverlays]]
@@ -24,9 +23,9 @@ license="The MIT License (MIT)"
     versionRange="[37,)"
     ordering="NONE"
     side="CLIENT"
-[[dependencies.moreoverlays]]
-    modId="jei"
-    mandatory=false
-    versionRange="[6.0.0.25,)"
-    ordering="NONE"
-    side="CLIENT"
+#[[dependencies.moreoverlays]]
+#    modId="jei"
+#    mandatory=false
+#    versionRange="[6.0.0.25,)"
+#    ordering="NONE"
+#    side="CLIENT"
