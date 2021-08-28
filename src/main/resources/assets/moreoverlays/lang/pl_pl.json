@@ -1,0 +1,16 @@
+{
+  "key.moreoverlays.category": "More Overlays Updated",
+  "key.moreoverlays.chunkbounds.desc": "Pokaż/ukryj granice chunków",
+  "key.moreoverlays.lightoverlay.desc": "Pokaż/ukryj nakładkę oświetlenia",
+
+  "gui.config.moreoverlays.tile": "Ustawienia moda More Overlays Updated",
+  "gui.config.moreoverlays.reset_config": "Reset ustawień",
+  "gui.config.moreoverlays.undo": "Cofnij zmiany",
+  "gui.config.moreoverlays.save": "Zapisz",
+
+  "config.moreoverlays.category.lightoverlay": "Nakładka oświetlenia",
+  "config.moreoverlays.category.chunkbounds": "Granice chunków",
+  "config.moreoverlays.category.itemsearch": "Wyszukiwanie przedmiotów",
+  "config.moreoverlays.category.searchoverlay": "Nakładka wyszukiwania przedmiotów",
+  "config.moreoverlays.category.rendersettings": "Ustawienia renderowania"
+}
