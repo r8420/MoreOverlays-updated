@@ -6,7 +6,6 @@ import at.ridgo8.moreoverlays.config.Config;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -56,13 +55,13 @@ public class GuiRenderer {
     public void preDraw() {
         Screen guiscr = Minecraft.getInstance().screen;
 
-//        TextFieldWidget textField = JeiModule.getJEITextField();
+        EditBox textField = JeiModule.getJEITextField();
 
         if (canShowIn(guiscr)) {
             allowRender = true;
-//            if (textField != null && enabled) {
-//                drawSearchFrame(textField);
-//            }
+            if (textField != null && enabled) {
+                drawSearchFrame(textField);
+            }
         }
     }
 
@@ -77,21 +76,21 @@ public class GuiRenderer {
 
     private void drawSearchFrame(EditBox textField) {
         Lighting.setupForFlatItems();
-//        GlStateManager._enableAlphaTest();
+        GlStateManager._enableAlphaTest();
         GlStateManager._enableDepthTest();
         GlStateManager._disableTexture();
-        GL11.glColor4f(1, 1, 1, 1);
-        GL11.glPushMatrix();
+        GlStateManager._color4f(1, 1, 1, 1);
+        GlStateManager._pushMatrix();
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder buffer = tess.getBuilder();
-        GL11.glColor4f(1, 1, 0, 1);
+        GlStateManager._color4f(1, 1, 0, 1);
 
         float x = textField.x + 2;
         float y = textField.y + 2;
         float width = textField.getWidth() - 4;
         float height = textField.getHeight() - 4;
 
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
         buffer.vertex(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
         buffer.vertex(x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
         buffer.vertex(x - FRAME_RADIUS, y, 1000).endVertex();
@@ -113,9 +112,9 @@ public class GuiRenderer {
         buffer.vertex(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
 
         tess.end();
-        GL11.glColor4f(1, 1, 1, 1);
+        GlStateManager._color4f(1, 1, 1, 1);
         GlStateManager._disableBlend();
-        GL11.glPopMatrix();
+        GlStateManager._popMatrix();
         GlStateManager._enableTexture();
     }
 
@@ -133,8 +132,8 @@ public class GuiRenderer {
 
     private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
         Lighting.setupForFlatItems();
-//        GlStateManager._enableAlphaTest();
-        GL11.glColor4f(1, 1, 1, 1);
+        GlStateManager._enableAlphaTest();
+        GlStateManager._color4f(1, 1, 1, 1);
 
         if (!enabled || views == null || views.isEmpty())
             return;
@@ -142,12 +141,12 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        GL11.glPushMatrix();
+        GlStateManager._pushMatrix();
         GlStateManager._enableBlend();
         GlStateManager._disableTexture();
-        GL11.glColor4f(0, 0, 0, 0.5F);
+        GlStateManager._color4f(0, 0, 0, 0.5F);
 
-        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
 
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
@@ -164,8 +163,8 @@ public class GuiRenderer {
         tess.end();
 
         GlStateManager._enableTexture();
-        GL11.glPopMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager._popMatrix();
+        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         GlStateManager._disableBlend();
     }
@@ -202,8 +201,7 @@ public class GuiRenderer {
 //                return true;
 //            }
 //        }
-//        return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
-        return false;
+        return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
     }
 
     public void tick() {
@@ -228,7 +226,7 @@ public class GuiRenderer {
     public void toggleMode() {
         enabled = !enabled;
         if (enabled) {
-//            lastFilterText = JeiModule.filter.getFilterText();
+            lastFilterText = "";
             emptyFilter = lastFilterText.replace(" ", "").isEmpty();
         } else {
             lastFilterText = "";

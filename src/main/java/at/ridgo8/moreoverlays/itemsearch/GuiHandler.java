@@ -2,6 +2,7 @@ package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.ClientRegistrationHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -26,7 +27,7 @@ public class GuiHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
-//        JeiModule.updateModule();
+        JeiModule.updateModule();
         GuiRenderer.INSTANCE.guiInit(event.getGui());
     }
 
@@ -37,25 +38,25 @@ public class GuiHandler {
 
     @SubscribeEvent
     public void onGuiClick(GuiScreenEvent.MouseClickedEvent.Pre event) {
-//        TextFieldWidget searchField = JeiModule.getJEITextField();
+        EditBox searchField = JeiModule.getJEITextField();
         //Minecraft mc = Minecraft.getInstance();
-//        if (searchField != null && event.getButton() == 0 && GuiRenderer.INSTANCE.canShowIn(event.getGui())) {
-//            //Screen guiScreen = event.getGui();
-//            //int x = event.getMouseX() * guiScreen.width / mc.displayWidth;
-//            //int y = guiScreen.height - event.getMouseY() * guiScreen.height / mc.displayHeight - 1;
-//            int x = (int) event.getMouseX();
-//            int y = (int) event.getMouseY();
-//
-//            if (x > searchField.x && x < searchField.x + searchField.getWidth() && y > searchField.y && y < searchField.y + searchField.getHeight()) {
-//                long now = System.currentTimeMillis();
-//                if (now - firstClick < 1000) {
-//                    GuiRenderer.INSTANCE.toggleMode();
-//                    firstClick = 0;
-//                } else {
-//                    firstClick = now;
-//                }
-//            }
-//        }
+        if (searchField != null && event.getButton() == 0 && GuiRenderer.INSTANCE.canShowIn(event.getGui())) {
+            //Screen guiScreen = event.getGui();
+            //int x = event.getMouseX() * guiScreen.width / mc.displayWidth;
+            //int y = guiScreen.height - event.getMouseY() * guiScreen.height / mc.displayHeight - 1;
+            int x = (int) event.getMouseX();
+            int y = (int) event.getMouseY();
+
+            if (x > searchField.x && x < searchField.x + searchField.getWidth() && y > searchField.y && y < searchField.y + searchField.getHeight()) {
+                long now = System.currentTimeMillis();
+                if (now - firstClick < 1000) {
+                    GuiRenderer.INSTANCE.toggleMode();
+                    firstClick = 0;
+                } else {
+                    firstClick = now;
+                }
+            }
+        }
     }
 
     @SubscribeEvent

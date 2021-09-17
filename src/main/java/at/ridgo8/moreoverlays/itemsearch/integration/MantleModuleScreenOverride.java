@@ -4,7 +4,7 @@ import at.ridgo8.moreoverlays.api.itemsearch.IOverrideSlotPos;
 import at.ridgo8.moreoverlays.api.itemsearch.IViewSlot;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
-//import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.world.phys.Vec2;
 //import slimeknights.mantle.client.screen.MultiModuleScreen;
 
 public class MantleModuleScreenOverride implements IOverrideSlotPos {
@@ -15,5 +15,30 @@ public class MantleModuleScreenOverride implements IOverrideSlotPos {
 //            return new ModuleScreenSlotView(slot, (MultiModuleScreen<?>) gui);
 //        }
         return null;
+    }
+
+    public static class ModuleScreenSlotView implements IViewSlot {
+
+        private final Slot slot;
+//        private final MultiModuleScreen<?> gui;
+
+        public ModuleScreenSlotView(Slot slot) {
+            this.slot = slot;
+        }
+
+        @Override
+        public Slot getSlot() {
+            return slot;
+        }
+
+        @Override
+        public Vec2 getRenderPos(int guiLeft, int guiTop) {
+            return new Vec2(-guiLeft, -guiTop + slot.y);
+        }
+
+        @Override
+        public boolean canSearch() {
+            return slot.container.getContainerSize() > slot.getSlotIndex();
+        }
     }
 }
