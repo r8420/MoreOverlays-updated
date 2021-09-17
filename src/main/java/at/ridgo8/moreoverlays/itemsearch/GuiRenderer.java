@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
 import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
@@ -147,18 +148,19 @@ public class GuiRenderer {
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
 //        RenderSystem.color4f(0, 0, 0, 0.5F);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
                 Vec2 posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
                 float px = posvec.x;
                 float py = posvec.y;
-                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
-                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
-                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
-                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
+                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
+                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
             }
         }
 
