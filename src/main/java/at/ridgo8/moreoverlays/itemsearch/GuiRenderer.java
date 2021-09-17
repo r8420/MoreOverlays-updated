@@ -5,19 +5,20 @@ import at.ridgo8.moreoverlays.api.itemsearch.SlotViewWrapper;
 import at.ridgo8.moreoverlays.config.Config;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
+import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
 import org.lwjgl.opengl.GL11;
+import mezz.jei.api.ingredients.*;
 
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class GuiRenderer {
 
     }
 
-    public void preDraw() {
+    public void preDraw(PoseStack matrixstack) {
         Screen guiscr = Minecraft.getInstance().screen;
 
         EditBox textField = JeiModule.getJEITextField();
@@ -60,7 +61,7 @@ public class GuiRenderer {
         if (canShowIn(guiscr)) {
             allowRender = true;
             if (textField != null && enabled) {
-                drawSearchFrame(textField);
+                drawSearchFrame(textField, matrixstack);
             }
         }
     }
@@ -74,48 +75,49 @@ public class GuiRenderer {
         }
     }
 
-    private void drawSearchFrame(EditBox textField) {
+    private void drawSearchFrame(EditBox textField, PoseStack matrixstack) {
+        Matrix4f matrix4f = matrixstack.last().pose();
         Lighting.setupForFlatItems();
-        GlStateManager._enableAlphaTest();
-        GlStateManager._enableDepthTest();
-        GlStateManager._disableTexture();
-        GlStateManager._color4f(1, 1, 1, 1);
-        GlStateManager._pushMatrix();
+//        RenderSystem.enableAlphaTest();
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableTexture();
+//        RenderSystem.color4f(1, 1, 1, 1);
+//        RenderSystem.pushMatrix();
         Tesselator tess = Tesselator.getInstance();
-        BufferBuilder buffer = tess.getBuilder();
-        GlStateManager._color4f(1, 1, 0, 1);
+        BufferBuilder renderer = tess.getBuilder();
+//        RenderSystem.color4f(1, 1, 0, 1);
 
         float x = textField.x + 2;
         float y = textField.y + 2;
         float width = textField.getWidth() - 4;
         float height = textField.getHeight() - 4;
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
-        buffer.vertex(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        buffer.vertex(x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        buffer.vertex(x - FRAME_RADIUS, y, 1000).endVertex();
-        buffer.vertex(x + width + FRAME_RADIUS, y, 1000).endVertex();
+        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).endVertex();
 
-        buffer.vertex(x, y, 1000).endVertex();
-        buffer.vertex(x - FRAME_RADIUS, y, 1000).endVertex();
-        buffer.vertex(x - FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.vertex(x, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x, y, 1000).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x, y + height, 1000).endVertex();
 
-        buffer.vertex(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.vertex(x - FRAME_RADIUS, y + height, 1000).endVertex();
-        buffer.vertex(x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
-        buffer.vertex(x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
 
-        buffer.vertex(x + width + FRAME_RADIUS, y, 1000).endVertex();
-        buffer.vertex(x + width, y, 1000).endVertex();
-        buffer.vertex(x + width, y + height, 1000).endVertex();
-        buffer.vertex(x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width, y, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).endVertex();
 
         tess.end();
-        GlStateManager._color4f(1, 1, 1, 1);
-        GlStateManager._disableBlend();
-        GlStateManager._popMatrix();
-        GlStateManager._enableTexture();
+//        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.disableBlend();
+//        RenderSystem.popMatrix();
+        RenderSystem.enableTexture();
     }
 
     public void renderTooltip(ItemStack stack) {
@@ -132,8 +134,8 @@ public class GuiRenderer {
 
     private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
         Lighting.setupForFlatItems();
-        GlStateManager._enableAlphaTest();
-        GlStateManager._color4f(1, 1, 1, 1);
+//        RenderSystem.enableAlphaTest();
+//        RenderSystem.color4f(1, 1, 1, 1);
 
         if (!enabled || views == null || views.isEmpty())
             return;
@@ -141,12 +143,12 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        GlStateManager._pushMatrix();
-        GlStateManager._enableBlend();
-        GlStateManager._disableTexture();
-        GlStateManager._color4f(0, 0, 0, 0.5F);
+//        RenderSystem.pushMatrix();
+        RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
+//        RenderSystem.color4f(0, 0, 0, 0.5F);
 
-        renderer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
+        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
@@ -162,11 +164,11 @@ public class GuiRenderer {
 
         tess.end();
 
-        GlStateManager._enableTexture();
-        GlStateManager._popMatrix();
-        GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableTexture();
+//        RenderSystem.popMatrix();
+//        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        GlStateManager._disableBlend();
+        RenderSystem.disableBlend();
     }
 
     public boolean canShowIn(Screen gui) {
@@ -196,11 +198,11 @@ public class GuiRenderer {
     private boolean isSearchedItem(ItemStack stack) {
         if (emptyFilter) return true;
         else if (stack.isEmpty()) return false;
-//        for (Object ingredient : JeiModule.filter.getFilteredIngredients()) {
-//            if (ItemUtils.ingredientMatches(ingredient, stack)) {
-//                return true;
-//            }
-//        }
+        for (Object ingredient : JeiModule.filter.getFilteredIngredients(VanillaTypes.ITEM)) {
+            if (ItemUtils.ingredientMatches(ingredient, stack)) {
+                return true;
+            }
+        }
         return Config.search_searchCustom.get() && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
     }
 
@@ -208,10 +210,10 @@ public class GuiRenderer {
         final Screen screen = Minecraft.getInstance().screen;
         if (!canShowIn(screen))
             return;
-//        if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {
-//            lastFilterText = JeiModule.filter.getFilterText();
-//            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
-//        }
+        if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {
+            lastFilterText = JeiModule.filter.getFilterText();
+            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
+        }
 
 
         if (enabled && screen instanceof AbstractContainerScreen<?>) {
@@ -226,7 +228,7 @@ public class GuiRenderer {
     public void toggleMode() {
         enabled = !enabled;
         if (enabled) {
-            lastFilterText = "";
+            lastFilterText = JeiModule.filter.getFilterText();
             emptyFilter = lastFilterText.replace(" ", "").isEmpty();
         } else {
             lastFilterText = "";

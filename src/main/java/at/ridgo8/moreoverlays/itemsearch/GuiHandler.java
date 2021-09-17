@@ -61,7 +61,7 @@ public class GuiHandler {
 
     @SubscribeEvent
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Pre event) {
-        GuiRenderer.INSTANCE.preDraw();
+        GuiRenderer.INSTANCE.preDraw(event.getMatrixStack());
     }
 
     @SubscribeEvent
