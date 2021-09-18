@@ -13,10 +13,10 @@ public class GuiUtils {
 
     public static void initUtil() {
         try {
-            fieldLeft = ObfuscationReflectionHelper.findField(AbstractContainerScreen.class, "leftPos");
+            fieldLeft = ObfuscationReflectionHelper.findField(AbstractContainerScreen.class, "f_97735_");
             fieldLeft.setAccessible(true);
 
-            fieldTop = ObfuscationReflectionHelper.findField(AbstractContainerScreen.class, "topPos");
+            fieldTop = ObfuscationReflectionHelper.findField(AbstractContainerScreen.class, "f_97736_");
             fieldTop.setAccessible(true);
         } catch (ObfuscationReflectionHelper.UnableToFindFieldException e) {
             MoreOverlays.logger.error("Tried to load gui coordinate fields for reflection");
