@@ -18,8 +18,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
-import org.lwjgl.opengl.GL11;
-import mezz.jei.api.ingredients.*;
 
 import java.util.Map;
 
