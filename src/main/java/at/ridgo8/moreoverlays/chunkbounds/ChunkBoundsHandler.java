@@ -3,7 +3,7 @@ package at.ridgo8.moreoverlays.chunkbounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,9 +46,9 @@ public class ChunkBoundsHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderWorldLastEvent event) {
+    public void renderWorldLastEvent(RenderLevelLastEvent event) {
         if (mode != RenderMode.NONE) {
-            ChunkBoundsRenderer.renderOverlays(event.getMatrixStack());
+            ChunkBoundsRenderer.renderOverlays(event.getPoseStack());
         }
     }
 

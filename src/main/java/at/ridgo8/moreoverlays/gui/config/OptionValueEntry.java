@@ -102,9 +102,9 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         for (String iTextComponent : this.tooltip) {
             tooltipConverted.add(Component.nullToEmpty(iTextComponent));
         }
-        if (btnReset.isHovered()) {
+        if (btnReset.isHoveredOrFocused()) {
             this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(this.txtReset), mouseX, mouseY);
-        } else if (btnUndo.isHovered()) {
+        } else if (btnUndo.isHoveredOrFocused()) {
             this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(this.txtUndo), mouseX, mouseY);
         } else if (mouseX < TITLE_WIDTH + rowLeft) {
             this.getConfigOptionList().getScreen().renderComponentTooltip(matrixStack, tooltipConverted, mouseX, mouseY);

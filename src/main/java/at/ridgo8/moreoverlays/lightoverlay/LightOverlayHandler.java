@@ -7,7 +7,7 @@ import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.client.Options;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -95,9 +95,9 @@ public class LightOverlayHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderWorldLastEvent event) {
+    public void renderWorldLastEvent(RenderLevelLastEvent event) {
         if (enabled) {
-            renderer.renderOverlays(scanner, event.getMatrixStack());
+            renderer.renderOverlays(scanner, event.getPoseStack());
         }
     }
 

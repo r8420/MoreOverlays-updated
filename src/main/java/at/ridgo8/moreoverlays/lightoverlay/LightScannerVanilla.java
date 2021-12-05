@@ -2,6 +2,8 @@ package at.ridgo8.moreoverlays.lightoverlay;
 
 import at.ridgo8.moreoverlays.api.lightoverlay.LightScannerBase;
 import at.ridgo8.moreoverlays.config.Config;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.MobCategory;
@@ -38,12 +40,14 @@ public class LightScannerVanilla extends LightScannerBase {
             return true;
 
         AABB bb = TEST_BB.move(pos.getX(), pos.getY(), pos.getZ());
-        if (world.getBlockCollisions(null, bb).count() == 0 && !world.containsAnyLiquid(bb)) {
+        List bbCollisions = Lists.newArrayList(world.getBlockCollisions(null, bb));
+        if (bbCollisions.size() == 0 && !world.containsAnyLiquid(bb)) {
             if (Config.light_IgnoreLayer.get())
                 return true;
             else {
                 AABB bb2 = bb.move(0, 1, 0);
-                return world.getBlockCollisions(null, bb2).count() == 0 && !world.containsAnyLiquid(bb2);
+                List bb2Collisions = Lists.newArrayList(world.getBlockCollisions(null, bb2));
+                return bb2Collisions.size() == 0 && !world.containsAnyLiquid(bb2);
             }
         }
         return false;
@@ -82,7 +86,7 @@ public class LightScannerVanilla extends LightScannerBase {
         if (!Config.light_SimpleEntityCheck.get()) {
             boolean hasSpawnable = false;
             for (final EntityType<?> type : this.typesToCheck) {
-                if (block.canCreatureSpawn(state, world, blockPos, SpawnPlacements.Type.ON_GROUND, type)) {
+                if (block.isValidSpawn(state, world, blockPos, SpawnPlacements.Type.ON_GROUND, type)) {
                     hasSpawnable = true;
                     break;
                 }
@@ -91,7 +95,7 @@ public class LightScannerVanilla extends LightScannerBase {
             if (!hasSpawnable) {
                 return 0;
             }
-        } else if (!block.canCreatureSpawn(state, world, blockPos, SpawnPlacements.Type.ON_GROUND, EntityType.ZOMBIE)) {
+        } else if (!block.isValidSpawn(state, world, blockPos, SpawnPlacements.Type.ON_GROUND, EntityType.ZOMBIE)) {
             return 0;
         }
 
