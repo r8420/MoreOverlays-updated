@@ -39,6 +39,11 @@ public final class ClientRegistrationHandler {
         if (enable_jei && ModList.get().isLoaded("mantle")) {
             SlotHandler.INSTANCE.addPositionOverride(new MantleModuleScreenOverride());
         }
+        // Quick fix for light level in 1.18 (need better fix)
+        if(!Config.light_FinishedMigration.get()){
+            Config.light_SaveLevel.set(1);
+            Config.light_FinishedMigration.set(true);
+        }
     }
     public static Screen openSettings(Minecraft mc, Screen modlist) {
         return new ConfigScreen(modlist, Config.config_client, MoreOverlays.MOD_ID);

@@ -12,6 +12,7 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue light_IgnoreSpawnList;
     public static ForgeConfigSpec.BooleanValue light_SimpleEntityCheck;
     public static ForgeConfigSpec.IntValue light_SaveLevel;
+    public static ForgeConfigSpec.BooleanValue light_FinishedMigration;
 
     public static ForgeConfigSpec.IntValue chunk_EdgeRadius;
     public static ForgeConfigSpec.BooleanValue chunk_ShowMiddle;
@@ -37,7 +38,8 @@ public class Config {
         light_IgnoreLayer = builder.comment("Ignore if there in no 2 Block space to spawn. (Less lag if true)").define("ignoreLayer", false);
         light_IgnoreSpawnList = builder.comment("Ignore if mobs can actually spawn according to other mods and biome spawn lists and just go by light value").define("ignoreSpawnList", false);
         light_SimpleEntityCheck = builder.comment("Blocks can allow/disallow spawns for different entity types. The check for this isn't very performat.\nSetting this to true will increase performance but decrease accuracy.").define("simpleCheck", false);
-        light_SaveLevel = builder.comment("Minimum save light level where no mobs can spawn").defineInRange("saveLevel", 8, 0, Integer.MAX_VALUE);
+        light_SaveLevel = builder.comment("Minimum save light level where no mobs can spawn").defineInRange("saveLevel", 1, 0, Integer.MAX_VALUE);
+        light_FinishedMigration = builder.comment("Finished 1.18 migration (don't change)").define("finishedMigration", false);
         builder.pop();
 
         builder.comment("Settings for the chunk bounds overlay").push("chunkbounds");
