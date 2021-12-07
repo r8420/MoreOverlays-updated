@@ -25,9 +25,19 @@ public class LightOverlayRenderer implements ILightRenderer {
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
     private static final EntityRenderDispatcher render = Minecraft.getInstance().getEntityRenderDispatcher();
 
-    private static void renderCross(PoseStack matrixstack, BlockPos pos, float r, float g, float b) {
-        Player player = Minecraft.getInstance().player;
+    private static Tesselator tess;
+    private static BufferBuilder renderer;
+    private static Minecraft minecraft;
 
+    public LightOverlayRenderer() {
+        tess = Tesselator.getInstance();
+        renderer = tess.getBuilder();
+        minecraft = Minecraft.getInstance();
+    }
+
+    private static void renderCross(PoseStack matrixstack, BlockPos pos, float r, float g, float b) {
+
+        Player player = minecraft.player;
         BlockState blockStateBelow = player.level.getBlockState(pos);
         float y = 0;
         if(blockStateBelow.getMaterial() == Material.TOP_SNOW){
@@ -55,9 +65,7 @@ public class LightOverlayRenderer implements ILightRenderer {
         float z1 = z0 + 1;
 
         Matrix4f matrix4f = matrixstack.last().pose();
-        Tesselator tess = Tesselator.getInstance();
-        BufferBuilder renderer = tess.getBuilder();
-        Minecraft minecraft = Minecraft.getInstance();
+
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
         float cameraX = (float) camera.getPosition().x;
