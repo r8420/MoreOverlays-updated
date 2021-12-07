@@ -64,13 +64,13 @@ public class LightOverlayRenderer implements ILightRenderer {
         float cameraY = (float)camera.getPosition().y;
         float cameraZ = (float)camera.getPosition().z;
 
-        renderer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+
         renderer.vertex(matrix4f, x0-cameraX, y-cameraY, z0-cameraZ).color(r, g, b, 1).endVertex();
         renderer.vertex(matrix4f, x1-cameraX, y-cameraY, z1-cameraZ).color(r, g, b, 1).endVertex();
 
         renderer.vertex(matrix4f, x1-cameraX, y-cameraY, z0-cameraZ).color(r, g, b, 1).endVertex();
         renderer.vertex(matrix4f, x0-cameraX, y-cameraY, z1-cameraZ).color(r, g, b, 1).endVertex();
-        tess.end();
+
     }
 
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
@@ -97,7 +97,7 @@ public class LightOverlayRenderer implements ILightRenderer {
         float ng = ((float) ((Config.render_spawnNColor.get() >> 8) & 0xFF)) / 255F;
         float nb = ((float) (Config.render_spawnNColor.get() & 0xFF)) / 255F;
 
-
+        renderer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
         for (Pair<BlockPos, Byte> entry : scanner.getLightModes()) {
             Byte mode = entry.getValue();
             if (mode == null || mode == 0)
@@ -107,5 +107,6 @@ public class LightOverlayRenderer implements ILightRenderer {
             else if (mode == 2)
                 renderCross(matrixstack, entry.getKey(), ar, ag, ab);
         }
+        tess.end();
     }
 }
