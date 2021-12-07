@@ -33,8 +33,8 @@ public class ConfigScreen extends Screen {
     private String txtDone = "";
 
     public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
-        //super(new TranslatableComponent("gui.config." + modId + ".tile"));
-        super(new TranslatableComponent("Config screen broken in this version - Edit config/moreoverlays.toml Manually!").withStyle(ChatFormatting.DARK_RED));
+        super(new TranslatableComponent("gui.config." + modId + ".tile"));
+//        super(new TranslatableComponent("Config screen broken in this version - Edit config/moreoverlays.toml Manually!").withStyle(ChatFormatting.DARK_RED));
         this.modListScreen = modListScreen;
         this.configSpec = spec;
         this.modId = modId;
@@ -86,7 +86,7 @@ public class ConfigScreen extends Screen {
                 Component.nullToEmpty(" " + this.txtDone),
                 (btn) -> this.back());
 
-//        this.addWidget(this.optionList);
+        this.addWidget(this.optionList);
         this.addWidget(this.btnReset);
         this.addWidget(this.btnUndo);
         this.addWidget(this.btnBack);
