@@ -1,9 +1,12 @@
 package at.ridgo8.moreoverlays.gui.config;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 
@@ -54,7 +57,19 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public List<? extends NarratableEntry> narratables() {
-        return null;
+    public List<? extends NarratableEntry> narratables()
+    {
+        return ImmutableList.of(new NarratableEntry()
+        {
+            public NarratableEntry.NarrationPriority narrationPriority()
+            {
+                return NarratableEntry.NarrationPriority.HOVERED;
+            }
+
+            public void updateNarration(NarrationElementOutput output)
+            {
+                output.add(NarratedElementType.TITLE, "");
+            }
+        });
     }
 }
