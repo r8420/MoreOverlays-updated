@@ -76,10 +76,10 @@ public class ChunkBoundsRenderer {
         }
 
         final int regionBorderX0 = regionX * ChunkBoundsHandler.REGION_SIZEX * 16;
-        final int regionBorderY0 = regionY * ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16;
+        final int regionBorderY0 = (regionY * ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16)-64;
         final int regionBorderZ0 = regionZ * ChunkBoundsHandler.REGION_SIZEZ * 16;
         final int regionBorderX1 = regionBorderX0 + (ChunkBoundsHandler.REGION_SIZEX * 16);
-        final int regionBorderY1 = regionBorderY0 + (ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16);
+        final int regionBorderY1 = regionBorderY0 + (ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16)-128;
         final int regionBorderZ1 = regionBorderZ0 + (ChunkBoundsHandler.REGION_SIZEZ * 16);
 
         final int radius = Config.chunk_EdgeRadius.get() * 16;
@@ -222,7 +222,7 @@ public class ChunkBoundsRenderer {
         renderer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
         
         for (float x = x0; x <= x1; x += step) {
-            renderer.vertex(matrix4f, x-cameraX, y0-cameraY, z0-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex(); // POSSIBLE CHANGE renderer.pos to something else
+            renderer.vertex(matrix4f, x-cameraX, y0-cameraY, z0-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
             renderer.vertex(matrix4f, x-cameraX, y1-cameraY, z0-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
             renderer.vertex(matrix4f, x-cameraX, y0-cameraY, z1-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
             renderer.vertex(matrix4f, x-cameraX, y1-cameraY, z1-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
@@ -251,6 +251,6 @@ public class ChunkBoundsRenderer {
             renderer.vertex(matrix4f, x1-cameraX, y0-cameraY, z-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
             renderer.vertex(matrix4f, x1-cameraX, y1-cameraY, z-cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
         }
-        tess.end(); // POSSIBLE CHANGE tess.draw();
+        tess.end();
     }
 }
