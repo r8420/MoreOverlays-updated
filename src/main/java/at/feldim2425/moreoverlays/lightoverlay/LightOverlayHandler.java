@@ -5,7 +5,6 @@ import at.feldim2425.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.feldim2425.moreoverlays.api.lightoverlay.ILightScanner;
 import at.feldim2425.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.feldim2425.moreoverlays.config.Config;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,12 +15,9 @@ import org.apache.logging.log4j.message.FormattedMessage;
 
 public class LightOverlayHandler {
 
-    private static boolean OPTIFINE = false;
     private static boolean enabled = false;
     private static ILightRenderer renderer = null;
     private static ILightScanner scanner = null;
-    private static boolean OptifineCheckDone;
-    private static boolean setBobbing = false;
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new LightOverlayHandler());
@@ -42,18 +38,6 @@ public class LightOverlayHandler {
             scanner.clear();
         }
         LightOverlayHandler.enabled = enabled;
-        if(!OptifineCheckDone){
-            detectOptifine();
-        }
-        if(OPTIFINE){
-            GameSettings settings = Minecraft.getInstance().gameSettings;
-            if(enabled){
-                setBobbing = settings.viewBobbing;
-                settings.viewBobbing = false;
-            } else{
-                settings.viewBobbing = setBobbing;
-            }
-        }
     }
 
     public static void reloadHandler() {
@@ -108,16 +92,5 @@ public class LightOverlayHandler {
             scanner.update(Minecraft.getInstance().player);
         }
 
-    }
-
-    private static void detectOptifine(){
-        try {
-            Class.forName("optifine.ZipResourceProvider");
-            OPTIFINE = true;
-            OptifineCheckDone = true;
-        } catch (final ClassNotFoundException e) {
-            OPTIFINE = false;
-            OptifineCheckDone = true;
-        }
     }
 }
