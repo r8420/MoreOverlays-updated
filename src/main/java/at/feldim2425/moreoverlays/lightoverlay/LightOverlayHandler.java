@@ -40,6 +40,12 @@ public class LightOverlayHandler {
         LightOverlayHandler.enabled = enabled;
     }
 
+    public static void reloadHandler() {
+        if (enabled) {
+            MoreOverlays.logger.info("Light overlay handlers reloaded");
+            reloadHandlerInternal();
+        }
+    }
 
     private static void reloadHandlerInternal() {
         LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(Config.light_IgnoreSpawnList.get(), LightOverlayRenderer.class, LightScannerVanilla.class);

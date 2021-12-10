@@ -6,6 +6,7 @@ import at.feldim2425.moreoverlays.api.lightoverlay.ILightScanner;
 import at.feldim2425.moreoverlays.config.Config;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SnowBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;

@@ -4,6 +4,7 @@ import at.feldim2425.moreoverlays.api.lightoverlay.LightScannerBase;
 import at.feldim2425.moreoverlays.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
