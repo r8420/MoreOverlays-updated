@@ -110,6 +110,9 @@ public class ChunkBoundsRenderer {
             renderGrid(matrixstack, regionBorderX0 - 0.005f, regionBorderY0 - 0.005f, regionBorderZ0 - 0.005f, regionBorderX1 + 0.005f,
                     regionBorderY1 + 0.005f, regionBorderZ1 + 0.005f, 16.0f, renderColorGrid);
         }
+        RenderSystem.enableTexture();
+        RenderSystem.disableCull();
+        RenderSystem.depthMask(true);
     }
 
     public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {

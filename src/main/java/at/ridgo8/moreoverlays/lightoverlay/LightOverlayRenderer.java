@@ -116,5 +116,8 @@ public class LightOverlayRenderer implements ILightRenderer {
                 renderCross(matrixstack, entry.getKey(), ar, ag, ab);
         }
         tess.end();
+        RenderSystem.enableTexture();
+        RenderSystem.disableCull();
+        RenderSystem.depthMask(true);
     }
 }
