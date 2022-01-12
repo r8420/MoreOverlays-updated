@@ -1,3 +1,135 @@
+Build: 1.18.1-39.0.19 - Wed Jan 12 02:00:21 GMT 2022
+	35673674+alcatrazescapee:
+		Rework world persistence hooks to fix the double registry injection when loading single player worlds. (#8234)
+
+=========
+Build: 1.18.1-39.0.18 - Tue Jan 11 00:16:08 GMT 2022
+	supermartijn642:
+		Update tags for new 1.17 and 1.18 content (#7891)
+
+=========
+Build: 1.18.1-39.0.17 - Mon Jan 10 00:56:15 GMT 2022
+	xfacthd:
+		Fix TerrainParticle rendering black under certain conditions (#8378)
+
+=========
+Build: 1.18.1-39.0.16 - Sun Jan 09 21:36:50 GMT 2022
+	cech12:
+		Allow modded tools to work on glow lichen (#8371)
+
+=========
+Build: 1.18.1-39.0.15 - Sun Jan 09 21:18:44 GMT 2022
+	sciwhiz12:
+		Fix custom climbable blocks not sending a death message (#8372)
+		
+		Fixes #8370
+
+=========
+Build: 1.18.1-39.0.14 - Sat Jan 08 21:20:26 GMT 2022
+	pupnewfster:
+		Provide access to the blockstate in BucketPickup#getPickupSound for multiply-logged blocks (#8357)
+
+=========
+Build: 1.18.1-39.0.13 - Sat Jan 08 20:47:41 GMT 2022
+	pupnewfster:
+		Fix clients being unable to deserialize tags for custom registries (#8352)
+
+=========
+Build: 1.18.1-39.0.12 - Sat Jan 08 20:28:36 GMT 2022
+	bageldotjpg:
+		Fix particles going fullbright for a few frames when first spawning (#8291)
+
+=========
+Build: 1.18.1-39.0.11 - Sat Jan 08 18:44:26 GMT 2022
+	diesieben07:
+		Also create parent directories when creating config files (#8364)
+
+=========
+Build: 1.18.1-39.0.10 - Sun Jan 02 18:43:24 GMT 2022
+	JTK222:
+		Fix crash with PermissionsAPI (#8330)
+		
+		Fixes a crash in singleplayer, when the internal server didn't shut down correctly between world loads.
+
+=========
+Build: 1.18.1-39.0.9 - Mon Dec 27 16:24:00 GMT 2021
+	sciwhiz12:
+		Re-add missing default spawn lists in features (#8285)
+		
+		Fixes #8265
+		Fixes #8301
+
+=========
+Build: 1.18.1-39.0.8 - Wed Dec 22 13:22:32 GMT 2021
+	JTK222:
+		Fixed incorrect generic in PermissionAPI (#8317)
+
+=========
+Build: 1.18.1-39.0.7 - Mon Dec 20 18:35:11 GMT 2021
+	JTK222:
+		Redo of the whole PermissionAPI (#7780)
+		
+		
+		
+		Co-authored-by: LexManos <LexManos@gmail.com>
+
+=========
+Build: 1.18.1-39.0.6 - Sun Dec 19 18:28:43 GMT 2021
+	JTK222:
+		Fix misplaced patch in SpreadingSnowyDirtBlock. 
+		
+		Fixes #8308. 
+
+=========
+Build: 1.18.1-39.0.5 - Mon Dec 13 21:58:30 GMT 2021
+	pupnewfster:
+		Add RenderArmEvent to make overriding just the arm rendering not require copying nearly as much vanilla code (#8254)
+
+=========
+Build: 1.18.1-39.0.4 - Mon Dec 13 21:32:20 GMT 2021
+	bageldotjpg:
+		Add MobEffect tags (#8231)
+
+=========
+Build: 1.18.1-39.0.3 - Mon Dec 13 19:49:00 GMT 2021
+	xfacthd:
+		Log missing or unsupported dependencies (#8218)
+
+=========
+Build: 1.18.1-39.0.2 - Mon Dec 13 19:33:05 GMT 2021
+	sciwhiz12:
+		Fix datagen test for sounds definitions provider  (#8249)
+
+=========
+Build: 1.18.1-39.0.1 - Mon Dec 13 19:14:15 GMT 2021
+	williewillus:
+		Fix wrong stage being declared in transition to common (#8267)
+
+=========
+Build: 1.18.1-39.0.0 - Fri Dec 10 19:32:24 GMT 2021
+	curle:
+		Update to 1.18.1
+		
+		Co-Authored by:
+		- Curle
+		_ Orion
+
+=========
+Build: 1.18-38.0.17 - Fri Dec 10 09:23:45 GMT 2021
+	oriondevelopment:
+		[CVE-2021-44228]: Update Log4J to fix the security issue inside it. (#8268)
+
+=========
+Build: 1.18-38.0.16 - Wed Dec 08 00:09:40 GMT 2021
+	jaredlll08:
+		Fix KeyMappings only checking if they conflict with themselves. (#8256)
+
+=========
+Build: 1.18-38.0.15 - Sun Dec 05 19:40:15 GMT 2021
+	xfacthd:
+		Fix ChunkWatchEvent not being fired (#8253)
+
+=========
 Build: 1.18-38.0.14 - Sat Dec 04 01:30:30 GMT 2021
 	git:
 		Call handleUpdateTag for BlockEntities again (#8237)
