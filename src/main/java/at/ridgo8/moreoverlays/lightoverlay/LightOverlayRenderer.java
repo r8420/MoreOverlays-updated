@@ -3,11 +3,15 @@ package at.ridgo8.moreoverlays.lightoverlay;
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
+import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -90,12 +94,27 @@ public class LightOverlayRenderer implements ILightRenderer {
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.disableBlend();
-
-        RenderSystem.depthMask(false);
-
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
-        RenderSystem.enableCull();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+        Quaternion cameraRotation = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
+
+        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+            // Use old renderer
+            RenderSystem.depthMask(false);
+            RenderSystem.enableCull();
+        } else {
+            // Use new renderer
+            matrixstack.pushPose();
+
+            // Only rotate when pose is not already rotated by ChunkBoundsRenderer
+            if(ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.NONE){
+                // Rotate yaw by 180 degrees. Parameters: (pitch, yaw, roll), angle, usingDegrees
+                cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), 180, true));
+            }
+            Matrix4f translateMatrix = new Matrix4f(cameraRotation);
+            matrixstack.mulPoseMatrix(translateMatrix);
+        }
 
         float ar = ((float) ((Config.render_spawnAColor.get() >> 16) & 0xFF)) / 255F;
         float ag = ((float) ((Config.render_spawnAColor.get() >> 8) & 0xFF)) / 255F;
@@ -116,8 +135,20 @@ public class LightOverlayRenderer implements ILightRenderer {
                 renderCross(matrixstack, entry.getKey(), ar, ag, ab);
         }
         tess.end();
+        // restore render settings
         RenderSystem.enableTexture();
-        RenderSystem.disableCull();
-        RenderSystem.depthMask(true);
+        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+            RenderSystem.disableCull();
+            RenderSystem.depthMask(true);
+        } else {
+            RenderSystem.lineWidth(1.0F);
+            RenderSystem.enableBlend();
+
+            cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), -180, true));
+            Matrix4f translateMatrix = new Matrix4f(cameraRotation);
+            matrixstack.mulPoseMatrix(translateMatrix);
+
+            matrixstack.popPose();
+        }
     }
 }

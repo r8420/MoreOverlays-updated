@@ -5,6 +5,7 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,8 +17,8 @@ import org.apache.logging.log4j.message.FormattedMessage;
 public class LightOverlayHandler {
 
     private static boolean enabled = false;
-    private static ILightRenderer renderer = null;
-    private static ILightScanner scanner = null;
+    public static ILightRenderer renderer = null;
+    public static ILightScanner scanner = null;
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new LightOverlayHandler());
@@ -80,7 +81,7 @@ public class LightOverlayHandler {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderLevelLastEvent event) {
-        if (enabled) {
+        if (enabled && Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
             renderer.renderOverlays(scanner, event.getPoseStack());
         }
     }

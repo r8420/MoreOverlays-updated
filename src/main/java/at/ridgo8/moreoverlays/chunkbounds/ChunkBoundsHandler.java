@@ -1,5 +1,6 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -47,7 +48,7 @@ public class ChunkBoundsHandler {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderLevelLastEvent event) {
-        if (mode != RenderMode.NONE) {
+        if (mode != RenderMode.NONE && Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
             ChunkBoundsRenderer.renderOverlays(event.getPoseStack());
         }
     }

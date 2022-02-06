@@ -1,0 +1,12 @@
+{
+  "required": false,
+  "package": "at.ridgo8.moreoverlays.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinDebugRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "moreoverlays.mixin-refmap.json"
+}

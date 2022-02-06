@@ -2,10 +2,14 @@ package at.ridgo8.moreoverlays.chunkbounds;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -25,28 +29,28 @@ public class ChunkBoundsRenderer {
         }
         Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
 
-//        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.disableBlend();
-
-        RenderSystem.depthMask(false);
-
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        RenderSystem.enableCull();
+        Quaternion cameraRotation = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
 
-//        } else {
-//            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-//            RenderSystem.disableTexture();
-//            RenderSystem.enableBlend();
-//            RenderSystem.defaultBlendFunc();
-//
-//            RenderSystem.bindTexture(103);
-//            RenderSystem.depthMask(true);
-//            RenderSystem.enableCull();
-//        }
+        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+            // Use old renderer
+            RenderSystem.depthMask(false);
+            RenderSystem.enableCull();
+        } else {
+            // Use new renderer
+            matrixstack.pushPose();
+
+            // Rotate yaw by 180 degrees. Parameters: (pitch, yaw, roll), angle, usingDegrees
+            cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), 180, true));
+            Matrix4f translateMatrix = new Matrix4f(cameraRotation);
+            matrixstack.mulPoseMatrix(translateMatrix);
+        }
 
 
         final int h = player.level.getHeight();
@@ -114,9 +118,24 @@ public class ChunkBoundsRenderer {
             renderGrid(matrixstack, regionBorderX0 - 0.005f, regionBorderY0 - 0.005f, regionBorderZ0 - 0.005f, regionBorderX1 + 0.005f,
                     regionBorderY1 + 0.005f, regionBorderZ1 + 0.005f, 16.0f, renderColorGrid);
         }
+
+        // restore render settings
         RenderSystem.enableTexture();
-        RenderSystem.disableCull();
-        RenderSystem.depthMask(true);
+        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+            RenderSystem.disableCull();
+            RenderSystem.depthMask(true);
+        } else {
+            RenderSystem.lineWidth(1.0F);
+            RenderSystem.enableBlend();
+
+            if(!LightOverlayHandler.isEnabled()){
+                cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), -180, true));
+                Matrix4f translateMatrix = new Matrix4f(cameraRotation);
+                matrixstack.mulPoseMatrix(translateMatrix);
+            }
+
+            matrixstack.popPose();
+        }
     }
 
     public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {
