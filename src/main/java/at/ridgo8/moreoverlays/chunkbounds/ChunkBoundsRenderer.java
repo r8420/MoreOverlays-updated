@@ -49,9 +49,7 @@ public class ChunkBoundsRenderer {
             cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), 180, true));
             Matrix4f translateMatrix = new Matrix4f(cameraRotation);
             matrixstack.mulPoseMatrix(translateMatrix);
-
         }
-
 
 
         final int h = player.level.getHeight();
