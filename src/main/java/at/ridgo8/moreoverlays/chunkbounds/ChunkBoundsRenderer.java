@@ -2,6 +2,7 @@ package at.ridgo8.moreoverlays.chunkbounds;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
@@ -35,6 +36,8 @@ public class ChunkBoundsRenderer {
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
+        Quaternion cameraRotation = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
+
         if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
             // Use old renderer
             RenderSystem.depthMask(false);
@@ -42,9 +45,7 @@ public class ChunkBoundsRenderer {
         } else {
             // Use new renderer
             matrixstack.pushPose();
-            Minecraft minecraft = Minecraft.getInstance();
 
-            Quaternion cameraRotation = minecraft.gameRenderer.getMainCamera().rotation();
             // Rotate yaw by 180 degrees. Parameters: (pitch, yaw, roll), angle, usingDegrees
             cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), 180, true));
             Matrix4f translateMatrix = new Matrix4f(cameraRotation);
@@ -126,6 +127,13 @@ public class ChunkBoundsRenderer {
         } else {
             RenderSystem.lineWidth(1.0F);
             RenderSystem.enableBlend();
+
+            if(!LightOverlayHandler.isEnabled()){
+                cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), -180, true));
+                Matrix4f translateMatrix = new Matrix4f(cameraRotation);
+                matrixstack.mulPoseMatrix(translateMatrix);
+            }
+
             matrixstack.popPose();
         }
     }

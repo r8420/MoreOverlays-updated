@@ -97,6 +97,8 @@ public class LightOverlayRenderer implements ILightRenderer {
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
+        Quaternion cameraRotation = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
+
         if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
             // Use old renderer
             RenderSystem.depthMask(false);
@@ -104,9 +106,7 @@ public class LightOverlayRenderer implements ILightRenderer {
         } else {
             // Use new renderer
             matrixstack.pushPose();
-            Minecraft minecraft = Minecraft.getInstance();
 
-            Quaternion cameraRotation = minecraft.gameRenderer.getMainCamera().rotation();
             // Only rotate when pose is not already rotated by ChunkBoundsRenderer
             if(ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.NONE){
                 // Rotate yaw by 180 degrees. Parameters: (pitch, yaw, roll), angle, usingDegrees
@@ -143,6 +143,11 @@ public class LightOverlayRenderer implements ILightRenderer {
         } else {
             RenderSystem.lineWidth(1.0F);
             RenderSystem.enableBlend();
+
+            cameraRotation.mul(new Quaternion(new Vector3f(0, -1, 0), -180, true));
+            Matrix4f translateMatrix = new Matrix4f(cameraRotation);
+            matrixstack.mulPoseMatrix(translateMatrix);
+
             matrixstack.popPose();
         }
     }
