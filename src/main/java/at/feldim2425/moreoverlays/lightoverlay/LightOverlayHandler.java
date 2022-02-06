@@ -6,6 +6,7 @@ import at.feldim2425.moreoverlays.api.lightoverlay.ILightScanner;
 import at.feldim2425.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.feldim2425.moreoverlays.config.Config;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GraphicsFanciness;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -16,8 +17,8 @@ import org.apache.logging.log4j.message.FormattedMessage;
 public class LightOverlayHandler {
 
     private static boolean enabled = false;
-    private static ILightRenderer renderer = null;
-    private static ILightScanner scanner = null;
+    public static ILightRenderer renderer = null;
+    public static ILightScanner scanner = null;
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new LightOverlayHandler());
@@ -80,7 +81,7 @@ public class LightOverlayHandler {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        if (enabled) {
+        if (enabled && Minecraft.getInstance().gameSettings.graphicFanciness != GraphicsFanciness.FABULOUS) {
             renderer.renderOverlays(scanner);
         }
     }

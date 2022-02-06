@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.settings.GraphicsFanciness;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
@@ -31,8 +32,11 @@ public class ChunkBoundsRenderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         final Vector3d view = render.info.getProjectedView();
-        GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
-        GlStateManager.rotatef(player.getYaw(0) + 180, 0, 1, 0); // Fixes camera rotation.
+        if(Minecraft.getInstance().gameSettings.graphicFanciness != GraphicsFanciness.FABULOUS){
+            GlStateManager.rotatef(player.getPitch(0), 1, 0, 0); // Fixes camera rotation.
+            GlStateManager.rotatef(player.getYaw(0) + 180, 0, 1, 0); // Fixes camera rotation.
+        }
+
         GlStateManager.translated(-view.x, -view.y, -view.z);
 
         final int h = player.world.getHeight();

@@ -1,6 +1,7 @@
 package at.feldim2425.moreoverlays.chunkbounds;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GraphicsFanciness;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -47,7 +48,7 @@ public class ChunkBoundsHandler {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        if (mode != RenderMode.NONE) {
+        if (mode != RenderMode.NONE && Minecraft.getInstance().gameSettings.graphicFanciness != GraphicsFanciness.FABULOUS) {
             ChunkBoundsRenderer.renderOverlays();
         }
     }
