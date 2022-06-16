@@ -198,7 +198,7 @@ public class GuiRenderer {
     private boolean isSearchedItem(ItemStack stack) {
         if (emptyFilter) return true;
         else if (stack.isEmpty()) return false;
-        for (Object ingredient : JeiModule.filter.getFilteredIngredients(VanillaTypes.ITEM)) {
+        for (Object ingredient : JeiModule.filter.getFilteredIngredients(VanillaTypes.ITEM_STACK)) {
             if (ItemUtils.ingredientMatches(ingredient, stack)) {
                 return true;
             }

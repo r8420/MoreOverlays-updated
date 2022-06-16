@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class ConfigScreen extends Screen {
 
     public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
         //super(new TranslatableComponent("gui.config." + modId + ".tile"));
-        super(new TranslatableComponent("Config screen is broken - To edit input fields please edit config/moreoverlays.toml Manually!").withStyle(ChatFormatting.DARK_RED));
+        super(Component.translatable("Config screen is broken - To edit input fields please edit config/moreoverlays.toml Manually!").withStyle(ChatFormatting.DARK_RED));
         this.modListScreen = modListScreen;
         this.configSpec = spec;
         this.modId = modId;

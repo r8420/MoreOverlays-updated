@@ -7,6 +7,7 @@ import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -81,7 +82,7 @@ public class LightOverlayHandler {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderLevelLastEvent event) {
-        if (enabled && Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+        if (enabled && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             renderer.renderOverlays(scanner, event.getPoseStack());
         }
     }

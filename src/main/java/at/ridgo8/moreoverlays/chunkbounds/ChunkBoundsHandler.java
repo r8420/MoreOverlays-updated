@@ -48,7 +48,7 @@ public class ChunkBoundsHandler {
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderLevelLastEvent event) {
-        if (mode != RenderMode.NONE && Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+        if (mode != RenderMode.NONE && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             ChunkBoundsRenderer.renderOverlays(event.getPoseStack());
         }
     }
@@ -64,7 +64,7 @@ public class ChunkBoundsHandler {
         }
         int y = 0;
         for (String text : regionInfo) {
-            mc.font.draw(event.getMatrixStack(), text, 10, y += 10, 0xFFFFFF);
+            mc.font.draw(event.getPoseStack(), text, 10, y += 10, 0xFFFFFF);
         }
     }
 

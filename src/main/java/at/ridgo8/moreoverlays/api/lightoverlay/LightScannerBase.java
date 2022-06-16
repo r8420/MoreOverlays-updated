@@ -1,6 +1,7 @@
 package at.ridgo8.moreoverlays.api.lightoverlay;
 
 import at.ridgo8.moreoverlays.config.Config;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
@@ -84,8 +85,8 @@ public abstract class LightScannerBase implements ILightScanner {
         if (Config.light_IgnoreSpawnList.get()) {
             return true;
         }
-        Biome biome = world.getBiome(pos);
-        return biome.getMobSettings().getCreatureProbability() > 0 && !biome.getMobSettings().getMobs(MobCategory.MONSTER).isEmpty();
+        Holder<Biome> biome = world.getBiome(pos);
+        return biome.get().getMobSettings().getCreatureProbability() > 0 && !biome.get().getMobSettings().getMobs(MobCategory.MONSTER).isEmpty();
     }
 
     public abstract byte getSpawnModeAt(BlockPos pos, Level world);

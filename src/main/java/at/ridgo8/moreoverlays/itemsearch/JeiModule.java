@@ -8,7 +8,7 @@ import mezz.jei.api.registration.IAdvancedRegistration;
 import mezz.jei.api.runtime.IIngredientFilter;
 import mezz.jei.api.runtime.IIngredientListOverlay;
 import mezz.jei.api.runtime.IJeiRuntime;
-import mezz.jei.gui.overlay.IngredientListOverlay;
+import mezz.jei.common.gui.overlay.IngredientListOverlay;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

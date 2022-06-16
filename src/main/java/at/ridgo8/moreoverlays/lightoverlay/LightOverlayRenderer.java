@@ -99,7 +99,7 @@ public class LightOverlayRenderer implements ILightRenderer {
 
         Quaternion cameraRotation = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
 
-        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             // Use old renderer
             RenderSystem.depthMask(false);
             RenderSystem.enableCull();
@@ -137,7 +137,7 @@ public class LightOverlayRenderer implements ILightRenderer {
         tess.end();
         // restore render settings
         RenderSystem.enableTexture();
-        if (Minecraft.getInstance().options.graphicsMode != GraphicsStatus.FABULOUS) {
+        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.disableCull();
             RenderSystem.depthMask(true);
         } else {
