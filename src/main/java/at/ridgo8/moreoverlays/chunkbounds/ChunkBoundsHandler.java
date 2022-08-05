@@ -3,8 +3,8 @@ package at.ridgo8.moreoverlays.chunkbounds;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +21,7 @@ public class ChunkBoundsHandler {
 
     private static RenderMode mode = RenderMode.NONE;
 
-    private final List<String> regionInfo = new ArrayList<String>();
+    private final List<String> regionInfo = new ArrayList<>();
 
     private int playerPrevRegionPosX = Integer.MIN_VALUE;
     private int playerPrevRegionPosZ = Integer.MIN_VALUE;
@@ -47,14 +47,16 @@ public class ChunkBoundsHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelLastEvent event) {
+    public void renderWorldLastEvent(RenderLevelStageEvent event) {
+        if(!event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_PARTICLES)) return;
+
         if (mode != RenderMode.NONE && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             ChunkBoundsRenderer.renderOverlays(event.getPoseStack());
         }
     }
 
     @SubscribeEvent
-    public void onOverlayRender(RenderGameOverlayEvent.Text event) {
+    public void onOverlayRender(CustomizeGuiOverlayEvent.DebugText event) {
         if (regionInfo.isEmpty()) {
             return;
         }

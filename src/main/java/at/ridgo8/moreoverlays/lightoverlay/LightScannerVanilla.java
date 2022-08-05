@@ -2,7 +2,6 @@ package at.ridgo8.moreoverlays.lightoverlay;
 
 import at.ridgo8.moreoverlays.api.lightoverlay.LightScannerBase;
 import at.ridgo8.moreoverlays.config.Config;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +27,7 @@ public class LightScannerVanilla extends LightScannerBase {
     private final List<EntityType<?>> typesToCheck;
 
     public LightScannerVanilla() {
-        typesToCheck = ForgeRegistries.ENTITIES.getValues().stream().filter((type) -> type.canSummon() && type.getCategory() == MobCategory.MONSTER).collect(Collectors.toList());
+        typesToCheck = ForgeRegistries.ENTITY_TYPES.getValues().stream().filter((type) -> type.canSummon() && type.getCategory() == MobCategory.MONSTER).collect(Collectors.toList());
     }
 
     private static boolean checkCollision(BlockPos pos, Level world) {

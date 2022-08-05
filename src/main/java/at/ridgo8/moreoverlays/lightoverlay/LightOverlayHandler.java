@@ -7,11 +7,10 @@ import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.message.FormattedMessage;
 
@@ -76,13 +75,15 @@ public class LightOverlayHandler {
         }
     }
     @SubscribeEvent
-    public void onWorldUnload(final WorldEvent.Unload event) {
+    public void onWorldUnload(final LevelEvent.Unload event) {
         setEnabled(false);
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelLastEvent event) {
-        if (enabled && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
+    public void renderWorldLastEvent(RenderLevelStageEvent event) {
+        if(!event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_PARTICLES)) return;
+
+        if (enabled &&  Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             renderer.renderOverlays(scanner, event.getPoseStack());
         }
     }
