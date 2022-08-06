@@ -32,7 +32,6 @@ public class LightScannerVanilla extends LightScannerBase {
 
     private static boolean checkCollision(BlockPos pos, Level world) {
         BlockState block1 = world.getBlockState(pos);
-        // POSSIBLE CHANGE: isNormalCube to isCollisionShapeFullBlock
         if (block1.isCollisionShapeFullBlock(world, pos) || (!Config.light_IgnoreLayer.get() && world.getBlockState(pos.above()).isCollisionShapeFullBlock(world, pos.above()))) //Don't check because a check on normal Cubes will/should return false ( 99% collide ).
             return false;
         else if (world.isEmptyBlock(pos) && (Config.light_IgnoreLayer.get() || world.isEmptyBlock(pos.above())))  //Don't check because Air has no Collision Box
