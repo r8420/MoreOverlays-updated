@@ -30,7 +30,7 @@ public class JeiModule implements IModPlugin {
         if (overlay instanceof IngredientListOverlay) {
             overlayInternal = ((IngredientListOverlay) overlay);
             try {
-                Field searchField = IngredientListOverlay.class.getDeclaredField("searchField");
+                Field searchField = IngredientListOverlay.class.getDeclaredField("textFieldFilter");
                 searchField.setAccessible(true);
 //                textField = (EditBox) searchField.get(IngredientListOverlay.class.getDeclaredField("searchField"));
                 textField = (EditBox) searchField.get(overlayInternal);
