@@ -17,7 +17,7 @@ apply plugin: 'maven-publish'
 // MixinGradle:
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.21.1-mc1.19'
+version = '1.21.2-mc1.19'
 group = 'at.ridgo8.moreoverlays' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'moreoverlays'
 
@@ -125,7 +125,7 @@ repositories {
     maven {
         // location of a maven mirror for JEI files, as a fallback
         name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        url = "https://modmaven.dev"
     }
 }
 
