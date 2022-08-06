@@ -28,7 +28,7 @@ public class MantleModuleScreenOverride implements IOverrideSlotPos {
         }
 
         @Override
-        public Slot getSlot() {
+        public Slot slot() {
             return slot;
         }
 

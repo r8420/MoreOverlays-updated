@@ -8,7 +8,7 @@ public interface IViewSlot {
     /*
      * The Slot
      */
-    Slot getSlot();
+    Slot slot();
 
     /*
      * Position offset for the Gui

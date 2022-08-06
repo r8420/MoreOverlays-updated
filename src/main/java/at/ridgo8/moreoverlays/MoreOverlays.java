@@ -1,11 +1,8 @@
 package at.ridgo8.moreoverlays;
 
 import at.ridgo8.moreoverlays.config.Config;
-//import at.ridgo8.moreoverlays.gui.ConfigScreen;
-//import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.screen.Screen;
 import at.ridgo8.moreoverlays.gui.ConfigScreen;
-import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -13,9 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.network.NetworkConstants;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
