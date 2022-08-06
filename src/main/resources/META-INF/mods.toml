@@ -21,12 +21,12 @@ license="The MIT License (MIT)"
 [[dependencies.moreoverlays]]
     modId="forge"
     mandatory=true 
-    versionRange="[39,)"
+    versionRange="[40.1.0,)"
     ordering="NONE"
     side="CLIENT"
 [[dependencies.moreoverlays]]
     modId="jei"
     mandatory=false
-    versionRange="[6.0.0.25,)"
+    versionRange="[10.1.0.228,)"
     ordering="NONE"
     side="CLIENT"

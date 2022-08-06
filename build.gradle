@@ -132,9 +132,11 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
-    implementation fg.deobf("mezz.jei:jei-${jei_version_api}")
-    implementation fg.deobf("mezz.jei:jei-${jei_version_core}")
-    //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    // compile against the JEI API but do not include it at runtime
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+    // at runtime, use the full JEI jar for Forge
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     implementation fg.deobf("slimeknights.mantle:Mantle:${mantle_version}")
     //provided files("libs/CustomMobSpawner-3.11.4.jar")
