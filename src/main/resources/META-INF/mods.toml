@@ -21,7 +21,7 @@ license="The MIT License (MIT)"
 [[dependencies.moreoverlays]]
     modId="forge"
     mandatory=true 
-    versionRange="[41,)"
+    versionRange="[41.0.94,)"
     ordering="NONE"
     side="CLIENT"
 [[dependencies.moreoverlays]]
