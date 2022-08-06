@@ -71,7 +71,7 @@ public class GuiHandler {
     }
 
     @SubscribeEvent
-    public void onRenderTooltip(RenderTooltipEvent.Pre event) {
+    public void onRenderTooltip(RenderTooltipEvent event) {
         GuiRenderer.INSTANCE.renderTooltip(event.getItemStack());
     }
 
