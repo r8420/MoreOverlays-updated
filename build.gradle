@@ -136,7 +136,6 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-${jei_version_core}")
     //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
-    implementation fg.deobf("slimeknights.mantle:Mantle:${mantle_version}")
     //provided files("libs/CustomMobSpawner-3.11.4.jar")
 
     // Apply Mixin AP
