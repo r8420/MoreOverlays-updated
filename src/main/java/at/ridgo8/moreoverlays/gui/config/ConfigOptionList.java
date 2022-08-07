@@ -174,9 +174,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         OptionEntry selected = this.getEntryAtPosition(p_mouseClicked_1_, p_mouseClicked_3_);
         for (final OptionEntry entry : this.children()) {
             if (entry != selected) {
-                if (entry.changeFocus(true)) {
-                    entry.changeFocus(true);
-                }
+                entry.setFocused(null);
             }
         }
 
@@ -204,9 +202,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
                 this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }
         }
-        if (this.changeFocus(true)) {
-            this.changeFocus(true);
-        }
+        this.setFocused(null);
     }
 
     public List<String> getCurrentPath() {

@@ -48,6 +48,7 @@ public class OptionGeneric<V>
 
     @Override
     public void setFocused(GuiEventListener focused) {
+        super.setFocused(focused);
         if (focused == null) {
             this.tfConfigEntry.setFocus(false);
         }
