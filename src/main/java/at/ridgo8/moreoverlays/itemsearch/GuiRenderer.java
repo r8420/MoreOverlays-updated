@@ -76,65 +76,64 @@ public class GuiRenderer {
 
     private void drawSearchFrame(EditBox textField, PoseStack matrixstack) {
         Matrix4f matrix4f = matrixstack.last().pose();
-        Lighting.setupForFlatItems();
-//        RenderSystem.enableAlphaTest();
+
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
-//        RenderSystem.color4f(1, 1, 1, 1);
-//        RenderSystem.pushMatrix();
+
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
-//        RenderSystem.color4f(1, 1, 0, 1);
 
-        float x = textField.x + 2;
-        float y = textField.y + 2;
-        float width = textField.getWidth() - 4;
+        float x = textField.x - 2;
+        float y = textField.y - 4;
+        float width = textField.getWidth() + 8;
         float height = textField.getHeight() - 4;
 
-        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).endVertex();
+        float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((Config.search_searchBoxColor.get() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (Config.search_searchBoxColor.get() & 0xFF)) / 255F;
 
-        renderer.vertex(matrix4f, x, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x, y + height, 1000).endVertex();
+        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        renderer.vertex(matrix4f, x, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x, y + height, 1000).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
 
         tess.end();
-//        RenderSystem.color4f(1, 1, 1, 1);
-        RenderSystem.disableBlend();
-//        RenderSystem.popMatrix();
+
         RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
     }
 
     public void renderTooltip(ItemStack stack) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
-            AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) guiscr;
-            if (gui.getSlotUnderMouse() != null && gui.getSlotUnderMouse().hasItem()
-                    && gui.getSlotUnderMouse().getItem().equals(stack)) {
-                allowRender = false;
-                drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
-            }
+            //AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) guiscr;
+            allowRender = false;
+            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
         }
     }
 
     private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
         Lighting.setupForFlatItems();
-//        RenderSystem.enableAlphaTest();
-//        RenderSystem.color4f(1, 1, 1, 1);
 
         if (!enabled || views == null || views.isEmpty())
             return;
@@ -142,31 +141,33 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-//        RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-//        RenderSystem.color4f(0, 0, 0, 0.5F);
+
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+
+        float r = ((float) ((Config.search_filteredSlotColor.get() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((Config.search_filteredSlotColor.get() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (Config.search_filteredSlotColor.get() & 0xFF)) / 255F;
+        float a = Config.search_filteredSlotTransparancy.get().floatValue();
 
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
                 Vec2 posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
                 float px = posvec.x;
                 float py = posvec.y;
-                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
-                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
-                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
-                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
+                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
+                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
             }
         }
 
         tess.end();
 
         RenderSystem.enableTexture();
-//        RenderSystem.popMatrix();
-//        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         RenderSystem.disableBlend();
     }
@@ -226,6 +227,10 @@ public class GuiRenderer {
     }
 
     public void toggleMode() {
+        if(!Config.search_enabled.get()){
+            enabled = false;
+            return;
+        }
         enabled = !enabled;
         if (enabled) {
             lastFilterText = JeiModule.filter.getFilterText();

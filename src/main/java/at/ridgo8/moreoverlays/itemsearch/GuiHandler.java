@@ -1,9 +1,9 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.ClientRegistrationHandler;
+import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.renderer.ScreenEffectRenderer;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenOpenEvent;
@@ -28,6 +28,11 @@ public class GuiHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onGuiInit(ScreenEvent.InitScreenEvent.Post event) {
+        if(!Config.search_enabled.get()){
+            toggleMode();
+            return;
+        }
+
         JeiModule.updateModule();
         GuiRenderer.INSTANCE.guiInit(event.getScreen());
     }
@@ -39,16 +44,17 @@ public class GuiHandler {
 
     @SubscribeEvent
     public void onGuiClick(ScreenEvent.MouseClickedEvent.Pre event) {
-        EditBox searchField = JeiModule.getJEITextField();
-        //Minecraft mc = Minecraft.getInstance();
-        if (searchField != null && event.getButton() == 0 && GuiRenderer.INSTANCE.canShowIn(event.getScreen())) {
-            //Screen guiScreen = event.getGui();
-            //int x = event.getMouseX() * guiScreen.width / mc.displayWidth;
-            //int y = guiScreen.height - event.getMouseY() * guiScreen.height / mc.displayHeight - 1;
-            int x = (int) event.getMouseX();
-            int y = (int) event.getMouseY();
+        EditBox textField = JeiModule.getJEITextField();
+        if (textField != null && event.getButton() == 0 && GuiRenderer.INSTANCE.canShowIn(event.getScreen())) {
+            int mouse_x = (int) event.getMouseX();
+            int mouse_y = (int) event.getMouseY();
 
-            if (x > searchField.x && x < searchField.x + searchField.getWidth() && y > searchField.y && y < searchField.y + searchField.getHeight()) {
+            float textField_x = textField.x - 2;
+            float textField_y = textField.y - 4;
+            float textField_width = textField.getWidth() + 8;
+            float textField_height = textField.getHeight() - 4;
+
+            if (mouse_x > textField_x && mouse_x < textField_x + textField_width && mouse_y > textField_y && mouse_y < textField_y + textField_height) {
                 long now = System.currentTimeMillis();
                 if (now - firstClick < 1000) {
                     GuiRenderer.INSTANCE.toggleMode();
@@ -71,7 +77,7 @@ public class GuiHandler {
     }
 
     @SubscribeEvent
-    public void onRenderTooltip(RenderTooltipEvent event) {
+    public void onRenderTooltip(RenderTooltipEvent.Pre event) {
         GuiRenderer.INSTANCE.renderTooltip(event.getItemStack());
     }
 
