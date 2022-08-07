@@ -1,6 +1,6 @@
 {
   "required": false,
-  "package": "at.feldim2425.moreoverlays.mixin",
+  "package": "at.ridgo8.moreoverlays.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
     "MixinDebugRenderer"
