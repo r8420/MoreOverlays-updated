@@ -76,47 +76,47 @@ public class GuiRenderer {
 
     private void drawSearchFrame(EditBox textField, PoseStack matrixstack) {
         Matrix4f matrix4f = matrixstack.last().pose();
-        Lighting.setupForFlatItems();
-//        RenderSystem.enableAlphaTest();
+
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
-//        RenderSystem.color4f(1, 1, 1, 1);
-//        RenderSystem.pushMatrix();
+
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
-//        RenderSystem.color4f(1, 1, 0, 1);
 
-        float x = textField.x + 2;
-        float y = textField.y + 2;
-        float width = textField.getWidth() - 4;
+        float x = textField.x - 2;
+        float y = textField.y - 4;
+        float width = textField.getWidth() + 8;
         float height = textField.getHeight() - 4;
 
-        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).endVertex();
+        renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x, y, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x, y + height, 1000).color(1, 1, 0, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width, y, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width, y + height, 1000).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y + height, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
 
         tess.end();
-//        RenderSystem.color4f(1, 1, 1, 1);
-        RenderSystem.disableBlend();
-//        RenderSystem.popMatrix();
+
         RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
     }
 
     public void renderTooltip(ItemStack stack) {
@@ -130,8 +130,6 @@ public class GuiRenderer {
 
     private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
         Lighting.setupForFlatItems();
-//        RenderSystem.enableAlphaTest();
-//        RenderSystem.color4f(1, 1, 1, 1);
 
         if (!enabled || views == null || views.isEmpty())
             return;
@@ -139,10 +137,9 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-//        RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-//        RenderSystem.color4f(0, 0, 0, 0.5F);
+
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -162,8 +159,6 @@ public class GuiRenderer {
         tess.end();
 
         RenderSystem.enableTexture();
-//        RenderSystem.popMatrix();
-//        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         RenderSystem.disableBlend();
     }
