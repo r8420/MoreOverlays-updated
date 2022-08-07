@@ -26,6 +26,9 @@ public class Config {
 
     public static ForgeConfigSpec.BooleanValue search_enabled;
     public static ForgeConfigSpec.BooleanValue search_searchCustom;
+    public static ForgeConfigSpec.IntValue search_searchBoxColor;
+    public static ForgeConfigSpec.IntValue search_filteredSlotColor;
+    public static ForgeConfigSpec.DoubleValue search_filteredSlotTransparancy;
 
 
     public static void initialize() {
@@ -59,6 +62,9 @@ public class Config {
         builder.comment("Settings for the search overlay").push("searchoverlay");
         search_enabled = builder.comment("Setting this to false this will disable the functionality to double click the JEI search bar for item searching.").define("search_enabled", true);
         search_searchCustom = builder.comment("Also searches for the custom name of an item in user inventory (for example items named in anvil)\nSetting this to false will increase performance but will not find custom named items.").define("custom_search", true);
+        search_searchBoxColor = builder.comment("Color for the search box when double clicked").defineInRange("search_box_color", 0xFFFF00, 0, 0xFFFFFF);
+        search_filteredSlotColor = builder.comment("Color of the filtered out slots").defineInRange("search_slot_color", 0x000000, 0, 0xFFFFFF);
+        search_filteredSlotTransparancy = builder.comment("Transparancy for the filtered out slots").defineInRange("search_slot_alpha", 0.5F, 0F, 1F);
         builder.pop();
 
         config_client = builder.build();

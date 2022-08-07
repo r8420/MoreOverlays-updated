@@ -83,12 +83,17 @@ public class GuiRenderer {
         GlStateManager.pushMatrix();
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder buffer = tess.getBuffer();
-        GlStateManager.color4f(1, 1, 0, 1);
 
         float x = textField.x + 2;
         float y = textField.y + 2;
         float width = textField.getWidth() - 4;
         float height = textField.getHeight() - 4;
+
+        float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((Config.search_searchBoxColor.get() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (Config.search_searchBoxColor.get() & 0xFF)) / 255F;
+
+        GlStateManager.color4f(r, g, b, 1);
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         buffer.pos(x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).endVertex();
@@ -144,7 +149,13 @@ public class GuiRenderer {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture();
-        GlStateManager.color4f(0, 0, 0, 0.5F);
+
+        float r = ((float) ((Config.search_filteredSlotColor.get() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((Config.search_filteredSlotColor.get() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (Config.search_filteredSlotColor.get() & 0xFF)) / 255F;
+        float a = Config.search_filteredSlotTransparancy.get().floatValue();
+
+        GlStateManager.color4f(r, g, b, a);
 
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 
