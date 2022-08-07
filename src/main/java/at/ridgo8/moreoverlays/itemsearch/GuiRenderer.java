@@ -122,12 +122,9 @@ public class GuiRenderer {
     public void renderTooltip(ItemStack stack) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
-            AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) guiscr;
-            if (gui.getSlotUnderMouse() != null && gui.getSlotUnderMouse().hasItem()
-                    && gui.getSlotUnderMouse().getItem().equals(stack)) {
-                allowRender = false;
-                drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
-            }
+            //AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) guiscr;
+            allowRender = false;
+            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
         }
     }
 
