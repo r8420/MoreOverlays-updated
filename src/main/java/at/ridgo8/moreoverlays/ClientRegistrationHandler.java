@@ -11,7 +11,9 @@ import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import at.ridgo8.moreoverlays.lightoverlay.integration.AlternateLightHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 
 public final class ClientRegistrationHandler {
 
@@ -26,6 +28,10 @@ public final class ClientRegistrationHandler {
     }
 
     public static void setupClient() {
+        final ModLoadingContext ctx = ModLoadingContext.get();
+        ctx.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
+                () -> new ConfigGuiHandler.ConfigGuiFactory((minecraft, screen) -> new ConfigScreen(screen,Config.config_client, MoreOverlays.MOD_ID)));
+
         enable_jei = ModList.get().isLoaded("jei");
         KeyBindings.init();
 
