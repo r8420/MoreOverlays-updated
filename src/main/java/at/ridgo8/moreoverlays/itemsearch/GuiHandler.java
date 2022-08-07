@@ -1,6 +1,7 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.ClientRegistrationHandler;
+import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -27,6 +28,10 @@ public class GuiHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
+        if(!Config.search_enabled.get()){
+            toggleMode();
+            return;
+        }
         JeiModule.updateModule();
         GuiRenderer.INSTANCE.guiInit(event.getGui());
     }
