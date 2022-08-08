@@ -182,7 +182,6 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             Supplier lvt_9_1_ = p_231049_1_ ? lvt_7_1_::next : lvt_7_1_::previous;
 
             IGuiEventListener lvt_10_1_;
-            Boolean testo;
             do {
                 if (!lvt_8_1_.getAsBoolean()) {
                     this.setListener((IGuiEventListener)null);
@@ -190,7 +189,6 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
                 }
 
                 lvt_10_1_ = (IGuiEventListener)lvt_9_1_.get();
-                //testo =
             } while(!lvt_10_1_.changeFocus(p_231049_1_));
 
             this.setListener(lvt_10_1_);
