@@ -49,9 +49,9 @@ public class GuiHandler {
             int mouse_x = (int) event.getMouseX();
             int mouse_y = (int) event.getMouseY();
 
-            float textField_x = textField.x - 2;
-            float textField_y = textField.y - 4;
-            float textField_width = textField.getWidth() + 8;
+            float textField_x = textField.x + 2;
+            float textField_y = textField.y + 2;
+            float textField_width = textField.getWidth() - 4;
             float textField_height = textField.getHeight() - 4;
 
             if (mouse_x > textField_x && mouse_x < textField_x + textField_width && mouse_y > textField_y && mouse_y < textField_y + textField_height) {

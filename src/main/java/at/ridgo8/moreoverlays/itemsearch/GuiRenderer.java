@@ -85,9 +85,9 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        float x = textField.x - 2;
-        float y = textField.y - 4;
-        float width = textField.getWidth() + 8;
+        float x = textField.x + 2;
+        float y = textField.y + 2;
+        float width = textField.getWidth() - 4;
         float height = textField.getHeight() - 4;
 
         float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
