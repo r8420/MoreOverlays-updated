@@ -218,6 +218,10 @@ public class GuiRenderer {
     }
 
     public void toggleMode() {
+        if(!Config.search_enabled.get()){
+            enabled = false;
+            return;
+        }
         enabled = !enabled;
         if (enabled) {
             lastFilterText = JeiModule.filter.getFilterText();

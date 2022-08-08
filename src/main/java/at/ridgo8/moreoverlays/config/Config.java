@@ -25,6 +25,7 @@ public class Config {
     public static ForgeConfigSpec.IntValue render_spawnNColor;
     public static ForgeConfigSpec.DoubleValue render_spawnLineWidth;
 
+    public static ForgeConfigSpec.BooleanValue search_enabled;
     public static ForgeConfigSpec.BooleanValue search_searchCustom;
 
 
@@ -58,6 +59,7 @@ public class Config {
         builder.pop();
 
         builder.comment("Settings for the search overlay").push("searchoverlay");
+        search_enabled = builder.comment("Setting this to false this will disable the functionality to double click the JEI search bar for item searching.").define("search_enabled", true);
         search_searchCustom = builder.comment("Also searches for the custom name of an item in user inventory (for example items named in anvil)\nSetting this to false will increase performance but will not find custom named items.").define("custom_search", true);
         builder.pop();
 
