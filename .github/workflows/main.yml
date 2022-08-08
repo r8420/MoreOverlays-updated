@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the master-1.18 branch
   push:
-    branches: [ master-1.18 ]
+    branches: [ master-1.18-JEI-9 ]
   pull_request:
-    branches: [ master-1.18 ]
+    branches: [ master-1.18-JEI-9 ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,17 +18,11 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'adopt'
-    - name: Validate Gradle wrapper
-      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
     - run: ./gradlew build
     - uses: actions/upload-artifact@v2
       with:
