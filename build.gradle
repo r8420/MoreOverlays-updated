@@ -1,3 +1,9 @@
+tasks.whenTaskAdded {task ->
+    if(task.name.contains("rename")) {
+        task.enabled = false
+    }
+}
+
 buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
