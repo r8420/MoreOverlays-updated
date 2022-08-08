@@ -2,7 +2,7 @@
 [![CurseForge](http://cf.way2muchnoise.eu/391382.svg?)](https://www.curseforge.com/minecraft/mc-mods/more-overlays-updated)  [![CurseForge](http://cf.way2muchnoise.eu/versions/391382.svg?)](https://www.curseforge.com/minecraft/mc-mods/more-overlays-updated)
 
 
-# MoreOverlays
+# MoreOverlays Legacy
 [![CurseForge](http://cf.way2muchnoise.eu/243478.svg)](https://minecraft.curseforge.com/projects/more-overlays)  [![CurseForge](http://cf.way2muchnoise.eu/versions/243478.svg)](https://minecraft.curseforge.com/projects/more-overlays)
 
 
@@ -15,15 +15,17 @@ Added:
 
 ### Custom Build
 You can make custom builds and use them.
-I prefer deleting the Link to the Version File in MoreOverlays.java Line 19
 ```
- Original:
- public static final String UPDATE_JSON = "https://raw.githubusercontent.com/feldim2425/Mod_Update-JSONs/master/MoreOverlays.json";
- 
- For custom build:
- public static final String UPDATE_JSON = "";
+ gradlew build
+```
+ or
+```
+ gradlew runclient
+```
+ Make sure you use the right Java version. To specify a custom Java version use:
  ```
- 
-
+gradlew build -Dorg.gradle.java.home="C:\Program Files\Java\jdk1.8.0_202"
+ ```
+(Replace "C:\Program Files\Java\jdk1.8.0_202" with the Java path you want to use)
 
 
