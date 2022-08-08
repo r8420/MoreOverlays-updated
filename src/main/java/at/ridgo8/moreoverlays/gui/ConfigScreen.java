@@ -32,8 +32,7 @@ public class ConfigScreen extends Screen {
     private String txtDone = "";
 
     public ConfigScreen(Screen modListScreen, ForgeConfigSpec spec, String modId) {
-        //super(new TranslatableComponent("gui.config." + modId + ".tile"));
-        super(Component.translatable("Config screen is broken - To edit input fields please edit config/moreoverlays.toml Manually!").withStyle(ChatFormatting.DARK_RED));
+        super(Component.translatable("gui.config." + modId + ".tile"));
         this.modListScreen = modListScreen;
         this.configSpec = spec;
         this.modId = modId;
