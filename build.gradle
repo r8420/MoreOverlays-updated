@@ -1,5 +1,7 @@
+// Remove the rename task on github builds because it freezes (has nothing to do with org.gradle.dependency.verification)
 tasks.whenTaskAdded {task ->
-    if(task.name.contains("rename")) {
+    if(task.name.contains("rename") && System.getProperty("org.gradle.dependency.verification") == "off") {
+        println "Will skip rename task"
         task.enabled = false
     }
 }
