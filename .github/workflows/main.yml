@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build with Gradle
-    - uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+    uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
     with:
       arguments: build -Dorg.gradle.java.home="C:\Program Files\Java\jdk1.8.0_202"
     - uses: actions/upload-artifact@v2
