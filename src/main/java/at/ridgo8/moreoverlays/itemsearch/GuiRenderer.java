@@ -126,7 +126,6 @@ public class GuiRenderer {
     public void renderTooltip(ItemStack stack) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
-            //AbstractContainerScreen<?> gui = (AbstractContainerScreen<?>) guiscr;
             allowRender = false;
             drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
         }
@@ -183,7 +182,6 @@ public class GuiRenderer {
             views.clear();
         }
         for (Slot slot : container.getMenu().slots) {
-            //System.out.println(slot);
             SlotViewWrapper wrapper;
             if (!views.containsKey(slot)) {
                 wrapper = new SlotViewWrapper(SlotHandler.INSTANCE.getViewSlot(container, slot));
