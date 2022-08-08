@@ -90,26 +90,30 @@ public class GuiRenderer {
         float width = textField.getWidth() + 8;
         float height = textField.getHeight() - 4;
 
+        float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((Config.search_searchBoxColor.get() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (Config.search_searchBoxColor.get() & 0xFF)) / 255F;
+
         renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x, y, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x, y + height, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x, y + height, 1000).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width, y, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width, y + height, 1000).color(1, 1, 0, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(1, 1, 0, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
 
         tess.end();
 
@@ -144,15 +148,20 @@ public class GuiRenderer {
 
         renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
+        float r = ((float) ((Config.search_filteredSlotColor.get() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((Config.search_filteredSlotColor.get() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (Config.search_filteredSlotColor.get() & 0xFF)) / 255F;
+        float a = Config.search_filteredSlotTransparancy.get().floatValue();
+
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
                 Vec2 posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
                 float px = posvec.x;
                 float py = posvec.y;
-                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
-                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
-                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
-                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(0, 0, 0, 0.5F).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
+                renderer.vertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
+                renderer.vertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
+                renderer.vertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).color(r, g, b, a).endVertex();
             }
         }
 
