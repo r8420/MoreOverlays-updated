@@ -198,3 +198,9 @@ publishing {
         }
     }
 }
+
+tasks.whenTaskAdded {task ->
+    if(task.name.contains("rename")) {
+        task.enabled = false
+    }
+}
