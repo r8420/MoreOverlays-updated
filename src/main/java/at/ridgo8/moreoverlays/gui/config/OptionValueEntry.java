@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
@@ -17,6 +18,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
@@ -145,6 +149,53 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     @Override
     public List<? extends IGuiEventListener> getEventListeners() {
         return Arrays.asList(this.btnReset, this.btnUndo);
+    }
+
+    // Custom changeFocus method because of issue with config buttons on 1.16.5
+    @Override
+    public boolean changeFocus(boolean p_231049_1_) {
+        IGuiEventListener lvt_2_1_ = this.getListener();
+        boolean lvt_3_1_ = lvt_2_1_ != null;
+        if (lvt_3_1_ && lvt_2_1_.changeFocus(p_231049_1_)) {
+            return true;
+        } else {
+            List<TextFieldWidget> lvt_4_1_ = new ArrayList<TextFieldWidget>();
+            this.getEventListeners().forEach(l -> {
+                // Filter out the buttons because they don't need to be focussed
+                if(l instanceof TextFieldWidget){
+                    lvt_4_1_.add((TextFieldWidget)l);
+                }
+            });
+
+            int lvt_6_1_ = lvt_4_1_.indexOf(lvt_2_1_);
+            int lvt_5_3_;
+            if (lvt_3_1_ && lvt_6_1_ >= 0) {
+                lvt_5_3_ = lvt_6_1_ + (p_231049_1_ ? 1 : 0);
+            } else if (p_231049_1_) {
+                lvt_5_3_ = 0;
+            } else {
+                lvt_5_3_ = lvt_4_1_.size();
+            }
+
+            ListIterator<? extends IGuiEventListener> lvt_7_1_ = lvt_4_1_.listIterator(lvt_5_3_);
+            BooleanSupplier lvt_8_1_ = p_231049_1_ ? lvt_7_1_::hasNext : lvt_7_1_::hasPrevious;
+            Supplier lvt_9_1_ = p_231049_1_ ? lvt_7_1_::next : lvt_7_1_::previous;
+
+            IGuiEventListener lvt_10_1_;
+            Boolean testo;
+            do {
+                if (!lvt_8_1_.getAsBoolean()) {
+                    this.setListener((IGuiEventListener)null);
+                    return false;
+                }
+
+                lvt_10_1_ = (IGuiEventListener)lvt_9_1_.get();
+                //testo =
+            } while(!lvt_10_1_.changeFocus(p_231049_1_));
+
+            this.setListener(lvt_10_1_);
+            return true;
+        }
     }
 
     @Override

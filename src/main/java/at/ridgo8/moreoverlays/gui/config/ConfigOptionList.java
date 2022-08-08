@@ -177,6 +177,7 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
                 if (entry.changeFocus(true)) {
                     entry.changeFocus(true);
                 }
+                entry.setListener(null);
             }
         }
 
@@ -204,9 +205,16 @@ public class ConfigOptionList extends AbstractOptionList<ConfigOptionList.Option
                 this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }
         }
-        if (this.changeFocus(true)) {
-            this.changeFocus(true);
+
+//        OptionGeneric test = (OptionGeneric) this;
+//        test.setFocused(false);
+        for (final OptionEntry entry : this.getEventListeners()) {
+            if (entry.changeFocus(true)) {
+                entry.changeFocus(true);
+            }
+            entry.setListener(null);
         }
+        this.setListener(null);
     }
 
     public List<String> getCurrentPath() {
