@@ -1,30 +1,34 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
-
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the master-1.18 branch
-  push:
-    branches: [ master-1.18 ]
-  pull_request:
-    branches: [ master-1.18 ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: self-hosted
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    - uses: actions/checkout@v2
-    - run: ./gradlew build
-    - uses: actions/upload-artifact@v2
+# This is a basic workflow to help you get started with Actions 
+ 
+name: CI 
+ 
+# Controls when the workflow will run 
+on: 
+  # Triggers the workflow on push or pull request events but only for the master-1.18 branch 
+  push: 
+    branches: [ "master-1.18", "master-1.18-JEI-9" ]
+  pull_request: 
+    branches: [ "master-1.18", "master-1.18-JEI-9" ]
+ 
+  # Allows you to run this workflow manually from the Actions tab 
+  workflow_dispatch: 
+ 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel 
+jobs: 
+  # This workflow contains a single job called "build" 
+  build: 
+    # The type of runner that the job will run on 
+    runs-on: self-hosted 
+ 
+    # Steps represent a sequence of tasks that will be executed as part of the job 
+    steps: 
+    - uses: actions/checkout@v2 
+    - uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      #env:
+      #  JAVA_HOME: "C:/Program Files/Java/jdk1.8.0_202"
       with:
-        name: Package
+        arguments: build -Dorg.gradle.dependency.verification=off
+    - uses: actions/upload-artifact@v2 
+      with: 
+        name: Package 
         path: build/libs
