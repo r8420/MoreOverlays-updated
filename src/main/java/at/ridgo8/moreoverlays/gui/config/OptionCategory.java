@@ -21,9 +21,9 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment) {
         super(list);
-        btnOpen = new Button(0, 0, this.getConfigOptionList().getRowWidth() - 4, 20, Component.nullToEmpty(name), (btn) -> {
+        btnOpen = new Button.Builder(Component.nullToEmpty(name), (btn) -> {
             list.push(path);
-        });
+        }).pos(0, 0).size(this.getConfigOptionList().getRowWidth() - 4, 20).build();
 
         String[] lines = null;
         if (comment != null) {

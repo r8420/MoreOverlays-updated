@@ -3,7 +3,6 @@ package at.ridgo8.moreoverlays.gui;
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.config.ConfigOptionList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -72,17 +71,23 @@ public class ConfigScreen extends Screen {
         final int xDefaultAll = this.width - resetWidth - pad;
         final int xUndoAll = xDefaultAll - undoWidth;
 
-        this.btnReset = new Button(xDefaultAll, buttonY, 100, buttonHeight,
+        this.btnReset = new Button.Builder(
                 Component.nullToEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
-                (btn) -> this.optionList.reset());
+                (btn) -> this.optionList.reset())
+                .pos(xDefaultAll, buttonY)
+                .size(100, buttonHeight).build();
 
-        this.btnUndo = new Button(xUndoAll, buttonY, 100, buttonHeight,
+        this.btnUndo = new Button.Builder(
                 Component.nullToEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
-                (btn) -> this.optionList.undo());
+                (btn) -> this.optionList.undo())
+                .pos(xUndoAll, buttonY)
+                .size(100, buttonHeight).build();
 
-        this.btnBack = new Button(xBack, buttonY, doneWidth, buttonHeight,
+        this.btnBack = new Button.Builder(
                 Component.nullToEmpty(" " + this.txtDone),
-                (btn) -> this.back());
+                (btn) -> this.back())
+                .pos(xBack, buttonY)
+                .size(doneWidth, buttonHeight).build();
 
         this.addWidget(this.optionList);
         this.addWidget(this.btnReset);

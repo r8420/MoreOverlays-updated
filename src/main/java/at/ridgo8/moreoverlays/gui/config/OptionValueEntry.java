@@ -42,10 +42,16 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         super(list);
         this.value = confValue;
         this.spec = spec;
-        this.btnReset = new Button(list.getRowWidth() - 20, 0, 20, 20, Component.nullToEmpty(ConfigOptionList.RESET_CHAR),
-                (btn) -> this.reset());
-        this.btnUndo = new Button(list.getRowWidth() - 42, 0, 20, 20, Component.nullToEmpty(ConfigOptionList.UNDO_CHAR),
-                (btn) -> this.undo());
+
+        this.btnReset = new Button.Builder(Component.nullToEmpty(ConfigOptionList.RESET_CHAR),
+                (btn) -> this.reset())
+                    .pos(list.getRowWidth() - 20, 0)
+                    .size(20, 20).build();
+
+        this.btnUndo = new Button.Builder(Component.nullToEmpty(ConfigOptionList.UNDO_CHAR),
+                (btn) -> this.undo())
+                    .pos(list.getRowWidth() - 42, 0)
+                    .size(20, 20).build();
 
         this.txtReset = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".reset_config");
         this.txtUndo = I18n.get("gui.config." + MoreOverlays.MOD_ID + ".undo");

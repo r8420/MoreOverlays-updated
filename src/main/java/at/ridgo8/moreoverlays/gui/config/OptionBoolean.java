@@ -24,7 +24,7 @@ public class OptionBoolean
         super(list, valSpec, spec);
         this.showValidity = false;
 
-        btnChange = new Button(OptionValueEntry.TITLE_WIDTH + 5, 0, this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20, Component.nullToEmpty(""), this::buttonPressed);
+        btnChange = new Button.Builder(Component.nullToEmpty(""), this::buttonPressed).pos(OptionValueEntry.TITLE_WIDTH + 5, 0).size(this.getConfigOptionList().getRowWidth() - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR, 20).build();
         this.overrideUnsaved(this.value.get());
     }
 
