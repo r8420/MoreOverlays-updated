@@ -11,6 +11,7 @@ license="The MIT License (MIT)"
 	logoFile="moreoverlays.png"
 	credits="Thanks to all contributors of this project"
 	authors="feldim2425, RiDGo8/R8420"
+	displayTest="IGNORE_ALL_VERSION"
     description='''
     Adds some overlays from the old (MC 1.7.x) NotEnoughItems Mod:
     * Chunk and Region borders
