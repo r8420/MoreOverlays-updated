@@ -48,8 +48,8 @@ public class GuiHandler {
             int mouse_x = (int) event.getMouseX();
             int mouse_y = (int) event.getMouseY();
 
-            float textField_x = textField.x - 2;
-            float textField_y = textField.y - 4;
+            float textField_x = textField.getX() - 2;
+            float textField_y = textField.getY() - 4;
             float textField_width = textField.getWidth() + 8;
             float textField_height = textField.getHeight() - 4;
 

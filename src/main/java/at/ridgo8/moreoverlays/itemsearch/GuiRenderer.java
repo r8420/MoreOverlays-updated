@@ -7,7 +7,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
+import org.joml.Matrix4f;
 import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -85,8 +85,8 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
-        float x = textField.x - 2;
-        float y = textField.y - 4;
+        float x = textField.getX() - 2;
+        float y = textField.getY() - 4;
         float width = textField.getWidth() + 8;
         float height = textField.getHeight() - 4;
 
