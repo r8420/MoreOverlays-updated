@@ -9,7 +9,6 @@ import mezz.jei.api.runtime.IIngredientFilter;
 import mezz.jei.api.runtime.IIngredientListOverlay;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.gui.overlay.IngredientListOverlay;
-import mezz.jei.library.gui.IngredientListOverlayDummy;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -27,53 +26,26 @@ public class JeiModule implements IModPlugin {
     private static IngredientListOverlay overlayInternal;
     private static EditBox textField;
 
-    public static IJeiRuntime jeiRuntime;
-
-    public static boolean tryAgain = false;
-
     public static void updateModule() {
-        var isInstanceOfIngredientListOverlay = false;
-
-        // Temporary fix for JEI
-        try {
-            isInstanceOfIngredientListOverlay = overlay instanceof IngredientListOverlay;
-
-            if(tryAgain && isInstanceOfIngredientListOverlay)
-                MoreOverlays.logger.info("JEI integration: IngredientListOverlay loaded");
-
-            if (overlay instanceof IngredientListOverlayDummy) {
-                tryAgain = true;
-                MoreOverlays.logger.warn("JEI integration failed. Trying again later");
-            }
-
-            if(isInstanceOfIngredientListOverlay)
-                tryAgain = false;
-        } catch (NoClassDefFoundError e) {
-            MoreOverlays.logger.error("Something went wrong. JEI integration failed");
-            tryAgain = false;
-        }
-
-        if (isInstanceOfIngredientListOverlay) {
+        if (overlay instanceof IngredientListOverlay) {
             overlayInternal = ((IngredientListOverlay) overlay);
             try {
                 Field searchField = IngredientListOverlay.class.getDeclaredField("searchField");
                 searchField.setAccessible(true);
                 textField = (EditBox) searchField.get(overlayInternal);
-                MoreOverlays.logger.info("JEI integration success");
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 try {
                     // If JEI decides to change it to textFieldFilter
                     Field searchField = IngredientListOverlay.class.getDeclaredField("textFieldFilter");
                     searchField.setAccessible(true);
                     textField = (EditBox) searchField.get(overlayInternal);
-                    MoreOverlays.logger.info("JEI integration success");
                 } catch (NoSuchFieldException | IllegalAccessException f) {
                     MoreOverlays.logger.error("Something went wrong. Tried to load JEI Search Text Field object");
                     e.printStackTrace();
                     f.printStackTrace();
                 }
             }
-        } else {
+        } else{
             overlayInternal = null;
             textField = null;
         }
@@ -101,7 +73,6 @@ public class JeiModule implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
-        JeiModule.jeiRuntime = jeiRuntime;
         overlay = jeiRuntime.getIngredientListOverlay();
         filter = jeiRuntime.getIngredientFilter();
         updateModule();
