@@ -1,6 +1,7 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.ClientRegistrationHandler;
+import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
@@ -31,7 +32,11 @@ public class GuiHandler {
             toggleMode();
             return;
         }
-
+        if(JeiModule.tryAgain){
+            MoreOverlays.logger.info("Trying JEI integration again");
+            JeiModule.overlay = JeiModule.jeiRuntime.getIngredientListOverlay();
+            JeiModule.filter = JeiModule.jeiRuntime.getIngredientFilter();
+        }
         JeiModule.updateModule();
         GuiRenderer.INSTANCE.guiInit(event.getScreen());
     }
