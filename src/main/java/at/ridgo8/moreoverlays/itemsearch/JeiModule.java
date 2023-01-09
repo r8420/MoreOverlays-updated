@@ -59,14 +59,12 @@ public class JeiModule implements IModPlugin {
                 Field searchField = IngredientListOverlay.class.getDeclaredField("searchField");
                 searchField.setAccessible(true);
                 textField = (EditBox) searchField.get(overlayInternal);
-                MoreOverlays.logger.info("JEI integration success");
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 try {
                     // If JEI decides to change it to textFieldFilter
                     Field searchField = IngredientListOverlay.class.getDeclaredField("textFieldFilter");
                     searchField.setAccessible(true);
                     textField = (EditBox) searchField.get(overlayInternal);
-                    MoreOverlays.logger.info("JEI integration success");
                 } catch (NoSuchFieldException | IllegalAccessException f) {
                     MoreOverlays.logger.error("Something went wrong. Tried to load JEI Search Text Field object");
                     e.printStackTrace();
