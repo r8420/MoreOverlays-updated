@@ -25,7 +25,7 @@ apply plugin: 'maven-publish'
 // MixinGradle:
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.21.4-mc1.19.3'
+version = '1.21.6-mc1.19.3'
 group = 'at.ridgo8.moreoverlays' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'moreoverlays'
 
@@ -141,10 +141,12 @@ dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+//    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+//    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
     // at runtime, use the full JEI jar for Forge
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    // Need to compile full JEI because api is missing IngredientListOverlay
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     //provided files("libs/CustomMobSpawner-3.11.4.jar")
 
