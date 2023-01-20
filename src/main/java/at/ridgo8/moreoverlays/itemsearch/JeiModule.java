@@ -1,21 +1,20 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
+import at.ridgo8.moreoverlays.util.ReflectionUtil;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.registration.IAdvancedRegistration;
+import mezz.jei.api.ingredients.subtypes.UidContext;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.runtime.IIngredientFilter;
 import mezz.jei.api.runtime.IIngredientListOverlay;
 import mezz.jei.api.runtime.IJeiRuntime;
-import mezz.jei.gui.overlay.IngredientListOverlay;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import mezz.jei.api.ingredients.subtypes.UidContext;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
 
 @JeiPlugin
 public class JeiModule implements IModPlugin {
@@ -23,31 +22,16 @@ public class JeiModule implements IModPlugin {
     public static IIngredientListOverlay overlay;
     public static IIngredientFilter filter;
     private static IJeiHelpers jeiHelpers;
-    private static IngredientListOverlay overlayInternal;
     private static EditBox textField;
 
     public static void updateModule() {
-        if (overlay instanceof IngredientListOverlay) {
-            overlayInternal = ((IngredientListOverlay) overlay);
-            try {
-                Field searchField = IngredientListOverlay.class.getDeclaredField("searchField");
-                searchField.setAccessible(true);
-                textField = (EditBox) searchField.get(overlayInternal);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                try {
-                    // If JEI decides to change it to textFieldFilter
-                    Field searchField = IngredientListOverlay.class.getDeclaredField("textFieldFilter");
-                    searchField.setAccessible(true);
-                    textField = (EditBox) searchField.get(overlayInternal);
-                } catch (NoSuchFieldException | IllegalAccessException f) {
-                    MoreOverlays.logger.error("Something went wrong. Tried to load JEI Search Text Field object");
-                    e.printStackTrace();
-                    f.printStackTrace();
-                }
-            }
-        } else{
-            overlayInternal = null;
-            textField = null;
+        if (overlay != null) {
+            textField = ReflectionUtil.findFieldsWithClass(overlay, EditBox.class)
+                .findFirst()
+                .orElseGet(() -> {
+                    MoreOverlays.logger.error("Something went wrong. Could not find JEI Search Text Field object");
+                    return null;
+                });
         }
     }
 
@@ -60,15 +44,6 @@ public class JeiModule implements IModPlugin {
             return ItemUtils.matchNBT(stack1, stack2);
         }
         return jeiHelpers.getStackHelper().isEquivalent(stack1, stack2, UidContext.Ingredient);
-
-		/*
-		String info1 = subtypes.getSubtypeInfo(stack1);
-		String info2 = subtypes.getSubtypeInfo(stack2);
-		if (info1 == null || info2 == null) {
-			return ItemUtils.matchNBT(stack1, stack2);
-		} else {
-			return info1.equals(info2);
-		}*/
     }
 
     @Override
@@ -79,11 +54,12 @@ public class JeiModule implements IModPlugin {
     }
 
     @Override
-    public void registerAdvanced(IAdvancedRegistration registration) {
+    public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
         jeiHelpers = registration.getJeiHelpers();
     }
 
     @Override
+    @Nonnull
     public ResourceLocation getPluginUid() {
         return new ResourceLocation(MoreOverlays.MOD_ID, "jei_module");
     }
