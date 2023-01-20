@@ -32,6 +32,8 @@ public class JeiModule implements IModPlugin {
                     MoreOverlays.logger.error("Something went wrong. Could not find JEI Search Text Field object");
                     return null;
                 });
+        } else {
+            textField = null;
         }
     }
 
