@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
+import net.minecraftforge.fml.ModList;
 
 import java.util.Map;
 
@@ -89,6 +90,12 @@ public class GuiRenderer {
         float y = textField.y - 4;
         float width = textField.getWidth() + 8;
         float height = textField.getHeight() - 4;
+
+        if(ModList.get().getModContainerById("jei").get().getModInfo().getVersion().getQualifier().startsWith("9")){
+            x = textField.x + 2;
+            y = textField.y + 2;
+            width = textField.getWidth() - 4;
+        }
 
         float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
         float g = ((float) ((Config.search_searchBoxColor.get() >> 8) & 0xFF)) / 255F;

@@ -27,6 +27,6 @@ license="The MIT License (MIT)"
 [[dependencies.moreoverlays]]
     modId="jei"
     mandatory=false
-    versionRange="[10.1.0.228,)"
+    versionRange="[6.0.0.25,)"
     ordering="NONE"
     side="CLIENT"

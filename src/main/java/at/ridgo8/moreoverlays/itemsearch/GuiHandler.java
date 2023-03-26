@@ -11,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 
 public class GuiHandler {
 
@@ -53,6 +54,12 @@ public class GuiHandler {
             float textField_y = textField.y - 4;
             float textField_width = textField.getWidth() + 8;
             float textField_height = textField.getHeight() - 4;
+
+            if(ModList.get().getModContainerById("jei").get().getModInfo().getVersion().getQualifier().startsWith("9")){
+                textField_x = textField.x + 2;
+                textField_y = textField.y + 2;
+                textField_width = textField.getWidth() - 4;
+            }
 
             if (mouse_x > textField_x && mouse_x < textField_x + textField_width && mouse_y > textField_y && mouse_y < textField_y + textField_height) {
                 long now = System.currentTimeMillis();
