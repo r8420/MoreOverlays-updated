@@ -78,7 +78,6 @@ public class GuiRenderer {
         Matrix4f matrix4f = matrixstack.last().pose();
 
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
@@ -117,7 +116,6 @@ public class GuiRenderer {
 
         tess.end();
 
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
@@ -141,7 +139,6 @@ public class GuiRenderer {
         BufferBuilder renderer = tess.getBuilder();
 
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
@@ -166,7 +163,6 @@ public class GuiRenderer {
 
         tess.end();
 
-        RenderSystem.enableTexture();
 
         RenderSystem.disableBlend();
     }

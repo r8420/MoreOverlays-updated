@@ -28,7 +28,7 @@ public class ChunkBoundsRenderer {
 
 
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
+        // RenderSystem.disableTexture();
         RenderSystem.disableBlend();
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -118,7 +118,7 @@ public class ChunkBoundsRenderer {
         }
 
         // restore render settings
-        RenderSystem.enableTexture();
+        // RenderSystem.enableTexture();
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.disableCull();
             RenderSystem.depthMask(true);

@@ -50,7 +50,7 @@ public class OptionGeneric<V>
     public void setFocused(GuiEventListener focused) {
         super.setFocused(focused);
         if (focused == null) {
-            this.tfConfigEntry.setFocus(false);
+            this.tfConfigEntry.setFocused(false);
         }
     }
 

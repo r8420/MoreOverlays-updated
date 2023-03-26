@@ -93,7 +93,6 @@ public class LightOverlayRenderer implements ILightRenderer {
         Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
 
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
         RenderSystem.disableBlend();
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -137,7 +136,6 @@ public class LightOverlayRenderer implements ILightRenderer {
         }
         tess.end();
         // restore render settings
-        RenderSystem.enableTexture();
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.disableCull();
             RenderSystem.depthMask(true);
