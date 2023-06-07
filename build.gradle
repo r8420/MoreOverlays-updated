@@ -25,7 +25,7 @@ apply plugin: 'maven-publish'
 // MixinGradle:
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.21.7-mc1.19.4'
+version = '1.21.8-mc1.19.4'
 group = 'at.ridgo8.moreoverlays' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'moreoverlays'
 
