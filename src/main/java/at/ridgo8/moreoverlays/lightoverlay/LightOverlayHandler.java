@@ -12,6 +12,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.logging.log4j.message.FormattedMessage;
 
 public class LightOverlayHandler {
@@ -54,8 +57,8 @@ public class LightOverlayHandler {
 
         if (renderer == null || renderer.getClass() != event.getRenderer()) {
             try {
-                renderer = event.getRenderer().newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
+                renderer = event.getRenderer().getDeclaredConstructor().newInstance();
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightRenderer from type \"%s\"!", event.getRenderer().getName()), e);
                 renderer = new LightOverlayRenderer();
             }
@@ -67,8 +70,8 @@ public class LightOverlayHandler {
             }
 
             try {
-                scanner = event.getScanner().newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
+                scanner = event.getScanner().getDeclaredConstructor().newInstance();
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightScanner from type \"%s\"!", event.getScanner().getName()), e);
                 scanner = new LightScannerVanilla();
             }
