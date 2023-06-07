@@ -5,6 +5,7 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -12,6 +13,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import net.minecraft.network.chat.Component;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -38,8 +41,10 @@ public class LightOverlayHandler {
 
         if (enabled) {
             reloadHandlerInternal();
+            Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Enabled"), true);
         } else {
             scanner.clear();
+            Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Disabled"), true);
         }
         LightOverlayHandler.enabled = enabled;
     }

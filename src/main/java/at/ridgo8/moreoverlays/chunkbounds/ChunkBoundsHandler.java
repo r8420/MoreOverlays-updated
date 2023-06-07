@@ -1,5 +1,6 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -8,6 +9,8 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,7 @@ public class ChunkBoundsHandler {
     public static void toggleMode() {
         RenderMode[] modes = RenderMode.values();
         mode = modes[(mode.ordinal() + 1) % modes.length];
+        Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.RED + "Chunk Border Overlay: " + mode.name()), true);
     }
 
     @SubscribeEvent
