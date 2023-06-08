@@ -12,10 +12,10 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Quaternionf;
@@ -43,9 +43,9 @@ public class LightOverlayRenderer implements ILightRenderer {
         if(player == null)
             return;
 
-        BlockState blockStateBelow = player.level.getBlockState(pos);
+        BlockState blockStateBelow = player.level().getBlockState(pos);
         float y = 0;
-        if(blockStateBelow.getMaterial() == Material.TOP_SNOW){
+        if(blockStateBelow.is(BlockTags.SNOW)){
             if(pos.getY() > player.getY()){
                 // Block is above player
                 y = 0.005f + (pos.getY()+0.125f);

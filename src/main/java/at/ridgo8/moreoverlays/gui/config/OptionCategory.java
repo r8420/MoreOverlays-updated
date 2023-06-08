@@ -1,8 +1,9 @@
 package at.ridgo8.moreoverlays.gui.config;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -42,13 +43,13 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
-        btnOpen.render(matrixStack, mouseX, mouseY, partialTick);
+    public void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
+        btnOpen.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    protected void renderTooltip(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
-        this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(tooltip.toString()), mouseX, mouseY);
+    protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(tooltip.toString()), mouseX, mouseY);
     }
 
     @Override

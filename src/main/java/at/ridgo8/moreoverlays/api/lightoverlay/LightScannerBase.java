@@ -54,12 +54,12 @@ public abstract class LightScannerBase implements ILightScanner {
         for (int xo = -HRangeWest; xo <= HRangeEast; xo++) {
             for (int zo = -HRangeNorth; zo <= HRangeSouth; zo++) {
                 BlockPos pos1 = new BlockPos(px + xo, py, pz + zo);
-                if (!shouldCheck(pos1, player.level)) {
+                if (!shouldCheck(pos1, player.level())) {
                     continue;
                 }
                 for (int y = y1; y <= y2; y++) {
                     BlockPos pos = new BlockPos(px + xo, y, pz + zo);
-                    byte mode = getSpawnModeAt(pos, player.level);
+                    byte mode = getSpawnModeAt(pos, player.level());
                     if (mode != 0) {
                         overlayCache.add(Pair.of(pos, mode));
                     }

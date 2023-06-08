@@ -1,10 +1,9 @@
 package at.ridgo8.moreoverlays.gui.config;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
 import com.mojang.blaze3d.platform.Lighting;
@@ -83,25 +82,25 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    protected void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
+    protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX,
                                   int mouseY, boolean mouseOver, float partialTick) {
-        GuiComponent.drawString(matrixStack, Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
-        this.btnReset.render(matrixStack, mouseX, mouseY, partialTick);
-        this.btnUndo.render(matrixStack, mouseX, mouseY, partialTick);
+        guiGraphics.drawString(Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
+        this.btnReset.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTick);
 
         if (this.showValidity) {
             if (this.valid) {
-                GuiComponent.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
             } else {
-                GuiComponent.drawCenteredString(matrixStack, Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
             }
         }
     }
 
 
     @Override
-    protected void renderTooltip(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
-        super.renderTooltip(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
+    protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        super.renderTooltip(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
 
         List<Component> tooltipConverted = new ArrayList<Component>();
 
@@ -109,11 +108,11 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             tooltipConverted.add(Component.nullToEmpty(iTextComponent));
         }
         if (btnReset.isHoveredOrFocused()) {
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(this.txtReset), mouseX, mouseY);
+            guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(this.txtReset), mouseX, mouseY);
         } else if (btnUndo.isHoveredOrFocused()) {
-            this.getConfigOptionList().getScreen().renderTooltip(matrixStack, Component.nullToEmpty(this.txtUndo), mouseX, mouseY);
+            guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(this.txtUndo), mouseX, mouseY);
         } else if (mouseX < TITLE_WIDTH + rowLeft) {
-            this.getConfigOptionList().getScreen().renderComponentTooltip(matrixStack, tooltipConverted, mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltipConverted, mouseX, mouseY);
         }
         Lighting.setupForFlatItems();
         GlStateManager._disableBlend(); // TODO: Replace this

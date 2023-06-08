@@ -51,7 +51,7 @@ public class ChunkBoundsRenderer {
         }
 
 
-        final int h = player.level.getHeight();
+        final int h = player.level().getHeight();
         final int h0 = (int) player.getY();
         final int h1 = Math.min(h, h0 - 16);
         final int h2 = Math.min(h, h0 + 16);

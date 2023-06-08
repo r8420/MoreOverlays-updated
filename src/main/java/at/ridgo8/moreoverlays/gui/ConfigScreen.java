@@ -2,9 +2,9 @@ package at.ridgo8.moreoverlays.gui;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.config.ConfigOptionList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.resources.language.I18n;
@@ -111,17 +111,17 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        this.optionList.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.btnReset.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.btnUndo.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.btnBack.render(matrixStack, mouseX, mouseY, partialTicks);
-        drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, 8, 16777215);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
+        this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.btnReset.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.btnBack.render(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, 8, 16777215);
         if (this.categoryTitle != null) {
-            drawCenteredString(matrixStack, this.font, this.categoryTitle, this.width / 2, 24, 16777215);
+            guiGraphics.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 16777215);
         }
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     private void save() {

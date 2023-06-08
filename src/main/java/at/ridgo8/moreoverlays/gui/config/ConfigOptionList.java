@@ -4,11 +4,11 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.ConfigScreen;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.resources.language.I18n;
@@ -68,14 +68,14 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
 
     @Override
-    protected void renderDecorations(PoseStack matrixStack, int p_renderDecorations_1_, int p_renderDecorations_2_) {
+    protected void renderDecorations(GuiGraphics guiGraphics, int p_renderDecorations_1_, int p_renderDecorations_2_) {
         int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
             int l = this.getRowTop(j) + ITEM_HEIGHT;
             if (l >= this.y0 && k <= this.y1) {
                 ConfigOptionList.OptionEntry e = this.getEntry(j);
-                e.runRenderTooltip(matrixStack);
+                e.runRenderTooltip(guiGraphics);
             }
         }
     }
@@ -277,7 +277,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         }
 
         @Override
-        public void render(PoseStack matrixStack, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+        public void render(GuiGraphics guiGraphics, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                            boolean mouseOver, float partialTick) {
             this.rowTop = rowTop;
             this.rowLeft = rowLeft;
@@ -289,13 +289,13 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
             mouseX -= rowLeft;
             mouseY -= rowTop;
-            matrixStack.translate(rowLeft, rowTop, 0);
-            renderControls(matrixStack, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
+            guiGraphics.pose().translate(rowLeft, rowTop, 0);
+            renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
 
-            matrixStack.translate(-rowLeft, -rowTop, 0);
+            guiGraphics.pose().translate(-rowLeft, -rowTop, 0);
         }
 
-        protected abstract void renderControls(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+        protected abstract void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                                boolean mouseOver, float partialTick);
 
         /*
@@ -305,15 +305,15 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
          * Not the best way but AbstractOptionList doesn't seem to have any better hooks to do that.
          * A custom Implementation would be better but I'm too lazy to do that
          */
-        public void runRenderTooltip(PoseStack matrixStack) {
+        public void runRenderTooltip(GuiGraphics guiGraphics) {
             if (this.mouseOver) {
-                this.renderTooltip(matrixStack, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
+                this.renderTooltip(guiGraphics, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
                 Lighting.setupForFlatItems();;
                 GlStateManager._disableBlend(); // TODO: Replace this
             }
         }
 
-        protected void renderTooltip(PoseStack matrixStack, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         }
 
         @Override
