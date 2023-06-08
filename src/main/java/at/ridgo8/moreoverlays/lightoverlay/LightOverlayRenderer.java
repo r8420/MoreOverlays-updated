@@ -19,7 +19,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Quaternionf;
-import static net.minecraft.client.CameraType.THIRD_PERSON_FRONT;
 import org.joml.Vector4d;
 
 
@@ -91,9 +90,6 @@ public class LightOverlayRenderer implements ILightRenderer {
      }
 
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
-        if(Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT){
-            return;
-        }
         Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
 
         RenderSystem.enableDepthTest();

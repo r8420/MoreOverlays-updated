@@ -14,16 +14,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Quaternionf;
 
-import static net.minecraft.client.CameraType.THIRD_PERSON_FRONT;
 
 public class ChunkBoundsRenderer {
     private final static ResourceLocation BLANK_TEX = new ResourceLocation(MoreOverlays.MOD_ID, "textures/blank.png");
 
     public static void renderOverlays(PoseStack matrixstack) {
         Player player = Minecraft.getInstance().player;
-        if (Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT) {
-            return;
-        }
         Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
 
 
