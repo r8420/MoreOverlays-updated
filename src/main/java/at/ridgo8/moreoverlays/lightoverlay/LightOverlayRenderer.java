@@ -3,7 +3,6 @@ package at.ridgo8.moreoverlays.lightoverlay;
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
-import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -18,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joml.Quaternionf;
 import org.joml.Vector4d;
 
 
@@ -97,23 +95,9 @@ public class LightOverlayRenderer implements ILightRenderer {
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        Quaternionf cameraRotation = Minecraft.getInstance().gameRenderer.getMainCamera().rotation();
-
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            // Use old renderer
             RenderSystem.depthMask(false);
             RenderSystem.enableCull();
-        } else {
-            // Use new renderer
-            matrixstack.pushPose();
-
-            // Only rotate when pose is not already rotated by ChunkBoundsRenderer
-            if(ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.NONE) {
-                // Rotate yaw by 180 degrees.
-                cameraRotation.rotateY((float) Math.toRadians(180 % 360));
-            }
-            Matrix4f translateMatrix = new Matrix4f().rotation(cameraRotation);
-            matrixstack.mulPoseMatrix(translateMatrix);
         }
 
         float ar = ((float) ((Config.render_spawnAColor.get() >> 16) & 0xFF)) / 255F;
@@ -136,22 +120,12 @@ public class LightOverlayRenderer implements ILightRenderer {
         }
         tess.end();
         // restore render settings
+        RenderSystem.depthMask(true);
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.disableCull();
-            RenderSystem.depthMask(true);
         } else {
             RenderSystem.lineWidth(1.0F);
             RenderSystem.enableBlend();
-
-            // Only rotate when pose is not already rotated by ChunkBoundsRenderer
-            if(ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.NONE) {
-                // Rotate yaw by 180 degrees.
-                cameraRotation.rotateY((float) Math.toRadians(-180 % 360));
-            }
-            Matrix4f translateMatrix = new Matrix4f().rotation(cameraRotation);
-            matrixstack.mulPoseMatrix(translateMatrix);
-
-            matrixstack.popPose();
         }
     }
 }
