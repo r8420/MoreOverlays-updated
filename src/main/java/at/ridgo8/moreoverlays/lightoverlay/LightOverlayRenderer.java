@@ -7,7 +7,7 @@ import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import org.joml.Matrix4f;
+import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.renderer.GameRenderer;
@@ -19,8 +19,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Quaternionf;
-
 import static net.minecraft.client.CameraType.THIRD_PERSON_FRONT;
+import org.joml.Vector4d;
 
 
 public class LightOverlayRenderer implements ILightRenderer {
@@ -63,28 +63,32 @@ public class LightOverlayRenderer implements ILightRenderer {
             }
         }
 
+        int x0 = pos.getX();
+        int x1 = x0 + 1;
+        int z0 = pos.getZ();
+        int z1 = z0 + 1;
 
-        float x0 = pos.getX();
-        float x1 = x0 + 1;
-        float z0 = pos.getZ();
-        float z1 = z0 + 1;
-
-        Matrix4f matrix4f = matrixstack.last().pose();
+        Matrix4d matrix4d = new Matrix4d();
+        matrixstack.last().pose().get(matrix4d);
 
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
-        float cameraX = (float) camera.getPosition().x;
-        float cameraY = (float)camera.getPosition().y;
-        float cameraZ = (float)camera.getPosition().z;
+        double cameraX = camera.getPosition().x;
+        double cameraY = camera.getPosition().y;
+        double cameraZ = camera.getPosition().z;
 
-
-        renderer.vertex(matrix4f, x0-cameraX, y-cameraY, z0-cameraZ).color(r, g, b, 1).endVertex();
-        renderer.vertex(matrix4f, x1-cameraX, y-cameraY, z1-cameraZ).color(r, g, b, 1).endVertex();
-
-        renderer.vertex(matrix4f, x1-cameraX, y-cameraY, z0-cameraZ).color(r, g, b, 1).endVertex();
-        renderer.vertex(matrix4f, x0-cameraX, y-cameraY, z1-cameraZ).color(r, g, b, 1).endVertex();
-
+        drawVertex(matrix4d, x0-cameraX, y-cameraY, z0-cameraZ, r, g, b);
+        drawVertex(matrix4d, x1-cameraX, y-cameraY, z1-cameraZ, r, g, b);
+        drawVertex(matrix4d, x1-cameraX, y-cameraY, z0-cameraZ, r, g, b);
+        drawVertex(matrix4d, x0-cameraX, y-cameraY, z1-cameraZ, r, g, b);
     }
+
+
+    private static Vector4d drawVertex(Matrix4d matrix, double x, double y, double z, float r, float g, float b) {
+        Vector4d vector4f = matrix.transform(new Vector4d(x, y, z, 1.0D));
+        renderer.vertex(vector4f.x(), vector4f.y(), vector4f.z()).color(r, g, b, 1).endVertex();
+        return vector4f;
+     }
 
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
         if(Minecraft.getInstance().options.getCameraType() == THIRD_PERSON_FRONT){

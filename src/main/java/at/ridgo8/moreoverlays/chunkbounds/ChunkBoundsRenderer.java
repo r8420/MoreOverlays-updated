@@ -5,7 +5,7 @@ import at.ridgo8.moreoverlays.config.Config;
 import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import org.joml.Matrix4f;
+import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
@@ -139,7 +139,8 @@ public class ChunkBoundsRenderer {
     }
 
     public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {
-        Matrix4f matrix4f = matrixstack.last().pose();
+        Matrix4d matrix4d = new Matrix4d();
+        matrixstack.last().pose().get(matrix4d);
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder bufferBuilder = tess.getBuilder();
         Minecraft minecraft = Minecraft.getInstance();
@@ -158,55 +159,73 @@ public class ChunkBoundsRenderer {
 
         bufferBuilder.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
 
-        bufferBuilder.vertex(matrix4f, (float) x, (float) h3, (float) z).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-        bufferBuilder.vertex(matrix4f, (float) x, (float) h, (float) z).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
+        float r = ((float) ((color >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((color >> 8) & 0xFF)) / 255F;
+        float b = ((float) (color & 0xFF)) / 255F;
+
+        drawVertex(bufferBuilder, matrix4d, x, h3, z, r, g, b);
+        drawVertex(bufferBuilder, matrix4d, x, h, z, r, g, b);
 
         tess.end();
     }
 
     public static void renderGrid(PoseStack matrixstack, float x0, float y0, float z0, float x1, float y1, float z1, float step, int color) {
-        Matrix4f matrix4f = matrixstack.last().pose();
+        Matrix4d matrix4d = new Matrix4d();
+        matrixstack.last().pose().get(matrix4d);
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
         Minecraft minecraft = Minecraft.getInstance();
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
-        float cameraX = (float) camera.getPosition().x;
-        float cameraY = (float) camera.getPosition().y;
-        float cameraZ = (float) camera.getPosition().z;
+        double cameraX = camera.getPosition().x;
+        double cameraY = camera.getPosition().y;
+        double cameraZ = camera.getPosition().z;
 
+        
         renderer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+        float r = ((float) ((color >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((color >> 8) & 0xFF)) / 255F;
+        float b = ((float) (color & 0xFF)) / 255F;
 
         for (float x = x0; x <= x1; x += step) {
-            renderer.vertex(matrix4f, x - cameraX, y0 - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y1 - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y0 - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y1 - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y0 - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y0 - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y1 - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x - cameraX, y1 - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
+            drawVertex(renderer, matrix4d, x - cameraX, y0 - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x - cameraX, y0 - cameraY, z1 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z1 - cameraZ, r, g, b);
+
+            drawVertex(renderer, matrix4d, x - cameraX, y0 - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x - cameraX, y0 - cameraY, z1 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z1 - cameraZ, r, g, b);
         }
         for (float y = y0; y <= y1; y += step) {
-            renderer.vertex(matrix4f, x0 - cameraX, y - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x0 - cameraX, y - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x0 - cameraX, y - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x0 - cameraX, y - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y - cameraY, z0 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y - cameraY, z1 - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
+            drawVertex(renderer, matrix4d, x0 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x0 - cameraX, y - cameraY, z1 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z1 - cameraZ, r, g, b);
+
+            drawVertex(renderer, matrix4d, x0 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x0 - cameraX, y - cameraY, z1 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z1 - cameraZ, r, g, b);
         }
         for (float z = z0; z <= z1; z += step) {
-            renderer.vertex(matrix4f, x0 - cameraX, y0 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y0 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x0 - cameraX, y1 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y1 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x0 - cameraX, y0 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x0 - cameraX, y1 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y0 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
-            renderer.vertex(matrix4f, x1 - cameraX, y1 - cameraY, z - cameraZ).color(((float) ((color >> 16) & 0xFF)) / 255F, ((float) ((color >> 8) & 0xFF)) / 255F, ((float) (color & 0xFF)) / 255F, 1).endVertex();
+            drawVertex(renderer, matrix4d, x0 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x0 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
+
+            drawVertex(renderer, matrix4d, x0 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x0 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
+            drawVertex(renderer, matrix4d, x1 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
         }
         tess.end();
     }
+
+    private static Vector4d drawVertex(BufferBuilder renderer, Matrix4d matrix, double x, double y, double z, float r, float g, float b) {
+        Vector4d vector4f = matrix.transform(new Vector4d(x, y, z, 1.0D));
+        renderer.vertex(vector4f.x(), vector4f.y(), vector4f.z()).color(r, g, b, 1).endVertex();
+        return vector4f;
+     }
 }
