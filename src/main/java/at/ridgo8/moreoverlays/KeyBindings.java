@@ -40,11 +40,11 @@ public class KeyBindings {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
     public void onKeyEvent(InputEvent.Key event) {
-        if (ClientRegistrationHandler.lightOverlayKeyMapping.isDown()) {
+        if (ClientRegistrationHandler.lightOverlayKeyMapping.consumeClick()) {
             LightOverlayHandler.setEnabled(!LightOverlayHandler.isEnabled());
         }
 
-        if (ClientRegistrationHandler.chunkBoundsKeyMapping.isDown()) {
+        if (ClientRegistrationHandler.chunkBoundsKeyMapping.consumeClick()) {
             ChunkBoundsHandler.toggleMode();
         }
     }
