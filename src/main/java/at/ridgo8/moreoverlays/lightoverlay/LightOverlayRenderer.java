@@ -81,10 +81,9 @@ public class LightOverlayRenderer implements ILightRenderer {
     }
 
 
-    private static Vector4d drawVertex(Matrix4d matrix, double x, double y, double z, float r, float g, float b) {
-        Vector4d vector4f = matrix.transform(new Vector4d(x, y, z, 1.0D));
-        renderer.vertex(vector4f.x(), vector4f.y(), vector4f.z()).color(r, g, b, 1).endVertex();
-        return vector4f;
+    private static void drawVertex(Matrix4d matrix, double x, double y, double z, float r, float g, float b) {
+        Vector4d vector4d = matrix.transform(new Vector4d(x, y, z, 1.0D));
+        renderer.vertex(vector4d.x(), vector4d.y(), vector4d.z()).color(r, g, b, 1).endVertex();
      }
 
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
