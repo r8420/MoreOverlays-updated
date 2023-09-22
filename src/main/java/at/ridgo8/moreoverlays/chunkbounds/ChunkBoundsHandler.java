@@ -65,9 +65,15 @@ public class ChunkBoundsHandler {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.getDebugOverlay().showDebugScreen()) {
-            return;
+        try {
+            if (mc.getDebugOverlay().showDebugScreen()) {
+                return;
+            }
         }
+        catch (NoSuchMethodError e) {
+            // ignore since only 1.20.2+ has this method
+        }
+
         int y = 0;
         for (String text : regionInfo) {
             event.getGuiGraphics().drawString(mc.font, text, 10, y += 10, 0xFFFFFF);
