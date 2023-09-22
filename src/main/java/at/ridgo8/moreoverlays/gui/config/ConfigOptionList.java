@@ -351,8 +351,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         }
 
         @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-            return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount);
+        public boolean mouseScrolled(double mouseX, double mouseY, double amount, double unknown) {
+            return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount, unknown);
         }
 
         public boolean isValid() {

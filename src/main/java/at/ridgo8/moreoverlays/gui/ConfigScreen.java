@@ -111,8 +111,13 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        
+    }
+    
+    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
+        this.renderDirtBackground(guiGraphics);
         this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.btnReset.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTicks);

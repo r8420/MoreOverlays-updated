@@ -65,7 +65,7 @@ public class ChunkBoundsHandler {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options.renderDebug) {
+        if (mc.getDebugOverlay().showDebugScreen()) {
             return;
         }
         int y = 0;
