@@ -73,9 +73,8 @@ public class ChunkBoundsHandler {
         } catch (NoSuchMethodError e) {
             try {
                 // Use reflection to check if the renderDebug field exists in mc.options. Note: remove this for future versions
-                Field renderDebugField = mc.options.getClass().getField("renderDebug");
+                Field renderDebugField = mc.options.getClass().getField("f_92063_");
                 boolean renderDebug = renderDebugField.getBoolean(mc.options);
-        
                 if (renderDebug) {
                     return;
                 }
