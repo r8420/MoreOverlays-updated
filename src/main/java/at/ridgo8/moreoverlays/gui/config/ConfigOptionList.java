@@ -39,7 +39,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
     public ConfigOptionList(Minecraft minecraft, String modId, ConfigScreen configs) {
         // Width, Height, Y-Start, Y-End, item_height
-        super(minecraft, configs.width, configs.height, 43, configs.height - 32, ITEM_HEIGHT);
+        super(minecraft, configs.width, configs.height - 32, 43, ITEM_HEIGHT);
         this.parent = configs;
         this.modId = modId;
     }
@@ -63,7 +63,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     }
 
     public void updateGui() {
-        this.updateSize(this.parent.width, this.parent.height, 43, this.parent.height - 32);
+        // this.setRectangle(this.parent.width, this.parent.height, 43, this.parent.height - 32);
+        this.setSize(this.parent.width, this.parent.height - 32);
     }
 
 
@@ -73,7 +74,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
             int l = this.getRowTop(j) + ITEM_HEIGHT;
-            if (l >= this.y0 && k <= this.y1) {
+            if (l >= this.getY() && k <= this.getBottom()) {
                 ConfigOptionList.OptionEntry e = this.getEntry(j);
                 e.runRenderTooltip(guiGraphics);
             }
