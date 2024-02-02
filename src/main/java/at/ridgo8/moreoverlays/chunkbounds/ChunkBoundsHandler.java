@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.Field;
 
 
 public class ChunkBoundsHandler {
@@ -69,9 +70,18 @@ public class ChunkBoundsHandler {
             if (mc.getDebugOverlay().showDebugScreen()) {
                 return;
             }
-        }
-        catch (NoSuchMethodError e) {
-            // ignore since only 1.20.2+ has this method
+        } catch (NoSuchMethodError e) {
+            try {
+                // Use reflection to check if the renderDebug field exists in mc.options. Note: remove this for future versions
+                Field renderDebugField = mc.options.getClass().getField("renderDebug");
+                boolean renderDebug = renderDebugField.getBoolean(mc.options);
+        
+                if (renderDebug) {
+                    return;
+                }
+            } catch(Exception f){
+                // Ignore
+            }
         }
 
         int y = 0;
