@@ -18,6 +18,9 @@ public class ChunkBoundsRenderer {
 
     public static void renderOverlays(PoseStack matrixstack) {
         Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
         Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
 
 
@@ -141,7 +144,7 @@ public class ChunkBoundsRenderer {
         }
     }
 
-    public static void renderGrid(PoseStack matrixstack, float x0, float y0, float z0, float x1, float y1, float z1, float step, int color) {
+    public static void renderGrid(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1, double step, int color) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         Tesselator tess = Tesselator.getInstance();
@@ -158,7 +161,13 @@ public class ChunkBoundsRenderer {
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
 
-        for (float x = x0; x <= x1; x += step) {
+        double stepSize = Math.max(1e-6, step);
+        int stepsX = (int)Math.max(0, Math.round((x1 - x0) / stepSize));
+        int stepsY = (int)Math.max(0, Math.round((y1 - y0) / stepSize));
+        int stepsZ = (int)Math.max(0, Math.round((z1 - z0) / stepSize));
+
+        for (int i = 0; i <= stepsX; i++) {
+            double x = x0 + i * stepSize;
             drawVertex(renderer, matrix4d, x - cameraX, y0 - cameraY, z0 - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z0 - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x - cameraX, y0 - cameraY, z1 - cameraZ, r, g, b);
@@ -169,7 +178,8 @@ public class ChunkBoundsRenderer {
             drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z0 - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x - cameraX, y1 - cameraY, z1 - cameraZ, r, g, b);
         }
-        for (float y = y0; y <= y1; y += step) {
+        for (int i = 0; i <= stepsY; i++) {
+            double y = y0 + i * stepSize;
             drawVertex(renderer, matrix4d, x0 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x0 - cameraX, y - cameraY, z1 - cameraZ, r, g, b);
@@ -180,7 +190,8 @@ public class ChunkBoundsRenderer {
             drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z0 - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x1 - cameraX, y - cameraY, z1 - cameraZ, r, g, b);
         }
-        for (float z = z0; z <= z1; z += step) {
+        for (int i = 0; i <= stepsZ; i++) {
+            double z = z0 + i * stepSize;
             drawVertex(renderer, matrix4d, x0 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x1 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x0 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
