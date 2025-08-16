@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
-import com.mojang.blaze3d.platform.Lighting;
+ 
 import net.minecraft.client.resources.language.I18n;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -39,8 +39,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     private CommentedConfig comments;
 
     public ConfigOptionList(Minecraft minecraft, String modId, ConfigScreen configs) {
-        // Width, Height, Y-Start, Y-End, item_height
-        super(minecraft, configs.width, configs.height - 32, 43, ITEM_HEIGHT);
+        // Width, ListHeight, Top, ItemHeight
+        super(minecraft, configs.width, Math.max(0, configs.height - 32 - 43), 43, ITEM_HEIGHT);
         this.parent = configs;
         this.modId = modId;
     }
@@ -53,10 +53,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         return this.parent;
     }
 
-    @Override
-    protected int getScrollbarPosition() {
-        return super.getScrollbarPosition() + 15 + 20;
-    }
+    // Note: getScrollbarPosition was removed/renamed in newer versions; using default scrollbar position
 
     @Override
     public int getRowWidth() {
@@ -64,8 +61,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     }
 
     public void updateGui() {
-        // this.setRectangle(this.parent.width, this.parent.height, 43, this.parent.height - 32);
-        this.setSize(this.parent.width, this.parent.height - 32);
+        this.setSize(this.parent.width, Math.max(0, this.parent.height - 32 - 43));
     }
 
 
@@ -168,20 +164,29 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             tmp.remove(tmp.size() - 1);
         }
         setPath(tmp);
+        // Clear focus so previously focused widgets do not remain highlighted when changing path
+        this.setFocused(null);
+        this.getScreen().setFocused(null);
     }
 
     @Override
-    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
-        boolean flag = super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
-        OptionEntry selected = this.getEntryAtPosition(p_mouseClicked_1_, p_mouseClicked_3_);
-        for (final OptionEntry entry : this.children()) {
-            if (entry != selected) {
-                entry.setFocused(null);
-            }
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // Only handle clicks that are within the list's vertical bounds to avoid eating clicks for bottom buttons
+        if (mouseY < this.getY() || mouseY > this.getBottom()) {
+            return false;
         }
-
-        return flag;
+        return super.mouseClicked(mouseX, mouseY, button);
     }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (mouseY < this.getY() || mouseY > this.getBottom()) {
+            return false;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    // Removed duplicate mouseClicked override (handled above), to avoid consuming clicks for bottom buttons
 
     public void refreshEntries() {
         this.clearEntries();
@@ -289,12 +294,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             this.mouseY = mouseY;
             this.mouseOver = mouseOver;
 
-            mouseX -= rowLeft;
-            mouseY -= rowTop;
-            guiGraphics.pose().translate(rowLeft, rowTop, 0);
+            // No pose translation; controls must position themselves in absolute screen space
             renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
-
-            guiGraphics.pose().translate(-rowLeft, -rowTop, 0);
         }
 
         protected abstract void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
@@ -310,8 +311,6 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         public void runRenderTooltip(GuiGraphics guiGraphics) {
             if (this.mouseOver) {
                 this.renderTooltip(guiGraphics, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
-                Lighting.setupForFlatItems();;
-                GlStateManager._disableBlend(); // TODO: Replace this
             }
         }
 
@@ -329,17 +328,17 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return super.mouseClicked(mouseX - this.rowLeft, mouseY - this.rowTop, button);
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         @Override
         public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            return super.mouseReleased(mouseX - this.rowLeft, mouseY - this.rowTop, button);
+            return super.mouseReleased(mouseX, mouseY, button);
         }
 
         @Override
         public boolean mouseDragged(double fromX, double fromY, int button, double toX, double toY) {
-            return super.mouseDragged(fromX - this.rowLeft, fromY - this.rowTop, button, toX - this.rowLeft, toY - this.rowTop);
+            return super.mouseDragged(fromX, fromY, button, toX, toY);
         }
 
         @Override
@@ -354,7 +353,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double amount, double unknown) {
-            return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount, unknown);
+            return super.mouseScrolled(mouseX, mouseY, amount, unknown);
         }
 
         public boolean isValid() {

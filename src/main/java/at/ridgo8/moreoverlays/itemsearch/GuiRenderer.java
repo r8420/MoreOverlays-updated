@@ -12,10 +12,11 @@ import org.joml.Matrix4f;
 import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
 import com.mojang.blaze3d.platform.Lighting;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -56,75 +57,50 @@ public class GuiRenderer {
 
     }
 
-    public void preDraw(PoseStack matrixstack) {
+    public void preDraw(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
 
         EditBox textField = JeiModule.getJEITextField();
 
         if (canShowIn(guiscr)) {
             allowRender = true;
-            if (textField != null && enabled) {
-                drawSearchFrame(textField, matrixstack);
-            }
+            // draw in postDraw to ensure on top
         }
     }
 
-    public void postDraw() {
+    public void postDraw(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
 
         if (allowRender && canShowIn(guiscr)) {
             allowRender = false;
+            if (enabled) {
+                EditBox textField = JeiModule.getJEITextField();
+                if (textField != null) {
+                    drawSearchFrame(textField, guiGraphics);
+                }
+            }
             drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
         }
     }
 
-    private void drawSearchFrame(EditBox textField, PoseStack matrixstack) {
-        Matrix4f matrix4f = matrixstack.last().pose();
+    private void drawSearchFrame(EditBox textField, GuiGraphics guiGraphics) {
+        int x = textField.getX() - 2;
+        int y = textField.getY() - 4;
+        int width = textField.getWidth() + 8;
+        int height = textField.getHeight() - 4;
 
-        RenderSystem.enableDepthTest();
+        int rgb = Config.search_searchBoxColor.get() & 0xFFFFFF;
+        int color = 0xFF000000 | rgb;
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        int left = x - (int) FRAME_RADIUS;
+        int top = y - (int) FRAME_RADIUS;
+        int right = x + width + (int) FRAME_RADIUS;
+        int bottom = y + height + (int) FRAME_RADIUS;
 
-        Tesselator tess = Tesselator.getInstance();
-
-        float x = textField.getX() - 2;
-        float y = textField.getY() - 4;
-        float width = textField.getWidth() + 8;
-        float height = textField.getHeight() - 4;
-
-        float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
-        float g = ((float) ((Config.search_searchBoxColor.get() >> 8) & 0xFF)) / 255F;
-        float b = ((float) (Config.search_searchBoxColor.get() & 0xFF)) / 255F;
-
-        BufferBuilder renderer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-
-        renderer.addVertex(matrix4f, x, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x, y + height, 1000).setColor(r, g, b, 1F);
-
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
-
-        RenderSystem.disableBlend();
-        RenderSystem.enableDepthTest();
-        RenderSystem.depthMask(true);
+        guiGraphics.fill(left, top, right, y, color);
+        guiGraphics.fill(left, y + height, right, bottom, color);
+        guiGraphics.fill(left, y, x, y + height, color);
+        guiGraphics.fill(x + width, y, right, y + height, color);
     }
 
     public void renderTooltip(ItemStack stack) {
@@ -145,7 +121,7 @@ public class GuiRenderer {
 
         RenderSystem.enableBlend();
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
 
         BufferBuilder renderer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 

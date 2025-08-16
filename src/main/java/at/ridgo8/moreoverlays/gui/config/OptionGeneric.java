@@ -31,6 +31,10 @@ public class OptionGeneric<V>
     protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
+        // Absolute positioning: set field position/size within this row
+        this.tfConfigEntry.setX(rowLeft + OptionValueEntry.TITLE_WIDTH + 5);
+        this.tfConfigEntry.setY(rowTop + 2);
+        this.tfConfigEntry.setWidth(rowWidth - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR);
         this.tfConfigEntry.render(guiGraphics, mouseX, mouseY, 0);
     }
 

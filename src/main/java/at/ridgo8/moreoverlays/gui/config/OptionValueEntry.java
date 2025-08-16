@@ -1,12 +1,11 @@
 package at.ridgo8.moreoverlays.gui.config;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
-import com.mojang.blaze3d.platform.Lighting;
+ 
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
@@ -94,15 +93,20 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
-        guiGraphics.drawString(Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
+        guiGraphics.drawString(Minecraft.getInstance().font, this.name, rowLeft + (60 - TITLE_WIDTH), rowTop + 6, 0xFFFFFF);
+        // Absolute positioning so hover area matches rendering
+        this.btnReset.setPosition(this.rowLeft + this.getConfigOptionList().getRowWidth() - 20, this.rowTop);
+        this.btnUndo.setPosition(this.rowLeft + this.getConfigOptionList().getRowWidth() - 42, this.rowTop);
         this.btnReset.render(guiGraphics, mouseX, mouseY, partialTick);
         this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTick);
 
         if (this.showValidity) {
+            int validityX = rowLeft + this.getConfigOptionList().getRowWidth() - 53;
+            int validityY = rowTop + 6;
             if (this.valid) {
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.VALID, validityX, validityY, 0x00FF00);
             } else {
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.INVALID, validityX, validityY, 0xFF0000);
             }
         }
     }
@@ -124,8 +128,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         } else if (mouseX < TITLE_WIDTH + rowLeft) {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltipConverted, mouseX, mouseY);
         }
-        Lighting.setupForFlatItems();
-        GlStateManager._disableBlend();
+        // No GL state twiddling here; tooltip is rendered by GuiGraphics
     }
 
     protected abstract void overrideUnsaved(V value);

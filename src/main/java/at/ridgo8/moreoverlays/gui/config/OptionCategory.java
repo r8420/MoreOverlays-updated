@@ -22,9 +22,10 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     public OptionCategory(ConfigOptionList list, List<String> path, String name, String comment) {
         super(list);
-        btnOpen = new Button.Builder(Component.nullToEmpty(name), (btn) -> {
-            list.push(path);
-        }).pos(0, 0).size(this.getConfigOptionList().getRowWidth() - 4, 20).build();
+        btnOpen = new Button.Builder(Component.nullToEmpty(name), (btn) -> list.push(path))
+                .pos(0, 0)
+                .size(this.getConfigOptionList().getRowWidth() - 4, 20)
+                .build();
 
         String[] lines = null;
         if (comment != null) {
@@ -44,6 +45,8 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     @Override
     public void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
+        // Absolute positioning so hover area matches rendering
+        btnOpen.setPosition(this.rowLeft, this.rowTop);
         btnOpen.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 

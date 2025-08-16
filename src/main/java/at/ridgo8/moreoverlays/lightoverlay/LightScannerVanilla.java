@@ -27,10 +27,8 @@ public class LightScannerVanilla extends LightScannerBase {
     private final List<EntityType<?>> typesToCheck;
 
     public LightScannerVanilla() {
-        typesToCheck = BuiltInRegistries.ENTITY_TYPE.getTags()
-            .flatMap(pair -> pair.getSecond().stream())
-            .filter(holder -> holder.value().canSummon() && holder.value().getCategory() == MobCategory.MONSTER)
-            .map(Holder::value)
+        typesToCheck = BuiltInRegistries.ENTITY_TYPE.stream()
+            .filter(type -> type.canSummon() && type.getCategory() == MobCategory.MONSTER)
             .collect(Collectors.toList());
     }
 

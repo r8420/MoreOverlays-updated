@@ -67,12 +67,12 @@ public class GuiHandler {
 
     @SubscribeEvent
     public void onDrawScreen(ScreenEvent.Render.Pre event) {
-        GuiRenderer.INSTANCE.preDraw(event.getGuiGraphics().pose());
+        GuiRenderer.INSTANCE.preDraw(event.getGuiGraphics());
     }
 
     @SubscribeEvent
     public void onDrawScreen(ScreenEvent.Render.Post event) {
-        GuiRenderer.INSTANCE.postDraw();
+        GuiRenderer.INSTANCE.postDraw(event.getGuiGraphics());
     }
 
     @SubscribeEvent

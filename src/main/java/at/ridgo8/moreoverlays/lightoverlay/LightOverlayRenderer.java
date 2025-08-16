@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.*;
 import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
 import net.minecraft.client.GraphicsStatus;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -87,12 +87,10 @@ public class LightOverlayRenderer implements ILightRenderer {
      }
 
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
-        Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
-
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
         RenderSystem.lineWidth(Config.render_chunkLineWidth.get().floatValue());
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
 
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.depthMask(false);

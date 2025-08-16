@@ -32,6 +32,9 @@ public class OptionBoolean
     protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
+        // Absolute positioning: place the change button at the row's left/top origin
+        this.btnChange.setPosition(rowLeft + OptionValueEntry.TITLE_WIDTH + 5, rowTop + 0);
+        this.btnChange.setWidth(rowWidth - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR);
         this.btnChange.render(guiGraphics, mouseX, mouseY, 0);
 
     }

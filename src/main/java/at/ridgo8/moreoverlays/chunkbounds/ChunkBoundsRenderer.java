@@ -8,7 +8,7 @@ import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector4d;
@@ -18,13 +18,12 @@ public class ChunkBoundsRenderer {
 
     public static void renderOverlays(PoseStack matrixstack) {
         Player player = Minecraft.getInstance().player;
-        Minecraft.getInstance().getTextureManager().bindForSetup(BLANK_TEX);
 
 
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
         RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth.get());
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
 
 
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
