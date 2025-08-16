@@ -201,6 +201,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
                 this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
             } else if (cEntry.getValue() instanceof ModConfigSpec.BooleanValue) {
                 this.addEntry(new OptionBoolean(this, (ModConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
+            } else if (cEntry.getValue() instanceof ModConfigSpec.IntValue && cEntry.getKey().toLowerCase().contains("color")) {
+                this.addEntry(new OptionColor(this, (ModConfigSpec.IntValue) cEntry.getValue(), (ModConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             } else {
                 this.addEntry(new OptionGeneric<>(this, (ModConfigSpec.ConfigValue<?>) cEntry.getValue(), (ModConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }
