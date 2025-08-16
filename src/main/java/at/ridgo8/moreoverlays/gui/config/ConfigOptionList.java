@@ -168,6 +168,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             tmp.remove(tmp.size() - 1);
         }
         setPath(tmp);
+        // Do not force-clear focus here; let focused inputs keep focus when navigating up
     }
 
     @Override
@@ -289,12 +290,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             this.mouseY = mouseY;
             this.mouseOver = mouseOver;
 
-            mouseX -= rowLeft;
-            mouseY -= rowTop;
-            guiGraphics.pose().translate(rowLeft, rowTop, 0);
+            // Render controls in absolute screen coordinates; controls position themselves using rowLeft/rowTop
             renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
-
-            guiGraphics.pose().translate(-rowLeft, -rowTop, 0);
         }
 
         protected abstract void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
@@ -329,17 +326,17 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return super.mouseClicked(mouseX - this.rowLeft, mouseY - this.rowTop, button);
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         @Override
         public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            return super.mouseReleased(mouseX - this.rowLeft, mouseY - this.rowTop, button);
+            return super.mouseReleased(mouseX, mouseY, button);
         }
 
         @Override
         public boolean mouseDragged(double fromX, double fromY, int button, double toX, double toY) {
-            return super.mouseDragged(fromX - this.rowLeft, fromY - this.rowTop, button, toX - this.rowLeft, toY - this.rowTop);
+            return super.mouseDragged(fromX, fromY, button, toX, toY);
         }
 
         @Override
@@ -354,7 +351,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double amount, double unknown) {
-            return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount, unknown);
+            return super.mouseScrolled(mouseX, mouseY, amount, unknown);
         }
 
         public boolean isValid() {
