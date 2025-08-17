@@ -23,6 +23,7 @@
   "config.moreoverlays.lightoverlay.savelevel": "Безоп. уровень св.",
   "config.moreoverlays.lightoverlay.finishedmigration": "Миграция 1.18",
   "config.moreoverlays.lightoverlay.spawn_numbers": "Использовать цифры",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Интервал обновления (кадры)",
 
   "config.moreoverlays.chunkbounds.radius": "Радиус границы",
   "config.moreoverlays.chunkbounds.middle": "Показать центр",

@@ -23,6 +23,7 @@
   "config.moreoverlays.lightoverlay.savelevel": "Bezp. poziom światła",
   "config.moreoverlays.lightoverlay.finishedmigration": "Migracja 1.18 zakoń.",
   "config.moreoverlays.lightoverlay.spawn_numbers": "Używaj nakładki z numerami",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Interwał aktualizacji (klatki)",
 
   "config.moreoverlays.chunkbounds.radius": "Promień krawędzi",
   "config.moreoverlays.chunkbounds.middle": "Pokaż środek",

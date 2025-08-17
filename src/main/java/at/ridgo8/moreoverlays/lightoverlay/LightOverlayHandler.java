@@ -146,7 +146,8 @@ public class LightOverlayHandler {
             boolean movedBlock = (bp.getX() != lastPlayerBlockX) || (bp.getY() != lastPlayerBlockY) || (bp.getZ() != lastPlayerBlockZ);
             float yaw = player.getYRot();
             boolean rotated = Float.isNaN(lastPlayerYaw) || Math.abs(yaw - lastPlayerYaw) > 15.0f;
-            boolean periodicRefresh = (clientTickCounter % 2L) == 0L;
+            int updateInterval = Math.max(1, Config.light_UpdateIntervalFrames.get());
+            boolean periodicRefresh = (clientTickCounter % updateInterval) == 0L;
 
             if (movedBlock || rotated || periodicRefresh) {
                 scanner.update(player);

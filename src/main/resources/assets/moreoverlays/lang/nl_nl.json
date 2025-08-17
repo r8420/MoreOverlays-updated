@@ -23,6 +23,7 @@
   "config.moreoverlays.lightoverlay.savelevel": "Veilige Lichtniveau",
   "config.moreoverlays.lightoverlay.finishedmigration": "1.18 Migratie Voltooid",
   "config.moreoverlays.lightoverlay.spawn_numbers": "Gebruik Cijfer-Overlay",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Update-interval (frames)",
 
   "config.moreoverlays.chunkbounds.radius": "Randradius",
   "config.moreoverlays.chunkbounds.middle": "Toon Middelpunt",

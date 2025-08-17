@@ -23,6 +23,7 @@
   "config.moreoverlays.lightoverlay.savelevel": "Sicheres Lichtlvl",
   "config.moreoverlays.lightoverlay.finishedmigration": "1.18 Migration",
   "config.moreoverlays.lightoverlay.spawn_numbers": "Zahlen-Overlay verwenden",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Aktualisierungsintervall (Frames)",
 
   "config.moreoverlays.chunkbounds.radius": "Kantenradius",
   "config.moreoverlays.chunkbounds.middle": "Mitte zeigen",

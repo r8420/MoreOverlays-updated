@@ -23,6 +23,7 @@
   "config.moreoverlays.lightoverlay.savelevel": "Safe Light Level",
   "config.moreoverlays.lightoverlay.finishedmigration": "1.18 Migration Done",
   "config.moreoverlays.lightoverlay.spawn_numbers": "Use Number Overlay",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Update Interval (Frames)",
 
   "config.moreoverlays.chunkbounds.radius": "Edge Radius",
   "config.moreoverlays.chunkbounds.middle": "Show Mid Point",

@@ -14,6 +14,7 @@ public class Config {
     public static ModConfigSpec.BooleanValue light_SimpleEntityCheck;
     public static ModConfigSpec.IntValue light_SaveLevel;
     public static ModConfigSpec.BooleanValue light_FinishedMigration;
+    public static ModConfigSpec.IntValue light_UpdateIntervalFrames;
 
     public static ModConfigSpec.IntValue chunk_EdgeRadius;
     public static ModConfigSpec.BooleanValue chunk_ShowMiddle;
@@ -51,6 +52,7 @@ public class Config {
         light_SimpleEntityCheck = builder.comment("Blocks can allow/disallow spawns for different entity types. The check for this isn't very performat.\nSetting this to true will increase performance but decrease accuracy.").define("simpleCheck", false);
         light_SaveLevel = builder.comment("Minimum save light level where no mobs can spawn").defineInRange("saveLevel", 1, 0, Integer.MAX_VALUE);
         light_FinishedMigration = builder.comment("Finished 1.18 migration (internal)").define("finishedMigration", false);
+        light_UpdateIntervalFrames = builder.comment("Only update the light scanner every N client ticks/frames. Set to 1 to update every frame (disables throttling).").defineInRange("update_interval_frames", 1, 1, Integer.MAX_VALUE);
         builder.pop();
 
         builder.comment("Settings for the chunk bounds overlay").push("chunkbounds");
