@@ -13,6 +13,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import at.ridgo8.moreoverlays.lightoverlay.render.CrossOverlayRenderer;
+import at.ridgo8.moreoverlays.lightoverlay.render.NumberOverlayRenderer;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
@@ -34,6 +36,8 @@ public class LightOverlayHandler {
     private static int lastPlayerBlockY = Integer.MIN_VALUE;
     private static int lastPlayerBlockZ = Integer.MIN_VALUE;
     private static float lastPlayerYaw = Float.NaN;
+    // Track renderer mode to hot-swap immediately on config change
+    private static boolean lastRenderNumbers = false;
 
     public static void init() {
         NeoForge.EVENT_BUS.register(new LightOverlayHandler());
@@ -60,6 +64,8 @@ public class LightOverlayHandler {
                 lastPlayerBlockZ = bp.getZ();
                 lastPlayerYaw = Minecraft.getInstance().player.getYRot();
                 clientTickCounter = 0L;
+                // Initialize renderer mode tracking
+                lastRenderNumbers = Config.render_spawnNumbers.get();
             }
         } else {
             scanner.clear();
@@ -76,7 +82,10 @@ public class LightOverlayHandler {
     }
 
     private static void reloadHandlerInternal() {
-        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(Config.light_IgnoreSpawnList.get(), LightOverlayRenderer.class, LightScannerVanilla.class);
+        Class<? extends ILightRenderer> rendererCls = Config.render_spawnNumbers.get()
+                ? NumberOverlayRenderer.class
+                : CrossOverlayRenderer.class;
+        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(Config.light_IgnoreSpawnList.get(), rendererCls, LightScannerVanilla.class);
         NeoForge.EVENT_BUS.post(event);
 
         if (renderer == null || renderer.getClass() != event.getRenderer()) {
@@ -84,7 +93,7 @@ public class LightOverlayHandler {
                 renderer = event.getRenderer().getDeclaredConstructor().newInstance();
             } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightRenderer from type \"%s\"!", event.getRenderer().getName()), e);
-                renderer = new LightOverlayRenderer();
+                renderer = new CrossOverlayRenderer();
             }
         }
 
@@ -100,6 +109,9 @@ public class LightOverlayHandler {
                 scanner = new LightScannerVanilla();
             }
         }
+
+        // Keep mode tracker in sync after any reload
+        lastRenderNumbers = Config.render_spawnNumbers.get();
     }
     @SubscribeEvent
     public void onWorldUnload(final LevelEvent.Unload event) {
@@ -120,6 +132,13 @@ public class LightOverlayHandler {
         if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null && enabled &&
                 (Minecraft.getInstance().screen == null || !Minecraft.getInstance().screen.isPauseScreen())) {
             clientTickCounter++;
+
+            // Hot-reload renderer when the render mode is toggled in the config screen
+            boolean currentRenderNumbers = Config.render_spawnNumbers.get();
+            if (currentRenderNumbers != lastRenderNumbers) {
+                reloadHandlerInternal();
+                lastRenderNumbers = currentRenderNumbers;
+            }
 
             Player player = Minecraft.getInstance().player;
             BlockPos bp = player.blockPosition();

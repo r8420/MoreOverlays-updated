@@ -33,6 +33,8 @@
   "config.moreoverlays.rendersettings.spawn_always_color": "Spawn: Color",
   "config.moreoverlays.rendersettings.spawn_night_color": "Spawn: Night Color",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn: Line Width",
+  "config.moreoverlays.rendersettings.spawn_numbers": "Spawn: Use Number Overlay",
+  "config.moreoverlays.rendersettings.spawn_number_scale": "Spawn: Number Size",
 
   "config.moreoverlays.searchoverlay.search_enabled": "Enable Search",
   "config.moreoverlays.searchoverlay.custom_search": "Search Custom",

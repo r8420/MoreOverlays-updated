@@ -33,6 +33,8 @@
   "config.moreoverlays.rendersettings.spawn_always_color": "Цвет спавна",
   "config.moreoverlays.rendersettings.spawn_night_color": "Цвет ноч. спавн",
   "config.moreoverlays.rendersettings.spawn_line_width": "Шир. линии спавна",
+  "config.moreoverlays.rendersettings.spawn_numbers": "Спавн: Использовать цифры",
+  "config.moreoverlays.rendersettings.spawn_number_scale": "Спавн: Размер цифр",
 
   "config.moreoverlays.searchoverlay.search_enabled": "Вкл. поиск",
   "config.moreoverlays.searchoverlay.custom_search": "Свой поиск",

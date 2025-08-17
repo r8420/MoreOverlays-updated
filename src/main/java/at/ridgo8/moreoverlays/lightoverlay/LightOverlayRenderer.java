@@ -10,6 +10,9 @@ import org.joml.Matrix4f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -17,9 +20,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
+import com.mojang.math.Axis;
+import net.minecraft.core.Direction;
+import java.util.Objects;
 import org.joml.Vector3f;
 
 
+@Deprecated
 public class LightOverlayRenderer implements ILightRenderer {
 
     private final static ResourceLocation BLANK_TEX = ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
@@ -171,10 +178,6 @@ public class LightOverlayRenderer implements ILightRenderer {
 
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
-        // For DEBUG_LINES we always want a 1px line. Thicker lines are handled via quads.
-        // This ensures value 2.0 == 1px visual thickness.
-        // For TRIANGLES path below, this value is irrelevant but harmless.
-        // We'll override based on useDebugLines after we know the configured width.
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
@@ -190,10 +193,13 @@ public class LightOverlayRenderer implements ILightRenderer {
         float ng = ((float) ((Config.render_spawnNColor.get() >> 8) & 0xFF)) / 255F;
         float nb = ((float) (Config.render_spawnNColor.get() & 0xFF)) / 255F;
 
+        boolean renderNumbers = Config.render_spawnNumbers.get();
         double configuredWidth = Config.render_spawnLineWidth.get();
         boolean useDebugLines = configuredWidth <= 2.0;
-        RenderSystem.lineWidth(useDebugLines ? 1.0f : 1.0f);
-        renderer = tess.begin(useDebugLines ? VertexFormat.Mode.DEBUG_LINES : VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        if (!renderNumbers) {
+            RenderSystem.lineWidth(useDebugLines ? 1.0f : 1.0f);
+            renderer = tess.begin(useDebugLines ? VertexFormat.Mode.DEBUG_LINES : VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        }
 
         // Precompute common values
         Camera camera = minecraft.gameRenderer.getMainCamera();
@@ -207,72 +213,151 @@ public class LightOverlayRenderer implements ILightRenderer {
         float cullCos = (float)Math.cos(Math.toRadians(105.0));
 
         // Avoid backface-culling removing billboarded triangle quads
-        if (!useDebugLines && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
+        if (!renderNumbers && !useDebugLines && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.disableCull();
         }
+        if (renderNumbers) {
+            RenderSystem.disableCull();
+            RenderSystem.enableBlend();
+            RenderSystem.enablePolygonOffset();
+            RenderSystem.polygonOffset(-1f, -2f);
+        }
 
-        for (Pair<BlockPos, Byte> entry : scanner.getLightModes()) {
-            Byte mode = entry.getValue();
-            if (mode == null || mode == 0)
-                continue;
-            // Angle cull
-            BlockPos bp = entry.getKey();
-            float vx = (float)((bp.getX() + 0.5) - cameraX);
-            float vy = (float)((bp.getY() + 0.5) - cameraY);
-            float vz = (float)((bp.getZ() + 0.5) - cameraZ);
-            float vLenInv = 1.0f / (float)Math.max(1e-6, Math.sqrt(vx*vx + vy*vy + vz*vz));
-            float dot = (vx * look.x) + (vy * look.y) + (vz * look.z);
-            dot *= vLenInv; // cos(theta)
-            if (dot < cullCos) {
-                continue;
-            }
+        Font font = Minecraft.getInstance().font;
+        MultiBufferSource.BufferSource bufferSource = null;
+        if (renderNumbers) {
+            bufferSource = Objects.requireNonNull(Minecraft.getInstance().renderBuffers().bufferSource());
+        }
 
-            if (useDebugLines) {
-                if (mode == 1)
-                    renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
-                else if (mode == 2)
-                    renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
-            } else {
-                // Thick lines: render as camera-facing quads
-                float r = (mode == 1) ? nr : ar;
-                float g = (mode == 1) ? ng : ag;
-                float b = (mode == 1) ? nb : ab;
+        if (renderNumbers) {
+            // Render numbers over all top-solid surfaces within configured range, regardless of spawnability
+            final Player player = minecraft.player;
+            if (player != null && minecraft.level != null) {
+                final var world = minecraft.level;
+                final BlockPos playerPos = player.blockPosition();
+                final int up = Config.light_UpRange.get();
+                final int down = Config.light_DownRange.get();
+                final int hr = Config.light_HRange.get();
+                final float scale = (float) (double) Config.render_spawnNumberScale.get();
 
-                int x0 = bp.getX();
-                int x1 = x0 + 1;
-                int z0 = bp.getZ();
-                int z1 = z0 + 1;
+                for (int xo = -hr; xo <= hr; xo++) {
+                    for (int zo = -hr; zo <= hr; zo++) {
+                        for (int yo = -down; yo <= up; yo++) {
+                            BlockPos airPos = new BlockPos(playerPos.getX() + xo, playerPos.getY() + yo, playerPos.getZ() + zo);
+                            BlockPos belowPos = airPos.below();
+                            BlockState belowState = world.getBlockState(belowPos);
+                            if (!belowState.isFaceSturdy(world, belowPos, Direction.UP)) continue;
 
-                Player player = minecraft.player;
-                if (player == null) continue;
-                BlockState blockStateBelow = player.level().getBlockState(bp);
-                float y;
-                if(blockStateBelow.is(BlockTags.SNOW)){
-                    if(bp.getY() > player.getY()){
-                        y = 0.005f + (bp.getY()+0.125f);
-                    } else{
-                        y = (float) (0.005f + (bp.getY()+0.125f) + 0.01f * -(bp.getY()-player.getY()-1));
-                    }
-                } else{
-                    if(bp.getY() > player.getY()){
-                        y = 0.005f + bp.getY();
-                    } else{
-                        y = (float) (0.005f + bp.getY() + 0.01f * -(bp.getY()-player.getY()-1));
+                            // Angle cull to skip obviously off-screen
+                            float vx = (float)((airPos.getX() + 0.5) - cameraX);
+                            float vy = (float)((airPos.getY() + 0.5) - cameraY);
+                            float vz = (float)((airPos.getZ() + 0.5) - cameraZ);
+                            float vLenInv = 1.0f / (float)Math.max(1e-6, Math.sqrt(vx*vx + vy*vy + vz*vz));
+                            float dot = (vx * look.x) + (vy * look.y) + (vz * look.z);
+                            dot *= vLenInv;
+                            if (dot < cullCos) continue;
+
+                            int save = Config.light_SaveLevel.get();
+                            int blockLight = world.getBrightness(LightLayer.BLOCK, airPos);
+                            int skyLight = world.getBrightness(LightLayer.SKY, airPos);
+                            int color;
+                            if (blockLight >= save) {
+                                color = 0xFF00FF00; // green: no mobs can spawn
+                            } else if (skyLight >= save) {
+                                color = 0xFFFFFF00; // yellow: mobs can spawn at night only
+                            } else {
+                                color = 0xFFFF0000; // red: mobs can always spawn
+                            }
+
+                            String text = String.valueOf(blockLight);
+
+                            float y = belowPos.getY() + (belowState.is(BlockTags.SNOW) ? 0.125f : 0.0f) + 0.0035f;
+
+                            matrixstack.pushPose();
+                            matrixstack.translate(airPos.getX() + 0.5 - cameraX, y - cameraY, airPos.getZ() + 0.5 - cameraZ);
+                            // Face the sky (flat on the block top)
+                            matrixstack.mulPose(Axis.XP.rotationDegrees(-90f));
+                            matrixstack.scale(scale, scale, scale);
+
+                            float xoff = -font.width(text) / 2.0f;
+                            float yoff = -font.lineHeight / 2.0f;
+                            Matrix4f pose = matrixstack.last().pose();
+                            font.drawInBatch(text, xoff, yoff, color, false, pose, Objects.requireNonNull(bufferSource), Font.DisplayMode.NORMAL, 0, 0xF000F0);
+
+                            matrixstack.popPose();
+                        }
                     }
                 }
+            }
+        } else {
+            for (Pair<BlockPos, Byte> entry : scanner.getLightModes()) {
+                Byte mode = entry.getValue();
+                if (mode == null || mode == 0)
+                    continue;
+                // Angle cull
+                BlockPos bp = entry.getKey();
+                float vx = (float)((bp.getX() + 0.5) - cameraX);
+                float vy = (float)((bp.getY() + 0.5) - cameraY);
+                float vz = (float)((bp.getZ() + 0.5) - cameraZ);
+                float vLenInv = 1.0f / (float)Math.max(1e-6, Math.sqrt(vx*vx + vy*vy + vz*vz));
+                float dot = (vx * look.x) + (vy * look.y) + (vz * look.z);
+                dot *= vLenInv; // cos(theta)
+                if (dot < cullCos) {
+                    continue;
+                }
 
-                // Diagonals of the block square
-                // Map values > 2.0 to pixel widths starting at ~1.0px and increasing slowly.
-                // 2.0 => 1.0px, 2.1 => 1.01px, 3.0 => 1.10px, 12.0 => 2.0px, etc.
-                double desiredPixelWidth = 1.0 + Math.max(0.0, configuredWidth - 2.0) * 0.10;
-                addThickLine(currentMatrix, look, cameraX, cameraY, cameraZ, x0, y, z0, x1, y, z1, r, g, b, desiredPixelWidth);
-                addThickLine(currentMatrix, look, cameraX, cameraY, cameraZ, x1, y, z0, x0, y, z1, r, g, b, desiredPixelWidth);
+                if (useDebugLines) {
+                    if (mode == 1)
+                        renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
+                    else if (mode == 2)
+                        renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
+                } else {
+                    // Thick lines: render as camera-facing quads
+                    float r = (mode == 1) ? nr : ar;
+                    float g = (mode == 1) ? ng : ag;
+                    float b = (mode == 1) ? nb : ab;
+
+                    int x0 = bp.getX();
+                    int x1 = x0 + 1;
+                    int z0 = bp.getZ();
+                    int z1 = z0 + 1;
+
+                    Player player = minecraft.player;
+                    if (player == null) continue;
+                    BlockState blockStateBelow = player.level().getBlockState(bp);
+                    float y;
+                    if(blockStateBelow.is(BlockTags.SNOW)){
+                        if(bp.getY() > player.getY()){
+                            y = 0.005f + (bp.getY()+0.125f);
+                        } else{
+                            y = (float) (0.005f + (bp.getY()+0.125f) + 0.01f * -(bp.getY()-player.getY()-1));
+                        }
+                    } else{
+                        if(bp.getY() > player.getY()){
+                            y = 0.005f + bp.getY();
+                        } else{
+                            y = (float) (0.005f + bp.getY() + 0.01f * -(bp.getY()-player.getY()-1));
+                        }
+                    }
+
+                    // Diagonals of the block square
+                    // Map values > 2.0 to pixel widths starting at ~1.0px and increasing slowly.
+                    // 2.0 => 1.0px, 2.1 => 1.01px, 3.0 => 1.10px, 12.0 => 2.0px, etc.
+                    double desiredPixelWidth = 1.0 + Math.max(0.0, configuredWidth - 2.0) * 0.10;
+                    addThickLine(currentMatrix, look, cameraX, cameraY, cameraZ, x0, y, z0, x1, y, z1, r, g, b, desiredPixelWidth);
+                    addThickLine(currentMatrix, look, cameraX, cameraY, cameraZ, x1, y, z0, x0, y, z1, r, g, b, desiredPixelWidth);
+                }
             }
         }
 
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
+        if (renderNumbers) {
+            if (bufferSource != null) bufferSource.endBatch();
+            RenderSystem.disablePolygonOffset();
+        } else {
+            MeshData meshData = renderer.build();
+            if (meshData != null) {
+                BufferUploader.drawWithShader(meshData);
+            }
         }
 
         // restore render settings

@@ -25,6 +25,8 @@ public class Config {
     public static ModConfigSpec.IntValue render_spawnAColor;
     public static ModConfigSpec.IntValue render_spawnNColor;
     public static ModConfigSpec.DoubleValue render_spawnLineWidth;
+    public static ModConfigSpec.BooleanValue render_spawnNumbers;
+    public static ModConfigSpec.DoubleValue render_spawnNumberScale;
 
     public static ModConfigSpec.BooleanValue search_enabled;
     public static ModConfigSpec.BooleanValue search_searchCustom;
@@ -62,6 +64,8 @@ public class Config {
         render_spawnAColor = builder.comment("Color the X that marks \"Spawns always possible\"").defineInRange("spawn_always_color", 0xFF0000, 0, 0xFFFFFF);
         render_spawnNColor = builder.comment("Color the X that marks \"Spawns at night possible\"").defineInRange("spawn_night_color", 0xFFFF00, 0, 0xFFFFFF);
         render_spawnLineWidth = builder.comment("Line width for spawn indication").defineInRange("spawn_line_width", 2, 0, Double.MAX_VALUE);
+        render_spawnNumbers = builder.comment("Render light levels as numbers instead of crosses for spawnable blocks").define("spawn_numbers", false);
+        render_spawnNumberScale = builder.comment("Scale/size of the number overlay when enabled (world units)").defineInRange("spawn_number_scale", 0.07D, 0.005D, 0.5D);
         builder.pop();
 
         builder.comment("Settings for the search overlay").push("searchoverlay");
