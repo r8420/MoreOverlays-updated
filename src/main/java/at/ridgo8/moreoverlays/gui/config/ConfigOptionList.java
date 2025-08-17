@@ -193,6 +193,13 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             fullPath.addAll(this.configPath);
             fullPath.add(cEntry.getKey());
 
+            // Hide internal migration flags from the visual config screen
+            if (fullPath.size() == 2
+                    && "lightoverlay".equals(fullPath.get(0))
+                    && "finishedMigration".equalsIgnoreCase(fullPath.get(1))) {
+                continue;
+            }
+
             String comment = null;
             if (this.comments != null) {
                 comment = this.comments.getComment(fullPath);
