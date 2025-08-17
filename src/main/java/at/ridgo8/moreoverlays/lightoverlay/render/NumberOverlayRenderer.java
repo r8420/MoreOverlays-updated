@@ -108,8 +108,8 @@ public class NumberOverlayRenderer implements ILightRenderer {
                     matrixstack.pushPose();
                     matrixstack.translate(airPos.getX() + 0.5 - cameraX, y - cameraY, airPos.getZ() + 0.5 - cameraZ);
                     matrixstack.mulPose(Axis.XP.rotationDegrees(-90f));
-                    // Use negative X/Y scale to correct mirroring when laying flat
-                    matrixstack.scale(-scale, -scale, scale);
+                    // Use negative Y scale to correct mirroring when laying flat on the ground
+                    matrixstack.scale(scale, -scale, scale);
 
                     float xoff = -font.width(text) / 2.0f;
                     float yoff = -font.lineHeight / 2.0f;
