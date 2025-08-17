@@ -29,7 +29,7 @@
   "config.moreoverlays.rendersettings.chunk_edge_color": "Chunk: Randkleur",
   "config.moreoverlays.rendersettings.chunk_grid_color": "Chunk: Rasterkleur",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Chunk: Middenkleur",
-  "config.moreoverlays.rendersettings.chunk_line_width": "Chunk: Lijndikte",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Dikke Lijnen",
   "config.moreoverlays.rendersettings.spawn_always_color": "Spawn: Kleur",
   "config.moreoverlays.rendersettings.spawn_night_color": "Spawn: Nacht Kleur",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn: Lijndikte",

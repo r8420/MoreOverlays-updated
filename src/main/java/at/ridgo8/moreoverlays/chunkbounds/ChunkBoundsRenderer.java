@@ -27,7 +27,7 @@ public class ChunkBoundsRenderer {
 
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
-        // Keep 1px line for debug lines; thicker handled via triangle quads
+        // Keep 1px line for debug lines; thicker handled via triangle quads when enabled
         RenderSystem.lineWidth(1.0f);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
@@ -82,18 +82,13 @@ public class ChunkBoundsRenderer {
         final int renderColorMiddle = Config.render_chunkMiddleColor.get();
         final int renderColorGrid = Config.render_chunkGridColor.get();
 
-        double configuredWidth = Config.render_chunkLineWidth.get();
-        boolean useDebugLines = configuredWidth <= 1.5;
+        boolean useDebugLines = !Config.render_chunkThick.get();
         // For thick mode, we use camera-facing quads sized in screen pixels
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vector3f look = camera.getLookVector();
-        // Start at ~1px at 1.5 and increase very slowly beyond
-        // 1.5001 -> ~1.000002px, 2.0 -> ~1.01px, 3.0 -> ~1.03px
-        double desiredPixelWidth = 1.0 + Math.max(0.0, configuredWidth - 1.5) * 0.02;
+        double desiredPixelWidth = 1.5; // Use visually thick width similar to previous thick mode
         if (!useDebugLines && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
             RenderSystem.disableCull();
-            // Use slight alpha to help antialiasing without losing visibility
-            RenderSystem.enableBlend();
         }
 
 

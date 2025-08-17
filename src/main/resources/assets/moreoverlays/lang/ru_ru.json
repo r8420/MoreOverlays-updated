@@ -29,7 +29,7 @@
   "config.moreoverlays.rendersettings.chunk_edge_color": "Цвет края чанка",
   "config.moreoverlays.rendersettings.chunk_grid_color": "Цвет сетки",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Цвет центра",
-  "config.moreoverlays.rendersettings.chunk_line_width": "Ширина линии",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Толстые линии",
   "config.moreoverlays.rendersettings.spawn_always_color": "Цвет спавна",
   "config.moreoverlays.rendersettings.spawn_night_color": "Цвет ноч. спавн",
   "config.moreoverlays.rendersettings.spawn_line_width": "Шир. линии спавна",

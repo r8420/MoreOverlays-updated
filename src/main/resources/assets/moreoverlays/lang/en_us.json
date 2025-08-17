@@ -29,7 +29,7 @@
   "config.moreoverlays.rendersettings.chunk_edge_color": "Chunk: Edge Color",
   "config.moreoverlays.rendersettings.chunk_grid_color": "Chunk: Grid Color",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Chunk: Middle Color",
-  "config.moreoverlays.rendersettings.chunk_line_width": "Chunk: Line Width",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Thick Lines",
   "config.moreoverlays.rendersettings.spawn_always_color": "Spawn: Color",
   "config.moreoverlays.rendersettings.spawn_night_color": "Spawn: Night Color",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn: Line Width",

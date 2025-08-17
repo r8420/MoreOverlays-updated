@@ -29,7 +29,7 @@
   "config.moreoverlays.rendersettings.chunk_edge_color": "Kolor krawędzi",
   "config.moreoverlays.rendersettings.chunk_grid_color": "Kolor siatki",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Kolor środka",
-  "config.moreoverlays.rendersettings.chunk_line_width": "Szer. linii",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Grube linie",
   "config.moreoverlays.rendersettings.spawn_always_color": "Kolor spawnu",
   "config.moreoverlays.rendersettings.spawn_night_color": "Kolor nocny",
   "config.moreoverlays.rendersettings.spawn_line_width": "Szer. linii spawnu",
