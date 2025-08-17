@@ -55,12 +55,14 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
     @Override
     protected int getScrollbarPosition() {
-        return super.getScrollbarPosition() + 15 + 20;
+        // Shift scrollbar further right to accommodate wider label column and controls
+        return super.getScrollbarPosition() + 15 + 20 + 80;
     }
 
     @Override
     public int getRowWidth() {
-        return super.getRowWidth() + 64;
+        // Expand row width to preserve previous control width after increasing label column
+        return super.getRowWidth() + 64 + 80;
     }
 
     public void updateGui() {

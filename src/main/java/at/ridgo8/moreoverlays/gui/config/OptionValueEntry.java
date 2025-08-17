@@ -1,12 +1,10 @@
 package at.ridgo8.moreoverlays.gui.config;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
-import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
@@ -21,7 +19,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     public static final int CONTROL_WIDTH_NOVALIDATOR = 44;
     public static final int CONTROL_WIDTH_VALIDATOR = 64;
-    public static final int TITLE_WIDTH = 80;
+    public static final int TITLE_WIDTH = 160;
     protected final ModConfigSpec.ConfigValue<V> value;
     protected final ModConfigSpec.ValueSpec spec;
     private final List<String> tooltip;
@@ -78,8 +76,10 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
 
         tooltip.add(ChatFormatting.RED + this.name);
-        for (final String line : lines) {
-            tooltip.add(ChatFormatting.YELLOW + line);
+        if (lines != null) {
+            for (final String line : lines) {
+                tooltip.add(ChatFormatting.YELLOW + line);
+            }
         }
 
         this.updateValue(this.value.get());
@@ -94,8 +94,12 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
-        // Absolute label position aligned to this row
-        guiGraphics.drawString(Minecraft.getInstance().font, this.name, rowLeft + (60 - TITLE_WIDTH), rowTop + 6, 0xFFFFFF);
+        // Draw label right-aligned within the fixed title column to avoid overlap with controls
+        final var font = Minecraft.getInstance().font;
+        int rightEdge = rowLeft + TITLE_WIDTH - 5;
+        int startX = rightEdge - font.width(this.name);
+        if (startX < rowLeft + 4) startX = rowLeft + 4;
+        guiGraphics.drawString(font, this.name, startX, rowTop + 6, 0xFFFFFF);
         // Position row buttons absolutely so hover matches render
         this.btnReset.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 20, rowTop);
         this.btnUndo.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 42, rowTop);
@@ -106,9 +110,9 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             int validityX = rowLeft + this.getConfigOptionList().getRowWidth() - 53;
             int validityY = rowTop + 6;
             if (this.valid) {
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.VALID, validityX, validityY, 0x00FF00);
+                guiGraphics.drawCenteredString(font, ConfigOptionList.VALID, validityX, validityY, 0x00FF00);
             } else {
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.INVALID, validityX, validityY, 0xFF0000);
+                guiGraphics.drawCenteredString(font, ConfigOptionList.INVALID, validityX, validityY, 0xFF0000);
             }
         }
     }
