@@ -22,6 +22,7 @@
   "config.moreoverlays.lightoverlay.simplecheck": "Eenvoudige Check",
   "config.moreoverlays.lightoverlay.savelevel": "Veilige Lichtniveau",
   "config.moreoverlays.lightoverlay.finishedmigration": "1.18 Migratie Voltooid",
+  "config.moreoverlays.lightoverlay.spawn_numbers": "Gebruik Cijfer-Overlay",
 
   "config.moreoverlays.chunkbounds.radius": "Randradius",
   "config.moreoverlays.chunkbounds.middle": "Toon Middelpunt",
@@ -33,8 +34,8 @@
   "config.moreoverlays.rendersettings.spawn_always_color": "Spawn: Kleur",
   "config.moreoverlays.rendersettings.spawn_night_color": "Spawn: Nacht Kleur",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn: Lijndikte",
-  "config.moreoverlays.rendersettings.spawn_numbers": "Spawn: Gebruik Cijfer-Overlay",
   "config.moreoverlays.rendersettings.spawn_number_scale": "Spawn: Cijfergrootte",
+  "config.moreoverlays.rendersettings.spawn_safe_color": "Spawn: Veilige Kleur",
 
   "config.moreoverlays.searchoverlay.search_enabled": "Zoeken Inschakelen",
   "config.moreoverlays.searchoverlay.custom_search": "Aangepast Zoeken",

@@ -89,11 +89,11 @@ public class NumberOverlayRenderer implements ILightRenderer {
                     }
                     int color;
                     if (blockLight >= save) {
-                        color = 0xFF00FF00; // green: no mobs can spawn
+                        color = 0xFF000000 | Config.render_spawnSafeColor.get();
                     } else if (skyLight >= save) {
-                        color = 0xFFFFFF00; // yellow: mobs can spawn at night only
+                        color = 0xFF000000 | Config.render_spawnNColor.get();
                     } else {
-                        color = 0xFFFF0000; // red: mobs can always spawn
+                        color = 0xFF000000 | Config.render_spawnAColor.get();
                     }
 
                     String text = String.valueOf(blockLight);

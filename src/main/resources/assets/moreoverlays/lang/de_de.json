@@ -22,6 +22,7 @@
   "config.moreoverlays.lightoverlay.simplecheck": "Einfache Prüfung",
   "config.moreoverlays.lightoverlay.savelevel": "Sicheres Lichtlvl",
   "config.moreoverlays.lightoverlay.finishedmigration": "1.18 Migration",
+  "config.moreoverlays.lightoverlay.spawn_numbers": "Zahlen-Overlay verwenden",
 
   "config.moreoverlays.chunkbounds.radius": "Kantenradius",
   "config.moreoverlays.chunkbounds.middle": "Mitte zeigen",
@@ -33,8 +34,8 @@
   "config.moreoverlays.rendersettings.spawn_always_color": "Spawn-Farbe",
   "config.moreoverlays.rendersettings.spawn_night_color": "Nacht-Spawn Farbe",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn-Linienbr.",
-  "config.moreoverlays.rendersettings.spawn_numbers": "Spawn: Zahlen-Overlay verwenden",
   "config.moreoverlays.rendersettings.spawn_number_scale": "Spawn: Zahlengröße",
+  "config.moreoverlays.rendersettings.spawn_safe_color": "Spawn: Sichere Farbe",
 
   "config.moreoverlays.searchoverlay.search_enabled": "Suche aktivieren",
   "config.moreoverlays.searchoverlay.custom_search": "Benutzerd. Suche",
