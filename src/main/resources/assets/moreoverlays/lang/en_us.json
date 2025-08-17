@@ -22,6 +22,8 @@
   "config.moreoverlays.lightoverlay.simplecheck": "Simple Check",
   "config.moreoverlays.lightoverlay.savelevel": "Safe Light Level",
   "config.moreoverlays.lightoverlay.finishedmigration": "1.18 Migration Done",
+  "config.moreoverlays.lightoverlay.spawn_numbers": "Use Number Overlay",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Update Interval (Frames)",
 
   "config.moreoverlays.chunkbounds.radius": "Edge Radius",
   "config.moreoverlays.chunkbounds.middle": "Show Mid Point",
@@ -29,10 +31,12 @@
   "config.moreoverlays.rendersettings.chunk_edge_color": "Chunk: Edge Color",
   "config.moreoverlays.rendersettings.chunk_grid_color": "Chunk: Grid Color",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Chunk: Middle Color",
-  "config.moreoverlays.rendersettings.chunk_line_width": "Chunk: Line Width",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Thick Lines",
   "config.moreoverlays.rendersettings.spawn_always_color": "Spawn: Color",
   "config.moreoverlays.rendersettings.spawn_night_color": "Spawn: Night Color",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn: Line Width",
+  "config.moreoverlays.rendersettings.spawn_number_scale": "Spawn: Number Size",
+  "config.moreoverlays.rendersettings.spawn_safe_color": "Spawn: Safe Color",
 
   "config.moreoverlays.searchoverlay.search_enabled": "Enable Search",
   "config.moreoverlays.searchoverlay.custom_search": "Search Custom",

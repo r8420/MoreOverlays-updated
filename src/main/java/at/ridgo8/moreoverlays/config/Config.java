@@ -14,6 +14,7 @@ public class Config {
     public static ModConfigSpec.BooleanValue light_SimpleEntityCheck;
     public static ModConfigSpec.IntValue light_SaveLevel;
     public static ModConfigSpec.BooleanValue light_FinishedMigration;
+    public static ModConfigSpec.IntValue light_UpdateIntervalFrames;
 
     public static ModConfigSpec.IntValue chunk_EdgeRadius;
     public static ModConfigSpec.BooleanValue chunk_ShowMiddle;
@@ -21,10 +22,13 @@ public class Config {
     public static ModConfigSpec.IntValue render_chunkEdgeColor;
     public static ModConfigSpec.IntValue render_chunkGridColor;
     public static ModConfigSpec.IntValue render_chunkMiddleColor;
-    public static ModConfigSpec.DoubleValue render_chunkLineWidth;
+    public static ModConfigSpec.BooleanValue render_chunkThick;
     public static ModConfigSpec.IntValue render_spawnAColor;
     public static ModConfigSpec.IntValue render_spawnNColor;
+    public static ModConfigSpec.IntValue render_spawnSafeColor;
     public static ModConfigSpec.DoubleValue render_spawnLineWidth;
+    public static ModConfigSpec.BooleanValue render_spawnNumbers;
+    public static ModConfigSpec.DoubleValue render_spawnNumberScale;
 
     public static ModConfigSpec.BooleanValue search_enabled;
     public static ModConfigSpec.BooleanValue search_searchCustom;
@@ -39,6 +43,7 @@ public class Config {
         final ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
         builder.comment("Settings for the light / mobspawn overlay").push("lightoverlay");
+        render_spawnNumbers = builder.comment("Render light levels as numbers instead of crosses").define("spawn_numbers", false);
         light_UpRange = builder.comment("Range of the lightoverlay (positive Y)").defineInRange("uprange", 4, 0, Integer.MAX_VALUE);
         light_DownRange = builder.comment("Range of the lightoverlay (negative Y)").defineInRange("downrange", 16, 0, Integer.MAX_VALUE);
         light_HRange = builder.comment("Range of the lightoverlay (Horizontal N,E,S,W)").defineInRange("hrange", 16, 0, Integer.MAX_VALUE);
@@ -46,7 +51,8 @@ public class Config {
         light_IgnoreSpawnList = builder.comment("Ignore if mobs can actually spawn according to other mods and biome spawn lists and just go by light value").define("ignoreSpawnList", false);
         light_SimpleEntityCheck = builder.comment("Blocks can allow/disallow spawns for different entity types. The check for this isn't very performat.\nSetting this to true will increase performance but decrease accuracy.").define("simpleCheck", false);
         light_SaveLevel = builder.comment("Minimum save light level where no mobs can spawn").defineInRange("saveLevel", 1, 0, Integer.MAX_VALUE);
-        light_FinishedMigration = builder.comment("Finished 1.18 migration (don't change)").define("finishedMigration", false);
+        light_FinishedMigration = builder.comment("Finished 1.18 migration (internal)").define("finishedMigration", false);
+        light_UpdateIntervalFrames = builder.comment("Only update the light scanner every N client ticks/frames. Set to 1 to update every frame (disables throttling).").defineInRange("update_interval_frames", 1, 1, Integer.MAX_VALUE);
         builder.pop();
 
         builder.comment("Settings for the chunk bounds overlay").push("chunkbounds");
@@ -58,10 +64,12 @@ public class Config {
         render_chunkEdgeColor = builder.comment("Color for the chunk edge").defineInRange("chunk_edge_color", 0xFF0000, 0, 0xFFFFFF);
         render_chunkGridColor = builder.comment("Color for the chunk grid").defineInRange("chunk_grid_color", 0x00FF00, 0, 0xFFFFFF);
         render_chunkMiddleColor = builder.comment("Color for the middle chunk line").defineInRange("chunk_mid_color", 0xFFFF00, 0, 0xFFFFFF);
-        render_chunkLineWidth = builder.comment("Line width for chunk boundaries").defineInRange("chunk_line_width", 1.5, 0, Double.MAX_VALUE);
+        render_chunkThick = builder.comment("Use thicker lines for chunk boundaries").define("chunk_line_thick", false);
         render_spawnAColor = builder.comment("Color the X that marks \"Spawns always possible\"").defineInRange("spawn_always_color", 0xFF0000, 0, 0xFFFFFF);
         render_spawnNColor = builder.comment("Color the X that marks \"Spawns at night possible\"").defineInRange("spawn_night_color", 0xFFFF00, 0, 0xFFFFFF);
+        render_spawnSafeColor = builder.comment("Color for the number that marks \"No spawns possible\"").defineInRange("spawn_safe_color", 0x00FF00, 0, 0xFFFFFF);
         render_spawnLineWidth = builder.comment("Line width for spawn indication").defineInRange("spawn_line_width", 2, 0, Double.MAX_VALUE);
+        render_spawnNumberScale = builder.comment("Scale/size of the number overlay when enabled (world units)").defineInRange("spawn_number_scale", 0.07D, 0.005D, 0.5D);
         builder.pop();
 
         builder.comment("Settings for the search overlay").push("searchoverlay");

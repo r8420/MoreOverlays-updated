@@ -53,11 +53,12 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         return this.parent;
     }
 
-    // Note: getScrollbarPosition was removed/renamed in newer versions; using default scrollbar position
+    // Note: older API might not expose getScrollbarPosition; if so, keep default scrollbar position
 
     @Override
     public int getRowWidth() {
-        return super.getRowWidth() + 64;
+        // Expand row width to preserve previous control width after increasing label column
+        return super.getRowWidth() + 64 + 80;
     }
 
     public void updateGui() {
@@ -195,6 +196,13 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             fullPath.addAll(this.configPath);
             fullPath.add(cEntry.getKey());
 
+            // Hide internal migration flags from the visual config screen
+            if (fullPath.size() == 2
+                    && "lightoverlay".equals(fullPath.get(0))
+                    && "finishedMigration".equalsIgnoreCase(fullPath.get(1))) {
+                continue;
+            }
+
             String comment = null;
             if (this.comments != null) {
                 comment = this.comments.getComment(fullPath);
@@ -205,6 +213,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
                 this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
             } else if (cEntry.getValue() instanceof ModConfigSpec.BooleanValue) {
                 this.addEntry(new OptionBoolean(this, (ModConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
+            } else if (cEntry.getValue() instanceof ModConfigSpec.IntValue && cEntry.getKey().toLowerCase().contains("color")) {
+                this.addEntry(new OptionColor(this, (ModConfigSpec.IntValue) cEntry.getValue(), (ModConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             } else {
                 this.addEntry(new OptionGeneric<>(this, (ModConfigSpec.ConfigValue<?>) cEntry.getValue(), (ModConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }

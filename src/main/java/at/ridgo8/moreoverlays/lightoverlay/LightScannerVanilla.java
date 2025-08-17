@@ -2,14 +2,12 @@ package at.ridgo8.moreoverlays.lightoverlay;
 
 import at.ridgo8.moreoverlays.api.lightoverlay.LightScannerBase;
 import at.ridgo8.moreoverlays.config.Config;
-import com.google.common.collect.Lists;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.Level;
@@ -27,6 +25,7 @@ public class LightScannerVanilla extends LightScannerBase {
     private final List<EntityType<?>> typesToCheck;
 
     public LightScannerVanilla() {
+        // Fallback simple list: iterate registry and filter by category to avoid tag-stream API
         typesToCheck = BuiltInRegistries.ENTITY_TYPE.stream()
             .filter(type -> type.canSummon() && type.getCategory() == MobCategory.MONSTER)
             .collect(Collectors.toList());
@@ -40,14 +39,14 @@ public class LightScannerVanilla extends LightScannerBase {
             return true;
 
         AABB bb = TEST_BB.move(pos.getX(), pos.getY(), pos.getZ());
-        List bbCollisions = Lists.newArrayList(world.getBlockCollisions(null, bb));
-        if (bbCollisions.size() == 0 && !world.containsAnyLiquid(bb)) {
+        boolean hasCollision = world.getBlockCollisions(null, bb).iterator().hasNext();
+        if (!hasCollision && !world.containsAnyLiquid(bb)) {
             if (Config.light_IgnoreLayer.get())
                 return true;
             else {
                 AABB bb2 = bb.move(0, 1, 0);
-                List bb2Collisions = Lists.newArrayList(world.getBlockCollisions(null, bb2));
-                return bb2Collisions.size() == 0 && !world.containsAnyLiquid(bb2);
+                boolean hasCollision2 = world.getBlockCollisions(null, bb2).iterator().hasNext();
+                return !hasCollision2 && !world.containsAnyLiquid(bb2);
             }
         }
         return false;
