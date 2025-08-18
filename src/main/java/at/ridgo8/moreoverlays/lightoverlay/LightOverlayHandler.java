@@ -119,9 +119,7 @@ public class LightOverlayHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelStageEvent event) {
-        if(!event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_PARTICLES)) return;
-
+    public void renderWorldLastEvent(RenderLevelStageEvent.AfterParticles event) {
         if (enabled) {
             renderer.renderOverlays(scanner, event.getPoseStack());
         }

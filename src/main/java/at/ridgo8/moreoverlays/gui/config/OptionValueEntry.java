@@ -34,6 +34,12 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     private boolean valid = false;
     private boolean changes = false;
 
+    // Cached label bounds for hover detection
+    private int labelX;
+    private int labelY;
+    private int labelW;
+    private int labelH;
+
     @SuppressWarnings("unchecked")
     public OptionValueEntry(ConfigOptionList list, ModConfigSpec.ConfigValue<V> confValue, ModConfigSpec.ValueSpec spec) {
         super(list);
@@ -99,7 +105,12 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         int rightEdge = rowLeft + TITLE_WIDTH - 5;
         int startX = rightEdge - font.width(this.name);
         if (startX < rowLeft + 4) startX = rowLeft + 4;
-        guiGraphics.drawString(font, this.name, startX, rowTop + 6, 0xFFFFFF);
+        guiGraphics.drawString(font, this.name, startX, rowTop + 6, 0xFFFFFFFF);
+        // cache label hover rect
+        this.labelX = startX;
+        this.labelY = rowTop + 6;
+        this.labelW = font.width(this.name);
+        this.labelH = font.lineHeight;
         // Position row buttons absolutely so hover matches render
         this.btnReset.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 20, rowTop);
         this.btnUndo.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 42, rowTop);
@@ -110,9 +121,9 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             int validityX = rowLeft + this.getConfigOptionList().getRowWidth() - 53;
             int validityY = rowTop + 6;
             if (this.valid) {
-                guiGraphics.drawCenteredString(font, ConfigOptionList.VALID, validityX, validityY, 0x00FF00);
+                guiGraphics.drawCenteredString(font, ConfigOptionList.VALID, validityX, validityY, 0xFF00FF00);
             } else {
-                guiGraphics.drawCenteredString(font, ConfigOptionList.INVALID, validityX, validityY, 0xFF0000);
+                guiGraphics.drawCenteredString(font, ConfigOptionList.INVALID, validityX, validityY, 0xFFFF0000);
             }
         }
     }
@@ -122,19 +133,62 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         super.renderTooltip(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
 
-        List<Component> tooltipConverted = new ArrayList<Component>();
+        // Show tooltips contextually: label shows spec tooltip, buttons show their own tooltips
+        if (mouseX >= this.labelX && mouseX <= this.labelX + this.labelW && mouseY >= this.labelY && mouseY <= this.labelY + this.labelH) {
+            if (!this.tooltip.isEmpty()) {
+                List<Component> tooltipConverted = new ArrayList<>();
+                for (String s : this.tooltip) tooltipConverted.add(Component.nullToEmpty(s));
+                drawSimpleTooltip(guiGraphics, tooltipConverted, mouseX, mouseY);
+            }
+            return;
+        }
 
-        for (String iTextComponent : this.tooltip) {
-            tooltipConverted.add(Component.nullToEmpty(iTextComponent));
+        if (this.btnUndo != null && this.btnUndo.isMouseOver(mouseX, mouseY)) {
+            if (this.txtUndo != null && !this.txtUndo.isEmpty()) {
+                drawSimpleTooltip(guiGraphics, java.util.List.of(Component.nullToEmpty(this.txtUndo)), mouseX, mouseY);
+            }
+            return;
         }
-        if (btnReset.isHoveredOrFocused()) {
-            guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(this.txtReset), mouseX, mouseY);
-        } else if (btnUndo.isHoveredOrFocused()) {
-            guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(this.txtUndo), mouseX, mouseY);
-        } else if (mouseX < TITLE_WIDTH + rowLeft) {
-            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltipConverted, mouseX, mouseY);
+
+        if (this.btnReset != null && this.btnReset.isMouseOver(mouseX, mouseY)) {
+            if (this.txtReset != null && !this.txtReset.isEmpty()) {
+                drawSimpleTooltip(guiGraphics, java.util.List.of(Component.nullToEmpty(this.txtReset)), mouseX, mouseY);
+            }
         }
-        // No GL state twiddling here; tooltip is rendered by GuiGraphics
+    }
+
+    protected static void drawSimpleTooltip(GuiGraphics guiGraphics, List<Component> lines, int mouseX, int mouseY) {
+        final var font = Minecraft.getInstance().font;
+        int maxWidth = 0;
+        for (Component c : lines) {
+            int w = font.width(c);
+            if (w > maxWidth) maxWidth = w;
+        }
+        int x = mouseX + 12;
+        int y = mouseY - 12;
+        int padding = 4;
+        int lineHeight = font.lineHeight + 1;
+        int height = lines.size() * lineHeight + padding * 2 - 1;
+        int width = maxWidth + padding * 2;
+
+        int background = 0xF0100010; // vanilla-like dark bg with alpha
+        int borderLight = 0x505000FF;
+        int borderDark = 0x5028007F;
+
+        // background
+        guiGraphics.fill(x - 1, y - 1, x + width + 1, y + height + 1, background);
+        // border
+        guiGraphics.fill(x - 1, y - 1, x + width + 1, y, borderDark);
+        guiGraphics.fill(x - 1, y + height, x + width + 1, y + height + 1, borderLight);
+        guiGraphics.fill(x - 1, y, x, y + height, borderDark);
+        guiGraphics.fill(x + width, y, x + width + 1, y + height, borderLight);
+
+        int textX = x + padding;
+        int textY = y + padding - 1;
+        for (Component c : lines) {
+            guiGraphics.drawString(font, c, textX, textY, 0xFFFFFFFF);
+            textY += lineHeight;
+        }
     }
 
     protected abstract void overrideUnsaved(V value);

@@ -95,13 +95,11 @@ public class GuiRenderer {
         int right = x + width + (int) FRAME_RADIUS;
         int bottom = y + height + (int) FRAME_RADIUS;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 300);
         guiGraphics.fill(left, top, right, y, color);
         guiGraphics.fill(left, y + height, right, bottom, color);
         guiGraphics.fill(left, y, x, y + height, color);
         guiGraphics.fill(x + width, y, right, y + height, color);
-        guiGraphics.pose().popPose();
+        
     }
 
     public void renderTooltip(ItemStack stack) {
@@ -113,12 +111,9 @@ public class GuiRenderer {
     }
 
     private void drawSlotOverlay(GuiGraphics guiGraphics, AbstractContainerScreen<?> gui) {
-        Lighting.setupForFlatItems();
         if (!enabled || views == null || views.isEmpty())
             return;
-        // Draw overlays directly on the GUI via GuiGraphics.fill to avoid pipeline/UV issues in 1.21.5
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 300);
+        // Draw overlays directly on the GUI via GuiGraphics.fill
 
         float r = ((float) ((Config.search_filteredSlotColor.get() >> 16) & 0xFF)) / 255F;
         float g = ((float) ((Config.search_filteredSlotColor.get() >> 8) & 0xFF)) / 255F;
@@ -136,7 +131,7 @@ public class GuiRenderer {
                 guiGraphics.fill(left, top, right, bottom, argb);
             }
         }
-        guiGraphics.pose().popPose();
+        
     }
 
     public boolean canShowIn(Screen gui) {

@@ -14,10 +14,9 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
 
 
-@EventBusSubscriber(modid = MoreOverlays.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class ClientRegistrationHandler {
 
     private static boolean enable_jei = false;
@@ -49,6 +48,7 @@ public final class ClientRegistrationHandler {
             Config.light_SaveLevel.set(1);
             Config.light_FinishedMigration.set(true);
         }
+        NeoForge.EVENT_BUS.register(new ClientRegistrationHandler());
     }
 
     public static Screen openSettings(Minecraft mc, Screen modlist) {
@@ -56,11 +56,11 @@ public final class ClientRegistrationHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public void onClientTick(ClientTickEvent.Post event) {
         checkAndToggleKeyMappings();
     }
 
-    private static void checkAndToggleKeyMappings() {
+    private void checkAndToggleKeyMappings() {
         if (KeyBindings.lightOverlayKeyMapping.get().consumeClick()) {
             LightOverlayHandler.setEnabled(!LightOverlayHandler.isEnabled());
         }

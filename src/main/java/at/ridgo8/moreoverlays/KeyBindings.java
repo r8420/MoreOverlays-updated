@@ -7,10 +7,7 @@ import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-
-@EventBusSubscriber(modid = MoreOverlays.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class KeyBindings {
 
     // Lazy initialization for key mappings

@@ -131,11 +131,11 @@ public class ConfigScreen extends Screen {
             this.renderPanorama(guiGraphics, partialTicks);
         }
         this.renderMenuBackground(guiGraphics);
-        this.renderBlurredBackground();
+        this.renderBlurredBackground(guiGraphics);
         this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, 8, 16777215);
+        guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, 8, 0xFFFFFFFF);
         if (this.categoryTitle != null) {
-            guiGraphics.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 16777215);
+            guiGraphics.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 0xFFFFFFFF);
         }
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }

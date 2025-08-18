@@ -52,7 +52,14 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
-        guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.nullToEmpty(tooltip.toString()), mouseX, mouseY);
+        // Category tooltip only when hovering the button label area (not strictly needed as the entire row is the button)
+        if (this.btnOpen.isMouseOver(mouseX, mouseY) && !this.tooltip.isEmpty()) {
+            List<Component> converted = new ArrayList<>(this.tooltip.size());
+            for (String t : this.tooltip) {
+                converted.add(Component.nullToEmpty(t));
+            }
+            OptionValueEntry.drawSimpleTooltip(guiGraphics, converted, mouseX, mouseY);
+        }
     }
 
     @Override

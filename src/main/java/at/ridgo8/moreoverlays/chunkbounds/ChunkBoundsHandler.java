@@ -50,9 +50,7 @@ public class ChunkBoundsHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelStageEvent event) {
-        if(!event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_PARTICLES)) return;
-
+    public void renderWorldLastEvent(RenderLevelStageEvent.AfterParticles event) {
         if (mode != RenderMode.NONE) {
             ChunkBoundsRenderer.renderOverlays(event.getPoseStack());
         }
