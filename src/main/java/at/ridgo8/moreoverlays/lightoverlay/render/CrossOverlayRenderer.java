@@ -64,6 +64,83 @@ public class CrossOverlayRenderer implements ILightRenderer {
         drawVertex(consumer, currentMatrix, x1-cameraX, y-cameraY, z0-cameraZ, r, g, b);
         drawVertex(consumer, currentMatrix, x0-cameraX, y-cameraY, z1-cameraZ, r, g, b);
     }
+
+    private static double computeWorldWidthFromPixels(double desiredPixelWidth, double distanceToCamera) {
+        if (desiredPixelWidth <= 0.0) {
+            return 0.0;
+        }
+        int screenHeight = Math.max(1, Minecraft.getInstance().getWindow().getHeight());
+        double fovDegrees;
+        try {
+            Object fovObj = Minecraft.getInstance().options.fov().get();
+            if (fovObj instanceof Integer) {
+                fovDegrees = ((Integer) fovObj).doubleValue();
+            } else if (fovObj instanceof Double) {
+                fovDegrees = (Double) fovObj;
+            } else {
+                fovDegrees = 70.0;
+            }
+        } catch (Throwable t) {
+            fovDegrees = 70.0;
+        }
+        double fovRadians = Math.toRadians(fovDegrees);
+        double pixelsToWorldFactor = (2.0 * Math.tan(fovRadians / 2.0)) / (double) screenHeight;
+        double widthWorld = desiredPixelWidth * Math.max(0.0, distanceToCamera) * pixelsToWorldFactor;
+        return Math.max(widthWorld, 0.01);
+    }
+
+    private static void addThickLine(VertexConsumer consumer, Matrix4f currentMatrix, Vector3f cameraLook,
+                                     double cameraX, double cameraY, double cameraZ,
+                                     double ax, double ay, double az, double bx, double by, double bz,
+                                     float r, float g, float b, double desiredPixelWidth) {
+        double mx = (ax + bx) * 0.5;
+        double my = (ay + by) * 0.5;
+        double mz = (az + bz) * 0.5;
+        double dx = mx - cameraX;
+        double dy = my - cameraY;
+        double dz = mz - cameraZ;
+        double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        double worldWidth = computeWorldWidthFromPixels(desiredPixelWidth, distance);
+        float half = (float) (worldWidth * 0.5);
+
+        float vx = (float) (bx - ax);
+        float vy = (float) (by - ay);
+        float vz = (float) (bz - az);
+
+        float px = vy * cameraLook.z - vz * cameraLook.y;
+        float py = vz * cameraLook.x - vx * cameraLook.z;
+        float pz = vx * cameraLook.y - vy * cameraLook.x;
+        float plen = (float) Math.sqrt(px * px + py * py + pz * pz);
+        if (plen < 1.0e-4f) {
+            float ux = 0f, uy = 1f, uz = 0f;
+            px = vy * uz - vz * uy;
+            py = vz * ux - vx * uz;
+            pz = vx * uy - vy * ux;
+            plen = (float) Math.sqrt(px * px + py * py + pz * pz);
+            if (plen < 1.0e-4f) {
+                return;
+            }
+        }
+        float inv = 1.0f / plen;
+        px *= inv * half;
+        py *= inv * half;
+        pz *= inv * half;
+
+        double a1x = ax - px, a1y = ay - py, a1z = az - pz;
+        double a2x = ax + px, a2y = ay + py, a2z = az + pz;
+        double b1x = bx - px, b1y = by - py, b1z = bz - pz;
+        double b2x = bx + px, b2y = by + py, b2z = bz + pz;
+
+        // two triangles (a1-b1-b2) and (a1-b2-a2)
+        drawVertex(consumer, currentMatrix, a1x - cameraX, a1y - cameraY, a1z - cameraZ, r, g, b);
+        drawVertex(consumer, currentMatrix, b1x - cameraX, b1y - cameraY, b1z - cameraZ, r, g, b);
+        drawVertex(consumer, currentMatrix, b2x - cameraX, b2y - cameraY, b2z - cameraZ, r, g, b);
+
+        drawVertex(consumer, currentMatrix, a1x - cameraX, a1y - cameraY, a1z - cameraZ, r, g, b);
+        drawVertex(consumer, currentMatrix, b2x - cameraX, b2y - cameraY, b2z - cameraZ, r, g, b);
+        drawVertex(consumer, currentMatrix, a2x - cameraX, a2y - cameraY, a2z - cameraZ, r, g, b);
+    }
     
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
@@ -78,9 +155,12 @@ public class CrossOverlayRenderer implements ILightRenderer {
         float ng = ((float) ((Config.render_spawnNColor.get() >> 8) & 0xFF)) / 255F;
         float nb = ((float) (Config.render_spawnNColor.get() & 0xFF)) / 255F;
 
+        double configuredWidth = Config.render_spawnLineWidth.get();
+        boolean useDebugLines = configuredWidth <= 2.0;
         MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
-        // Use lines for thick crosses since they don't expect UV coordinates
-        final var renderType = at.ridgo8.moreoverlays.util.RenderTypes.POSITION_COLOR_OVERLAY;
+        final var renderType = useDebugLines
+                ? at.ridgo8.moreoverlays.util.RenderTypes.LIGHT_OVERLAY_LINES
+                : at.ridgo8.moreoverlays.util.RenderTypes.LIGHT_OVERLAY_TRIANGLES;
         VertexConsumer consumer = bufferSource.getBuffer(renderType);
         
 
@@ -105,11 +185,44 @@ public class CrossOverlayRenderer implements ILightRenderer {
             dot *= vLenInv;
             if (dot < cullCos) continue;
 
-            // Always render crosses using lines
-            if (mode == 1)
-                renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
-            else if (mode == 2)
-                renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
+            if (useDebugLines) {
+                if (mode == 1)
+                    renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
+                else if (mode == 2)
+                    renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
+            } else {
+                // Thick cross using camera-facing quads
+                float r = (mode == 1) ? nr : ar;
+                float g = (mode == 1) ? ng : ag;
+                float b = (mode == 1) ? nb : ab;
+
+                int x0 = bp.getX();
+                int x1 = x0 + 1;
+                int z0 = bp.getZ();
+                int z1 = z0 + 1;
+
+                Player player = minecraft.player;
+                if (player == null) continue;
+                BlockState blockStateBelow = player.level().getBlockState(bp);
+                float y;
+                if (blockStateBelow.is(BlockTags.SNOW)) {
+                    if (bp.getY() > player.getY()) {
+                        y = 0.005f + (bp.getY() + 0.125f);
+                    } else {
+                        y = (float) (0.005f + (bp.getY() + 0.125f) + 0.01f * -(bp.getY() - player.getY() - 1));
+                    }
+                } else {
+                    if (bp.getY() > player.getY()) {
+                        y = 0.005f + bp.getY();
+                    } else {
+                        y = (float) (0.005f + bp.getY() + 0.01f * -(bp.getY() - player.getY() - 1));
+                    }
+                }
+
+                double desiredPixelWidth = 1.0 + Math.max(0.0, configuredWidth - 2.0) * 0.10;
+                addThickLine(consumer, currentMatrix, look, cameraX, cameraY, cameraZ, x0, y, z0, x1, y, z1, r, g, b, desiredPixelWidth);
+                addThickLine(consumer, currentMatrix, look, cameraX, cameraY, cameraZ, x1, y, z0, x0, y, z1, r, g, b, desiredPixelWidth);
+            }
         }
 
         bufferSource.endBatch(renderType);
