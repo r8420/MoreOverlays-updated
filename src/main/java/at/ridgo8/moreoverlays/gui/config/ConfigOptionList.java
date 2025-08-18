@@ -165,9 +165,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             tmp.remove(tmp.size() - 1);
         }
         setPath(tmp);
-        // Clear focus so previously focused widgets do not remain highlighted when changing path
-        this.setFocused(null);
-        this.getScreen().setFocused(null);
+        // Reset scroll position to the top when navigating back
+        this.setScrollAmount(0.0D);
     }
 
     @Override

@@ -11,7 +11,7 @@ import net.neoforged.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(MoreOverlays.MOD_ID)
+@Mod(value = MoreOverlays.MOD_ID, dist = Dist.CLIENT) 
 public class MoreOverlays {
 
     public static final String MOD_ID = "moreoverlays";
