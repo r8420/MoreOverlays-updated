@@ -40,7 +40,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
     public ConfigOptionList(Minecraft minecraft, String modId, ConfigScreen configs) {
         // Width, Height, Y-Start, Y-End, item_height
-        super(minecraft, configs.width, configs.height - 32, 43, ITEM_HEIGHT);
+        super(minecraft, configs.width, configs.height - 32 - 43, 43, ITEM_HEIGHT);
         this.parent = configs;
         this.modId = modId;
     }
@@ -55,8 +55,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
     @Override
     protected int getScrollbarPosition() {
-        // Shift scrollbar further right to accommodate wider label column and controls
-        return super.getScrollbarPosition() + 15 + 20 + 80;
+        // Keep scrollbar within the visible list bounds
+        return super.getScrollbarPosition();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
     public void updateGui() {
         // this.setRectangle(this.parent.width, this.parent.height, 43, this.parent.height - 32);
-        this.setSize(this.parent.width, this.parent.height - 32);
+        this.setSize(this.parent.width, this.parent.height - 32 - 43);
     }
 
 
@@ -171,6 +171,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         }
         setPath(tmp);
         // Do not force-clear focus here; let focused inputs keep focus when navigating up
+        // Reset scroll position to the top when navigating back
+        this.setScrollAmount(0.0D);
     }
 
     @Override
