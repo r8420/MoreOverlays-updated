@@ -15,9 +15,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.api.distmarker.Dist;
 
 
-@EventBusSubscriber(modid = MoreOverlays.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(value = Dist.CLIENT, modid = MoreOverlays.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class ClientRegistrationHandler {
 
     private static boolean enable_jei = false;
