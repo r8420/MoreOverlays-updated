@@ -4,7 +4,6 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.ConfigScreen;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;

@@ -1,16 +1,14 @@
 package at.ridgo8.moreoverlays.lightoverlay.render;
 
-import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
-import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,23 +18,19 @@ import org.joml.Vector3f;
 
 public class CrossOverlayRenderer implements ILightRenderer {
 
-    private final static ResourceLocation BLANK_TEX = ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
-
-    private static Tesselator tess = Tesselator.getInstance();
-    private static BufferBuilder renderer = tess.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
     private static Minecraft minecraft = Minecraft.getInstance();
 
-    private static void drawVertex(Matrix4f matrix, double x, double y, double z, float r, float g, float b) {
+    private static void drawVertex(VertexConsumer consumer, Matrix4f matrix, double x, double y, double z, float r, float g, float b) {
         float xf = (float)x;
         float yf = (float)y;
         float zf = (float)z;
         float tx = matrix.m00() * xf + matrix.m10() * yf + matrix.m20() * zf + matrix.m30();
         float ty = matrix.m01() * xf + matrix.m11() * yf + matrix.m21() * zf + matrix.m31();
         float tz = matrix.m02() * xf + matrix.m12() * yf + matrix.m22() * zf + matrix.m32();
-        renderer.addVertex(tx, ty, tz).setColor(r, g, b, 1);
+        consumer.addVertex(tx, ty, tz).setColor(r, g, b, 1).setNormal(0, 1, 0);
     }
 
-    private static void renderCross(PoseStack matrixstack, Matrix4f currentMatrix, double cameraX, double cameraY, double cameraZ, BlockPos pos, float r, float g, float b) {
+    private static void renderCross(VertexConsumer consumer, PoseStack matrixstack, Matrix4f currentMatrix, double cameraX, double cameraY, double cameraZ, BlockPos pos, float r, float g, float b) {
         Player player = minecraft.player;
         if(player == null)
             return;
@@ -55,27 +49,26 @@ public class CrossOverlayRenderer implements ILightRenderer {
                 y = (float) (0.005f + pos.getY() + 0.01f * -(pos.getY()-player.getY()-1));
             }
         }
+        
         int x0 = pos.getX();
         int x1 = x0 + 1;
         int z0 = pos.getZ();
         int z1 = z0 + 1;
-        drawVertex(currentMatrix, x0-cameraX, y-cameraY, z0-cameraZ, r, g, b);
-        drawVertex(currentMatrix, x1-cameraX, y-cameraY, z1-cameraZ, r, g, b);
-        drawVertex(currentMatrix, x1-cameraX, y-cameraY, z0-cameraZ, r, g, b);
-        drawVertex(currentMatrix, x0-cameraX, y-cameraY, z1-cameraZ, r, g, b);
+        
+        // Draw two diagonal line segments for the cross
+        // First diagonal: (x0,z0) to (x1,z1)
+        drawVertex(consumer, currentMatrix, x0-cameraX, y-cameraY, z0-cameraZ, r, g, b);
+        drawVertex(consumer, currentMatrix, x1-cameraX, y-cameraY, z1-cameraZ, r, g, b);
+        
+        // Second diagonal: (x1,z0) to (x0,z1)  
+        drawVertex(consumer, currentMatrix, x1-cameraX, y-cameraY, z0-cameraZ, r, g, b);
+        drawVertex(consumer, currentMatrix, x0-cameraX, y-cameraY, z1-cameraZ, r, g, b);
     }
-
+    
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableBlend();
-        RenderSystem.setShader(net.minecraft.client.renderer.CoreShaders.POSITION_COLOR);
-        
-
-        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.depthMask(false);
-            RenderSystem.enableCull();
-        }
+        // State managed by RenderType in 1.21.5
+        // no explicit depth/cull toggling
 
         float ar = ((float) ((Config.render_spawnAColor.get() >> 16) & 0xFF)) / 255F;
         float ag = ((float) ((Config.render_spawnAColor.get() >> 8) & 0xFF)) / 255F;
@@ -85,10 +78,11 @@ public class CrossOverlayRenderer implements ILightRenderer {
         float ng = ((float) ((Config.render_spawnNColor.get() >> 8) & 0xFF)) / 255F;
         float nb = ((float) (Config.render_spawnNColor.get() & 0xFF)) / 255F;
 
-        double configuredWidth = Config.render_spawnLineWidth.get();
-        boolean useDebugLines = configuredWidth <= 2.0;
-        RenderSystem.lineWidth(useDebugLines ? 1.0f : 1.0f);
-        renderer = tess.begin(useDebugLines ? VertexFormat.Mode.DEBUG_LINES : VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
+        // Use lines for thick crosses since they don't expect UV coordinates
+        final var renderType = at.ridgo8.moreoverlays.util.RenderTypes.POSITION_COLOR_OVERLAY;
+        VertexConsumer consumer = bufferSource.getBuffer(renderType);
+        
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
         double cameraX = camera.getPosition().x;
@@ -111,33 +105,17 @@ public class CrossOverlayRenderer implements ILightRenderer {
             dot *= vLenInv;
             if (dot < cullCos) continue;
 
-            if (useDebugLines) {
-                if (mode == 1)
-                    renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
-                else if (mode == 2)
-                    renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
-            } else {
-                // Fallback to thin lines rendering here only
-                if (mode == 1)
-                    renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
-                else if (mode == 2)
-                    renderCross(matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
-            }
+            // Always render crosses using lines
+            if (mode == 1)
+                renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
+            else if (mode == 2)
+                renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
         }
 
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
-
-        RenderSystem.depthMask(true);
-        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.disableCull();
-        } else {
-            RenderSystem.lineWidth(1.0F);
-            RenderSystem.enableBlend();
-        }
+        bufferSource.endBatch(renderType);
+        // no explicit restore needed
     }
 }
+
 
 

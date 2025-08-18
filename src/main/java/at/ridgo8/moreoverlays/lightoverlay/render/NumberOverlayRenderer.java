@@ -29,14 +29,7 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
-        // State for numbers
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableCull();
-        RenderSystem.enableBlend();
-        RenderSystem.enablePolygonOffset();
-        RenderSystem.polygonOffset(-2f, -4f);
-        // Don't write to depth so equal-depth fragments don't occlude each other
-        RenderSystem.depthMask(false);
+        // State for numbers now managed by font/buffer sources and internal pipelines in 1.21.5
 
         final Minecraft mc = Minecraft.getInstance();
         final Font font = mc.font;
@@ -49,7 +42,7 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
         final Player player = mc.player;
         if (player == null || mc.level == null) {
-            RenderSystem.disablePolygonOffset();
+            // no-op
             return;
         }
 
@@ -121,8 +114,6 @@ public class NumberOverlayRenderer implements ILightRenderer {
         }
 
         bufferSource.endBatch();
-        RenderSystem.depthMask(true);
-        RenderSystem.disablePolygonOffset();
     }
 }
 

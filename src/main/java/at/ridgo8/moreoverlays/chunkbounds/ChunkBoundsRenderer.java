@@ -1,21 +1,18 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
-import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.config.Config;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
-import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.CoreShaders;
-import net.minecraft.resources.ResourceLocation;
+import at.ridgo8.moreoverlays.util.RenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector4d;
 import org.joml.Vector3f;
 
 public class ChunkBoundsRenderer {
-    private final static ResourceLocation BLANK_TEX = ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
 
     public static void renderOverlays(PoseStack matrixstack) {
         Player player = Minecraft.getInstance().player;
@@ -24,19 +21,11 @@ public class ChunkBoundsRenderer {
         }
         // No texture binding needed for POSITION_COLOR rendering
         
+        // Minimal fixed-state setup; exact pipeline is handled by RenderType
+        // Depth/blend/cull states are defined by the RenderType in 1.21.5
 
 
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableBlend();
-        // Keep 1px line for debug lines; thicker handled via triangle quads when enabled
-        RenderSystem.lineWidth(1.0f);
-        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
-
-
-        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.depthMask(false);
-            RenderSystem.enableCull();
-        } 
+        // No explicit depthMask/cull toggles here; rely on the render types
 
         final int h = player.level().getHeight();
         final int h0 = (int) player.getY();
@@ -88,9 +77,7 @@ public class ChunkBoundsRenderer {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vector3f look = camera.getLookVector();
         double desiredPixelWidth = 1.5; // Use visually thick width similar to previous thick mode
-        if (!useDebugLines && Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.disableCull();
-        }
+        // culling is defined per RenderType
 
 
         for (int xo = -16 - radius; xo <= radius; xo += 16) {
@@ -133,20 +120,12 @@ public class ChunkBoundsRenderer {
             }
         }
 
-        // restore render settings
-        RenderSystem.depthMask(true);
-        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.disableCull();
-        } else {
-            RenderSystem.lineWidth(1.0F);
-            RenderSystem.enableBlend();
-        }
+        // No explicit state restoration required with RenderType-based drawing
     }
 
     public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        Tesselator tess = Tesselator.getInstance();
         Minecraft minecraft = Minecraft.getInstance();
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
@@ -161,25 +140,20 @@ public class ChunkBoundsRenderer {
 
         z -= cameraZ;
 
-        BufferBuilder bufferBuilder = tess.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer consumer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
 
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
 
-        drawVertex(bufferBuilder, matrix4d, x, h3, z, r, g, b);
-        drawVertex(bufferBuilder, matrix4d, x, h, z, r, g, b);
-
-        MeshData meshData = bufferBuilder.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
+        addLine(consumer, matrix4d, x, h3, z, x, h, z, r, g, b);
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
     public static void renderGrid(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1, double step, int color) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        Tesselator tess = Tesselator.getInstance();
         Minecraft minecraft = Minecraft.getInstance();
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
@@ -188,7 +162,8 @@ public class ChunkBoundsRenderer {
         double cameraZ = camera.getPosition().z;
 
         
-        BufferBuilder renderer = tess.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
@@ -235,15 +210,19 @@ public class ChunkBoundsRenderer {
             drawVertex(renderer, matrix4d, x1 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
         }
 
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
-    private static void drawVertex(BufferBuilder renderer, Matrix4d matrix, double x, double y, double z, float r, float g, float b) {
-        Vector4d vector4d = matrix.transform(new Vector4d(x, y, z, 1.0D));
-        renderer.addVertex((float)vector4d.x(), (float)vector4d.y(), (float)vector4d.z()).setColor(r, g, b, 1);
+    private static void addLine(VertexConsumer consumer, Matrix4d matrix, double ax, double ay, double az, double bx, double by, double bz, float r, float g, float b) {
+        Vector4d a = matrix.transform(new Vector4d(ax, ay, az, 1.0D));
+        Vector4d c = matrix.transform(new Vector4d(bx, by, bz, 1.0D));
+        consumer.addVertex((float)a.x(), (float)a.y(), (float)a.z()).setColor(r, g, b, 1).setNormal(0, 1, 0);
+        consumer.addVertex((float)c.x(), (float)c.y(), (float)c.z()).setColor(r, g, b, 1).setNormal(0, 1, 0);
+    }
+
+    private static void drawVertex(VertexConsumer consumer, Matrix4d matrix, double x, double y, double z, float r, float g, float b) {
+        Vector4d v = matrix.transform(new Vector4d(x, y, z, 1.0D));
+        consumer.addVertex((float)v.x(), (float)v.y(), (float)v.z()).setColor(r, g, b, 1).setNormal(0, 1, 0);
     }
 
     private static double computeWorldWidthFromPixels(double desiredPixelWidth, double distanceToCamera) {
@@ -270,7 +249,7 @@ public class ChunkBoundsRenderer {
         return Math.max(widthWorld, 0.01);
     }
 
-    private static void addThickLine(BufferBuilder renderer, Matrix4d matrix4d, Vector3f cameraLook,
+    private static void addThickLine(VertexConsumer renderer, Matrix4d matrix4d, Vector3f cameraLook,
                                      double cameraX, double cameraY, double cameraZ,
                                      double ax, double ay, double az, double bx, double by, double bz,
                                      float r, float g, float b, double desiredPixelWidth) {
@@ -326,8 +305,8 @@ public class ChunkBoundsRenderer {
                                         Camera camera, Vector3f look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        Tesselator tess = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tess.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -339,18 +318,15 @@ public class ChunkBoundsRenderer {
 
         addThickLine(bufferBuilder, matrix4d, look, cameraX, cameraY, cameraZ, x, h3, z, x, h, z, r, g, b, desiredPixelWidth);
 
-        MeshData meshData = bufferBuilder.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
     private static void renderGridThick(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1,
                                         double step, int color, Camera camera, Vector3f look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        Tesselator tess = Tesselator.getInstance();
-        BufferBuilder renderer = tess.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -390,9 +366,46 @@ public class ChunkBoundsRenderer {
             addThickLine(renderer, matrix4d, look, cameraX, cameraY, cameraZ, x1, y0, z, x1, y1, z, r, g, b, desiredPixelWidth);
         }
 
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
+    }
+
+    public static void renderChunkBounds(PoseStack matrixstack, int chunkX, int chunkZ, int color) {
+        System.out.println("ChunkBoundsRenderer: Starting to render chunk bounds at (" + chunkX + ", " + chunkZ + ") with color " + color);
+        
+        Matrix4d matrix4d = new Matrix4d();
+        matrixstack.last().pose().get(matrix4d);
+        Minecraft minecraft = Minecraft.getInstance();
+
+        Camera camera = minecraft.gameRenderer.getMainCamera();
+        double cameraX = camera.getPosition().x;
+        double cameraY = camera.getPosition().y;
+        double cameraZ = camera.getPosition().z;
+
+        double x = chunkX * 16;
+        double z = chunkZ * 16;
+        double h3 = cameraY - 10;
+        double h = cameraY + 10;
+
+        x -= cameraX;
+        h3 -= cameraY;
+        h -= cameraY;
+        z -= cameraZ;
+
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer consumer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+
+        float r = ((float) ((color >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((color >> 8) & 0xFF)) / 255F;
+        float b = ((float) (color & 0xFF)) / 255F;
+
+        System.out.println("ChunkBoundsRenderer: Drawing chunk edges with color (" + r + ", " + g + ", " + b + ")");
+
+        addLine(consumer, matrix4d, x, h3, z, x, h, z, r, g, b);
+        addLine(consumer, matrix4d, x + 16, h3, z, x + 16, h, z, r, g, b);
+        addLine(consumer, matrix4d, x, h3, z + 16, x, h, z + 16, r, g, b);
+        addLine(consumer, matrix4d, x + 16, h3, z + 16, x + 16, h, z + 16, r, g, b);
+
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
+        System.out.println("ChunkBoundsRenderer: Finished rendering chunk bounds");
     }
 }

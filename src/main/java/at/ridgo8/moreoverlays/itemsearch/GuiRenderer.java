@@ -5,10 +5,7 @@ import at.ridgo8.moreoverlays.api.itemsearch.SlotViewWrapper;
 import at.ridgo8.moreoverlays.config.Config;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import net.minecraft.world.item.Item;
-import org.joml.Matrix4f;
 import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
 import com.mojang.blaze3d.platform.Lighting;
-import net.minecraft.client.renderer.CoreShaders;
+// import at.ridgo8.moreoverlays.util.RenderTypes;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -30,7 +27,7 @@ public class GuiRenderer {
 
     public static final GuiRenderer INSTANCE = new GuiRenderer();
 
-    private static final float OVERLAY_ZLEVEL = 299F;
+    // Z-level not needed for GuiGraphics.fill
     private static final float FRAME_RADIUS = 1.0F;
 
     private static boolean enabled = false;
@@ -50,7 +47,11 @@ public class GuiRenderer {
 
         guiOffsetX = GuiUtils.getGuiLeft((AbstractContainerScreen<?>) gui);
         guiOffsetY = GuiUtils.getGuiTop((AbstractContainerScreen<?>) gui);
-
+        
+        // Check slots when GUI initializes to ensure we have the latest data
+        if (enabled && gui instanceof AbstractContainerScreen<?>) {
+            checkSlots((AbstractContainerScreen<?>) gui);
+        }
     }
 
     public void guiOpen(Screen gui) {
@@ -59,9 +60,6 @@ public class GuiRenderer {
 
     public void preDraw(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
-
-        EditBox textField = JeiModule.getJEITextField();
-
         if (canShowIn(guiscr)) {
             allowRender = true;
             // draw in postDraw to ensure on top
@@ -79,7 +77,7 @@ public class GuiRenderer {
                     drawSearchFrame(textField, guiGraphics);
                 }
             }
-            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
+            drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
         }
     }
 
@@ -107,47 +105,32 @@ public class GuiRenderer {
         Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
             allowRender = false;
-            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
+            // We don't have GuiGraphics here; overlays are drawn in postDraw already.
         }
     }
 
-    private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
+    private void drawSlotOverlay(GuiGraphics guiGraphics, AbstractContainerScreen<?> gui) {
         Lighting.setupForFlatItems();
-
         if (!enabled || views == null || views.isEmpty())
             return;
-
-        Tesselator tess = Tesselator.getInstance();
-
-        RenderSystem.enableBlend();
-
-        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
-
-        BufferBuilder renderer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        // Draw overlays directly on the GUI via GuiGraphics.fill to avoid pipeline/UV issues in 1.21.5
 
         float r = ((float) ((Config.search_filteredSlotColor.get() >> 16) & 0xFF)) / 255F;
         float g = ((float) ((Config.search_filteredSlotColor.get() >> 8) & 0xFF)) / 255F;
         float b = ((float) (Config.search_filteredSlotColor.get() & 0xFF)) / 255F;
         float a = Config.search_filteredSlotTransparancy.get().floatValue();
 
-        for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
-            if (slot.getValue().isEnableOverlay()) {
-                Vec2 posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
-                float px = posvec.x;
-                float py = posvec.y;
-                renderer.addVertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
-                renderer.addVertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
-                renderer.addVertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
-                renderer.addVertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
+        for (Map.Entry<Slot, SlotViewWrapper> entry : views.entrySet()) {
+            if (entry.getValue().isEnableOverlay()) {
+                Vec2 pos = entry.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
+                int left = Math.round(pos.x) + guiOffsetX;
+                int top = Math.round(pos.y) + guiOffsetY;
+                int right = left + 16;
+                int bottom = top + 16;
+                int argb = ((int)(a * 255.0f) << 24) | ((int)(r * 255.0f) << 16) | ((int)(g * 255.0f) << 8) | (int)(b * 255.0f);
+                guiGraphics.fill(left, top, right, bottom, argb);
             }
         }
-
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
-
-        RenderSystem.disableBlend();
     }
 
     public boolean canShowIn(Screen gui) {
@@ -242,3 +225,4 @@ public class GuiRenderer {
         return enabled;
     }
 }
+
