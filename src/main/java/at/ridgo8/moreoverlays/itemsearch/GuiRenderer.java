@@ -40,6 +40,7 @@ public class GuiRenderer {
     private int guiOffsetX = 0;
     private int guiOffsetY = 0;
     private boolean drewOverlayInTooltipPhase = false;
+    private boolean drewFrameInTooltipPhase = false;
 
     public void guiInit(Screen gui) {
         if (!canShowIn(gui)) {
@@ -75,13 +76,16 @@ public class GuiRenderer {
             if (enabled) {
                 EditBox textField = JeiModule.getJEITextField();
                 if (textField != null) {
-                    drawSearchFrame(textField, guiGraphics);
+                    if (!drewFrameInTooltipPhase) {
+                        drawSearchFrame(textField, guiGraphics);
+                    }
                 }
             }
             if (!drewOverlayInTooltipPhase) {
                 drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
             }
             drewOverlayInTooltipPhase = false;
+            drewFrameInTooltipPhase = false;
         }
     }
 
@@ -109,6 +113,11 @@ public class GuiRenderer {
     public void renderTooltip(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (enabled && canShowIn(guiscr)) {
+            EditBox textField = JeiModule.getJEITextField();
+            if (textField != null) {
+                drawSearchFrame(textField, guiGraphics);
+                drewFrameInTooltipPhase = true;
+            }
             drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
             drewOverlayInTooltipPhase = true;
         }
