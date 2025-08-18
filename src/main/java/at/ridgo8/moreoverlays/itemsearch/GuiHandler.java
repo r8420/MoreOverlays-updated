@@ -79,7 +79,8 @@ public class GuiHandler {
 
     @SubscribeEvent
     public void onRenderTooltip(RenderTooltipEvent.Pre event) {
-        GuiRenderer.INSTANCE.renderTooltip(event.getItemStack());
+        // Draw overlays during tooltip pre so the tooltip renders above them
+        GuiRenderer.INSTANCE.renderTooltip(event.getGraphics());
     }
 
     @SubscribeEvent

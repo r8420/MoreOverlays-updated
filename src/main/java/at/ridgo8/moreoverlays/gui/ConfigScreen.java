@@ -45,7 +45,6 @@ public class ConfigScreen extends Screen {
         if (this.btnBack != null) this.btnBack.setFocused(false);
         if (this.btnUndo != null) this.btnUndo.setFocused(false);
         if (this.btnReset != null) this.btnReset.setFocused(false);
-        this.setFocused(null);
     }
 
     @Override

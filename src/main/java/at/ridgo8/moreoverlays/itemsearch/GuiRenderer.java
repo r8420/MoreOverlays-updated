@@ -39,6 +39,7 @@ public class GuiRenderer {
     private boolean allowRender = false;
     private int guiOffsetX = 0;
     private int guiOffsetY = 0;
+    private boolean drewOverlayInTooltipPhase = false;
 
     public void guiInit(Screen gui) {
         if (!canShowIn(gui)) {
@@ -77,7 +78,10 @@ public class GuiRenderer {
                     drawSearchFrame(textField, guiGraphics);
                 }
             }
-            drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
+            if (!drewOverlayInTooltipPhase) {
+                drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
+            }
+            drewOverlayInTooltipPhase = false;
         }
     }
 
@@ -102,11 +106,11 @@ public class GuiRenderer {
         
     }
 
-    public void renderTooltip(ItemStack stack) {
+    public void renderTooltip(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
-        if (allowRender && canShowIn(guiscr)) {
-            allowRender = false;
-            // We don't have GuiGraphics here; overlays are drawn in postDraw already.
+        if (enabled && canShowIn(guiscr)) {
+            drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
+            drewOverlayInTooltipPhase = true;
         }
     }
 
