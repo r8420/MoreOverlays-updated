@@ -151,13 +151,14 @@ public class ConfigScreen extends Screen {
         super.tick();
         this.btnReset.active = this.optionList.isResettable();
         this.btnUndo.active = this.optionList.isUndoable();
-        // Avoid lingering hover highlights if mouse is far from bottom bar
+        // Avoid clearing text-field focus each frame; only defocus bottom buttons if mouse is far away
         if (Minecraft.getInstance().mouseHandler != null) {
-            double mx = Minecraft.getInstance().mouseHandler.xpos() * (double)Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double)Minecraft.getInstance().getWindow().getScreenWidth();
             double my = Minecraft.getInstance().mouseHandler.ypos() * (double)Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double)Minecraft.getInstance().getWindow().getScreenHeight();
             int buttonY = this.height - 32 + (32 - 20) / 2;
             if (my < buttonY - 4 || my > buttonY + 24) {
-                clearBottomButtonFocus();
+                if (this.btnBack != null) this.btnBack.setFocused(false);
+                if (this.btnUndo != null) this.btnUndo.setFocused(false);
+                if (this.btnReset != null) this.btnReset.setFocused(false);
             }
         }
     }
