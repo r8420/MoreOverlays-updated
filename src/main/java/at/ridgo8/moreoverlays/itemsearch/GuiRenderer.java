@@ -106,10 +106,9 @@ public class GuiRenderer {
 
     public void renderTooltip(ItemStack stack) {
         Screen guiscr = Minecraft.getInstance().screen;
-        if (allowRender && canShowIn(guiscr)) {
-            allowRender = false;
-            // We don't have GuiGraphics here; overlays are drawn in postDraw already.
-        }
+        // Intentionally do nothing. In 1.21.5 the tooltip pre event fires between
+        // screen render pre and post. Flipping allowRender here prevents overlays
+        // and the search frame from rendering while hovering items.
     }
 
     private void drawSlotOverlay(GuiGraphics guiGraphics, AbstractContainerScreen<?> gui) {
