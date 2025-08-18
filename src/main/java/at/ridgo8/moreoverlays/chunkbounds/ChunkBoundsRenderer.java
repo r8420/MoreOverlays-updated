@@ -306,7 +306,7 @@ public class ChunkBoundsRenderer {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -318,7 +318,7 @@ public class ChunkBoundsRenderer {
 
         addThickLine(bufferBuilder, matrix4d, look, cameraX, cameraY, cameraZ, x, h3, z, x, h, z, r, g, b, desiredPixelWidth);
 
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
     }
 
     private static void renderGridThick(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1,
@@ -326,7 +326,7 @@ public class ChunkBoundsRenderer {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -366,7 +366,7 @@ public class ChunkBoundsRenderer {
             addThickLine(renderer, matrix4d, look, cameraX, cameraY, cameraZ, x1, y0, z, x1, y1, z, r, g, b, desiredPixelWidth);
         }
 
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
+        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
     }
 
     public static void renderChunkBounds(PoseStack matrixstack, int chunkX, int chunkZ, int color) {
