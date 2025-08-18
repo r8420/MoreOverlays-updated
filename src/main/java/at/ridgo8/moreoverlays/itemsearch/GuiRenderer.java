@@ -97,25 +97,25 @@ public class GuiRenderer {
         float b = ((float) (Config.search_searchBoxColor.get() & 0xFF)) / 255F;
 
         BufferBuilder renderer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
 
-        renderer.addVertex(matrix4f, x, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x, y + height, 1000).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
 
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
 
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width, y, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width, y + height, 1000).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
+        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
 
         MeshData meshData = renderer.build();
         if (meshData != null) {
