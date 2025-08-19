@@ -32,7 +32,9 @@ public class GuiHandler {
             return;
         }
 
+        // Refresh JEI handles; log a single warning if the field is missing for visibility
         JeiModule.updateModule();
+        JeiModule.logMissingSearchTextFieldOnce();
         GuiRenderer.INSTANCE.guiInit(event.getScreen());
     }
 

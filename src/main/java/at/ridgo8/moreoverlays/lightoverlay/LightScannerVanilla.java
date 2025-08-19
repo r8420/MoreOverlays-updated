@@ -39,14 +39,14 @@ public class LightScannerVanilla extends LightScannerBase {
             return true;
 
         AABB bb = TEST_BB.move(pos.getX(), pos.getY(), pos.getZ());
-        List bbCollisions = Lists.newArrayList(world.getBlockCollisions(null, bb));
-        if (bbCollisions.size() == 0 && !world.containsAnyLiquid(bb)) {
+        boolean hasCollision = world.getBlockCollisions(null, bb).iterator().hasNext();
+        if (!hasCollision && !world.containsAnyLiquid(bb)) {
             if (Config.light_IgnoreLayer.get())
                 return true;
             else {
                 AABB bb2 = bb.move(0, 1, 0);
-                List bb2Collisions = Lists.newArrayList(world.getBlockCollisions(null, bb2));
-                return bb2Collisions.size() == 0 && !world.containsAnyLiquid(bb2);
+                boolean hasCollision2 = world.getBlockCollisions(null, bb2).iterator().hasNext();
+                return !hasCollision2 && !world.containsAnyLiquid(bb2);
             }
         }
         return false;

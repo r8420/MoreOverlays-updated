@@ -17,6 +17,8 @@ license="The MIT License (MIT)"
     * Chunk and Region borders
     * Mob spawn / Light overlay
     * Item search when JEI (JustEnoughItems by Mezz) is installed
+    
+    Built for MC ${minecraft_version} (Forge)
     '''
 
 [[dependencies.moreoverlays]]

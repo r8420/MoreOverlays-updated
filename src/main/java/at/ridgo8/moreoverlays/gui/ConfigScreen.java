@@ -56,32 +56,33 @@ public class ConfigScreen extends Screen {
 
         Font font = Minecraft.getInstance().font;
 
-        int undoGlyphWidth = font.width(ConfigOptionList.UNDO_CHAR) * 2;
-        int resetGlyphWidth = font.width(ConfigOptionList.RESET_CHAR) * 2;
+        int undoGlyphWidth = font.width(ConfigOptionList.UNDO_CHAR);
+        int resetGlyphWidth = font.width(ConfigOptionList.RESET_CHAR);
 
-        int undoWidth = font.width(" " + this.txtUndo) + undoGlyphWidth + 20;
-        int resetWidth = font.width(" " + this.txtReset) + resetGlyphWidth + 20;
+        int undoWidth = Math.max(font.width(" " + this.txtUndo) + undoGlyphWidth + 20, 80);
+        int resetWidth = Math.max(font.width(" " + this.txtReset) + resetGlyphWidth + 20, 80);
         int doneWidth = Math.max(font.width(this.txtDone) + 20, 100);
 
         final int buttonY = this.height - 32 + (32 - 20) / 2;
         final int buttonHeight = 20;
 
         int pad = 10;
+        int gap = 8;
         final int xBack = pad;
         final int xDefaultAll = this.width - resetWidth - pad;
-        final int xUndoAll = xDefaultAll - undoWidth;
+        final int xUndoAll = xDefaultAll - gap - undoWidth;
 
         this.btnReset = new Button.Builder(
                 Component.nullToEmpty(ConfigOptionList.RESET_CHAR + " " + this.txtReset),
                 (btn) -> this.optionList.reset())
                 .pos(xDefaultAll, buttonY)
-                .size(100, buttonHeight).build();
+                .size(resetWidth, buttonHeight).build();
 
         this.btnUndo = new Button.Builder(
                 Component.nullToEmpty(ConfigOptionList.UNDO_CHAR + " " + this.txtUndo),
                 (btn) -> this.optionList.undo())
                 .pos(xUndoAll, buttonY)
-                .size(100, buttonHeight).build();
+                .size(undoWidth, buttonHeight).build();
 
         this.btnBack = new Button.Builder(
                 Component.nullToEmpty(" " + this.txtDone),
@@ -117,7 +118,11 @@ public class ConfigScreen extends Screen {
     
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderTransparentBackground(guiGraphics);
+        if (Minecraft.getInstance().level == null) {
+            this.renderPanorama(guiGraphics, partialTicks);
+        }
+        this.renderMenuBackground(guiGraphics);
+        this.renderBlurredBackground(partialTicks);
         this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.btnReset.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -140,6 +145,17 @@ public class ConfigScreen extends Screen {
         super.tick();
         this.btnReset.active = this.optionList.isResettable();
         this.btnUndo.active = this.optionList.isUndoable();
+        // Clear lingering hover/focus when mouse leaves bottom button bar
+        if (Minecraft.getInstance().mouseHandler != null && Minecraft.getInstance().getWindow() != null) {
+            double mx = Minecraft.getInstance().mouseHandler.xpos() * (double)Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double)Minecraft.getInstance().getWindow().getScreenWidth();
+            double my = Minecraft.getInstance().mouseHandler.ypos() * (double)Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double)Minecraft.getInstance().getWindow().getScreenHeight();
+            int buttonY = this.height - 32 + (32 - 20) / 2;
+            if (my < buttonY - 4 || my > buttonY + 24) {
+                if (this.btnBack != null) this.btnBack.setFocused(false);
+                if (this.btnUndo != null) this.btnUndo.setFocused(false);
+                if (this.btnReset != null) this.btnReset.setFocused(false);
+            }
+        }
     }
 
     public void updatePath(final List<String> newPath) {

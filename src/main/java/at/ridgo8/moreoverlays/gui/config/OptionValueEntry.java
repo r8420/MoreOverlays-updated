@@ -21,7 +21,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     public static final int CONTROL_WIDTH_NOVALIDATOR = 44;
     public static final int CONTROL_WIDTH_VALIDATOR = 64;
-    public static final int TITLE_WIDTH = 80;
+    public static final int TITLE_WIDTH = 160;
     protected final ForgeConfigSpec.ConfigValue<V> value;
     protected final ForgeConfigSpec.ValueSpec spec;
     private final List<String> tooltip;
@@ -78,8 +78,10 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
 
         tooltip.add(ChatFormatting.RED + this.name);
-        for (final String line : lines) {
-            tooltip.add(ChatFormatting.YELLOW + line);
+        if (lines != null) {
+            for (final String line : lines) {
+                tooltip.add(ChatFormatting.YELLOW + line);
+            }
         }
 
         this.updateValue(this.value.get());
@@ -94,15 +96,25 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     @Override
     protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
-        guiGraphics.drawString(Minecraft.getInstance().font, this.name, 60 - TITLE_WIDTH, 6, 0xFFFFFF);
+        // Draw label right-aligned within the fixed title column to avoid overlap with controls
+        final var font = Minecraft.getInstance().font;
+        int rightEdge = rowLeft + TITLE_WIDTH - 5;
+        int startX = rightEdge - font.width(this.name);
+        if (startX < rowLeft + 4) startX = rowLeft + 4;
+        guiGraphics.drawString(font, this.name, startX, rowTop + 6, 0xFFFFFF);
+        // Position row buttons absolutely so hover matches render
+        this.btnReset.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 20, rowTop);
+        this.btnUndo.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 42, rowTop);
         this.btnReset.render(guiGraphics, mouseX, mouseY, partialTick);
         this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTick);
 
         if (this.showValidity) {
+            int validityX = rowLeft + this.getConfigOptionList().getRowWidth() - 53;
+            int validityY = rowTop + 6;
             if (this.valid) {
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.VALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0x00FF00);
+                guiGraphics.drawCenteredString(font, ConfigOptionList.VALID, validityX, validityY, 0x00FF00);
             } else {
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, ConfigOptionList.INVALID, this.getConfigOptionList().getRowWidth() - 53, 6, 0xFF0000);
+                guiGraphics.drawCenteredString(font, ConfigOptionList.INVALID, validityX, validityY, 0xFF0000);
             }
         }
     }
@@ -124,8 +136,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         } else if (mouseX < TITLE_WIDTH + rowLeft) {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltipConverted, mouseX, mouseY);
         }
-        Lighting.setupForFlatItems();
-        GlStateManager._disableBlend();
+        // Rely on GuiGraphics to manage hover/tooltip rendering; do not twiddle GL state
     }
 
     protected abstract void overrideUnsaved(V value);
@@ -159,6 +170,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
 
     @Override
     public List<? extends GuiEventListener> children() {
+        // Return child widgets in z-order; interactive row controls first so they receive events properly
         return Arrays.asList(this.btnReset, this.btnUndo);
     }
 

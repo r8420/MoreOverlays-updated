@@ -22,6 +22,8 @@
   "config.moreoverlays.lightoverlay.simplecheck": "Verificação Simples",
   "config.moreoverlays.lightoverlay.savelevel": "Nível de Luz Seguro",
   "config.moreoverlays.lightoverlay.finishedmigration": "Migração 1.18 Concluída",
+  "config.moreoverlays.lightoverlay.spawn_numbers": "Usar Sobreposição Numérica",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Intervalo de Atualização (Quadros)",
 
   "config.moreoverlays.chunkbounds.radius": "Raio da Borda",
   "config.moreoverlays.chunkbounds.middle": "Mostrar Ponto Médio",
@@ -29,10 +31,13 @@
   "config.moreoverlays.rendersettings.chunk_edge_color": "Chunk: Cor da Borda",
   "config.moreoverlays.rendersettings.chunk_grid_color": "Chunk: Cor da Grade",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Chunk: Cor do Meio",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Linhas Grossas",
   "config.moreoverlays.rendersettings.chunk_line_width": "Chunk: Largura da Linha",
   "config.moreoverlays.rendersettings.spawn_always_color": "Geração: Cor",
   "config.moreoverlays.rendersettings.spawn_night_color": "Geração: Cor da Noite",
   "config.moreoverlays.rendersettings.spawn_line_width": "Spawn: Largura da Linha",
+  "config.moreoverlays.rendersettings.spawn_number_scale": "Spawn: Tamanho do Número",
+  "config.moreoverlays.rendersettings.spawn_safe_color": "Spawn: Cor Segura",
   
   "config.moreoverlays.searchoverlay.search_enabled": "Habilitar Pesquisa",
   "config.moreoverlays.searchoverlay.custom_search": "Busca Personalizada",
@@ -42,3 +47,5 @@
   "config.moreoverlays.searchoverlay.search_slot_color": "Cor do Slot",
   "config.moreoverlays.searchoverlay.search_slot_alpha": "Transparência do Slot"
 }
+
+

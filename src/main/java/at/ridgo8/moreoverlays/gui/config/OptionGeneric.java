@@ -31,6 +31,9 @@ public class OptionGeneric<V>
     protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
+        this.tfConfigEntry.setX(rowLeft + OptionValueEntry.TITLE_WIDTH + 5);
+        this.tfConfigEntry.setY(rowTop + 2);
+        this.tfConfigEntry.setWidth(rowWidth - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR);
         this.tfConfigEntry.render(guiGraphics, mouseX, mouseY, 0);
     }
 
@@ -41,17 +44,17 @@ public class OptionGeneric<V>
 
     @Override
     public List<? extends GuiEventListener> children() {
-        List<GuiEventListener> childs = new ArrayList<>(super.children());
-        childs.add(this.tfConfigEntry);
-        return childs;
+        // Ensure the text field is the only interactive child when focused so mouse/key events are routed correctly
+        List<GuiEventListener> children = new ArrayList<>(super.children());
+        children.add(this.tfConfigEntry);
+        return children;
     }
 
     @Override
     public void setFocused(GuiEventListener focused) {
         super.setFocused(focused);
-        if (focused == null) {
-            this.tfConfigEntry.setFocused(false);
-        }
+        // Keep the EditBox focus strictly in sync with row focus state
+        this.tfConfigEntry.setFocused(focused == this.tfConfigEntry);
     }
 
     @Override
