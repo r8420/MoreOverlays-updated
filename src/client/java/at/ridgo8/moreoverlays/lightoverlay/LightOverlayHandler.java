@@ -4,7 +4,7 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
-import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 
@@ -47,7 +47,7 @@ public class LightOverlayHandler {
     }
 
     private static void reloadHandlerInternal() {
-        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(Config.light_IgnoreSpawnList, LightOverlayRenderer.class, LightScannerVanilla.class);
+        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(ConfigManager.CONFIG.light_IgnoreSpawnList(), LightOverlayRenderer.class, LightScannerVanilla.class);
 
         if (renderer == null || renderer.getClass() != event.getRenderer()) {
             try {

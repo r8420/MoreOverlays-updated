@@ -2,7 +2,7 @@ package at.ridgo8.moreoverlays;
 
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler.RenderMode;
-import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import at.ridgo8.moreoverlays.itemsearch.GuiRenderer;
 import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 
@@ -44,7 +44,7 @@ public class MoreOverlays implements ModInitializer {
         });
 
 
-		Config.initialize();
+		ConfigManager.CONFIG.load();
         ClientRegistrationHandler.setupClient();
 	}
 }

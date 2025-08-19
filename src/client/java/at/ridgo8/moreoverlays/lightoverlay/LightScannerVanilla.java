@@ -1,7 +1,7 @@
 package at.ridgo8.moreoverlays.lightoverlay;
 
 import at.ridgo8.moreoverlays.api.lightoverlay.LightScannerBase;
-import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import com.google.common.collect.Lists;
 
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,15 +34,15 @@ public class LightScannerVanilla extends LightScannerBase {
 
     private static boolean checkCollision(BlockPos pos, Level world) {
         BlockState block1 = world.getBlockState(pos);
-        if (block1.isCollisionShapeFullBlock(world, pos) || (!Config.light_IgnoreLayer && world.getBlockState(pos.above()).isCollisionShapeFullBlock(world, pos.above()))) //Don't check because a check on normal Cubes will/should return false ( 99% collide ).
+        if (block1.isCollisionShapeFullBlock(world, pos) || (!ConfigManager.CONFIG.light_IgnoreLayer() && world.getBlockState(pos.above()).isCollisionShapeFullBlock(world, pos.above()))) //Don't check because a check on normal Cubes will/should return false ( 99% collide ).
             return false;
-        else if (world.isEmptyBlock(pos) && (Config.light_IgnoreLayer || world.isEmptyBlock(pos.above())))  //Don't check because Air has no Collision Box
+        else if (world.isEmptyBlock(pos) && (ConfigManager.CONFIG.light_IgnoreLayer() || world.isEmptyBlock(pos.above())))  //Don't check because Air has no Collision Box
             return true;
 
         AABB bb = TEST_BB.move(pos.getX(), pos.getY(), pos.getZ());
         List bbCollisions = Lists.newArrayList(world.getBlockCollisions(null, bb));
         if (bbCollisions.size() == 0 && !world.containsAnyLiquid(bb)) {
-            if (Config.light_IgnoreLayer)
+            if (ConfigManager.CONFIG.light_IgnoreLayer())
                 return true;
             else {
                 AABB bb2 = bb.move(0, 1, 0);
@@ -65,7 +65,7 @@ public class LightScannerVanilla extends LightScannerBase {
 
     @Override
     public byte getSpawnModeAt(BlockPos pos, Level world) {
-        if (world.getBrightness(LightLayer.BLOCK, pos) >= Config.light_SaveLevel)
+        if (world.getBrightness(LightLayer.BLOCK, pos) >= ConfigManager.CONFIG.light_SaveLevel())
             return 0;
 
         final BlockPos blockPos = pos.below();
@@ -83,7 +83,7 @@ public class LightScannerVanilla extends LightScannerBase {
             return 0;
 
         final BlockState state = world.getBlockState(blockPos);
-        if (!Config.light_SimpleEntityCheck) {
+        if (!ConfigManager.CONFIG.light_SimpleEntityCheck()) {
             boolean hasSpawnable = false;
             for (final EntityType<?> type : this.typesToCheck) {
                 if (state.isValidSpawn(world, blockPos, type)) {
@@ -99,7 +99,7 @@ public class LightScannerVanilla extends LightScannerBase {
             return 0;
         }
 
-        if (world.getBrightness(LightLayer.SKY, pos) >= Config.light_SaveLevel)
+        if (world.getBrightness(LightLayer.SKY, pos) >= ConfigManager.CONFIG.light_SaveLevel())
             return 1;
 
         return 2;
