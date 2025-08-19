@@ -10,10 +10,11 @@
 	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/more-overlays-updated",
-		"sources": "https://github.com/r8420/MoreOverlays-updated/"
+		"sources": "https://github.com/r8420/MoreOverlays-updated/",
+		"issues": "https://github.com/r8420/MoreOverlays-updated/issues"
 	},
 	"license": "The MIT License (MIT)",
-	"icon": "moreoverlays.png",
+	"icon": "moreoverlays_icon_small.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [

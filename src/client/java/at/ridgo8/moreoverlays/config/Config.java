@@ -3,6 +3,7 @@ package at.ridgo8.moreoverlays.config;
 import io.wispforest.owo.config.annotation.Modmenu;
 import io.wispforest.owo.config.annotation.SectionHeader;
 import io.wispforest.owo.config.annotation.RangeConstraint;
+import io.wispforest.owo.config.annotation.ExcludeFromScreen;
 import io.wispforest.owo.ui.core.Color;
 
 @Modmenu(modId = "moreoverlays")
@@ -21,6 +22,7 @@ public class Config {
     public boolean light_SimpleEntityCheck = false;
     @RangeConstraint(min = 0, max = 15)
     public int light_SaveLevel = 1;
+    @ExcludeFromScreen
     public boolean light_FinishedMigration = true;
 
     @SectionHeader("chunkbounds")
