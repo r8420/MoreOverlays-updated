@@ -2,7 +2,7 @@ package at.ridgo8.moreoverlays.lightoverlay;
 
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
-import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import org.joml.Matrix4d;
@@ -84,16 +84,18 @@ public class LightOverlayRenderer implements ILightRenderer {
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
-        RenderSystem.lineWidth((float) Config.render_chunkLineWidth);
+        RenderSystem.lineWidth((float) ConfigManager.CONFIG.render_chunkLineWidth());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        float ar = ((float) ((Config.render_spawnAColor >> 16) & 0xFF)) / 255F;
-        float ag = ((float) ((Config.render_spawnAColor >> 8) & 0xFF)) / 255F;
-        float ab = ((float) (Config.render_spawnAColor & 0xFF)) / 255F;
+        int aColor = ConfigManager.CONFIG.render_spawnAColor().argb();
+        float ar = ((float) ((aColor >> 16) & 0xFF)) / 255F;
+        float ag = ((float) ((aColor >> 8) & 0xFF)) / 255F;
+        float ab = ((float) (aColor & 0xFF)) / 255F;
 
-        float nr = ((float) ((Config.render_spawnNColor >> 16) & 0xFF)) / 255F;
-        float ng = ((float) ((Config.render_spawnNColor >> 8) & 0xFF)) / 255F;
-        float nb = ((float) (Config.render_spawnNColor & 0xFF)) / 255F;
+        int nColor = ConfigManager.CONFIG.render_spawnNColor().argb();
+        float nr = ((float) ((nColor >> 16) & 0xFF)) / 255F;
+        float ng = ((float) ((nColor >> 8) & 0xFF)) / 255F;
+        float nb = ((float) (nColor & 0xFF)) / 255F;
 
         renderer = tess.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
         for (Pair<BlockPos, Byte> entry : scanner.getLightModes()) {

@@ -12,6 +12,9 @@ base {
 
 repositories {
   maven {
+    url 'https://maven.wispforest.io/releases/'
+  }
+  maven {
     // location of the maven that hosts JEI files since January 2023
     name = "Jared's maven"
     url = "https://maven.blamejared.com/"
@@ -52,6 +55,10 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // owo-lib for config + UI
+    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
+    include "io.wispforest:owo-sentinel:${project.owo_version}"
 
 	modCompileOnlyApi("mezz.jei:jei-1.20.4-common-api:17.3.0.52")
 	modCompileOnlyApi("mezz.jei:jei-1.20.4-fabric-api:17.3.0.52")

@@ -1,6 +1,6 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
-import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import org.joml.Matrix4d;
@@ -18,7 +18,7 @@ public class ChunkBoundsRenderer {
 
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
-        RenderSystem.lineWidth((float) (double) Config.render_chunkLineWidth);
+        RenderSystem.lineWidth((float) (double) ConfigManager.CONFIG.render_chunkLineWidth());
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         final int h = player.level().getHeight();
@@ -61,10 +61,10 @@ public class ChunkBoundsRenderer {
         final int regionBorderY1 = regionBorderY0 + (ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16) - 128;
         final int regionBorderZ1 = regionBorderZ0 + (ChunkBoundsHandler.REGION_SIZEZ * 16);
 
-        final int radius = Config.chunk_EdgeRadius * 16;
-        final int renderColorEdge = Config.render_chunkEdgeColor;
-        final int renderColorMiddle = Config.render_chunkMiddleColor;
-        final int renderColorGrid = Config.render_chunkGridColor;
+        final int radius = ConfigManager.CONFIG.chunk_EdgeRadius() * 16;
+        final int renderColorEdge = ConfigManager.CONFIG.render_chunkEdgeColor().argb();
+        final int renderColorMiddle = ConfigManager.CONFIG.render_chunkMiddleColor().argb();
+        final int renderColorGrid = ConfigManager.CONFIG.render_chunkGridColor().argb();
 
 
         for (int xo = -16 - radius; xo <= radius; xo += 16) {
@@ -73,7 +73,7 @@ public class ChunkBoundsRenderer {
             }
         }
 
-        if (Config.chunk_ShowMiddle) {
+        if (ConfigManager.CONFIG.chunk_ShowMiddle()) {
             renderEdge(matrixstack, x2, z2, h3, h, renderColorMiddle);
         }
 

@@ -1,6 +1,6 @@
 package at.ridgo8.moreoverlays.api.lightoverlay;
 
-import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
@@ -22,9 +22,9 @@ public abstract class LightScannerBase implements ILightScanner {
         int py = (int) Math.floor(player.getY());
         int pz = (int) Math.floor(player.getZ());
 
-        int y1 = py - Config.light_DownRange;
-        int y2 = py + Config.light_UpRange;
-        int HRange = Config.light_HRange;
+        int y1 = py - ConfigManager.CONFIG.light_DownRange();
+        int y2 = py + ConfigManager.CONFIG.light_UpRange();
+        int HRange = ConfigManager.CONFIG.light_HRange();
 
         overlayCache.clear();
 
@@ -82,7 +82,7 @@ public abstract class LightScannerBase implements ILightScanner {
         if(world.isClientSide){
             return true;
         }
-        if (Config.light_IgnoreSpawnList) {
+        if (ConfigManager.CONFIG.light_IgnoreSpawnList()) {
             return true;
         }
         Holder<Biome> biome = world.getBiome(pos);

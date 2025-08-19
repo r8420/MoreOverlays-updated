@@ -1,64 +1,53 @@
 package at.ridgo8.moreoverlays.config;
 
+import io.wispforest.owo.config.annotation.Modmenu;
+import io.wispforest.owo.config.annotation.SectionHeader;
+import io.wispforest.owo.config.annotation.RangeConstraint;
+import io.wispforest.owo.config.annotation.WithAlpha;
+import io.wispforest.owo.ui.core.Color;
 
+@Modmenu(modId = "moreoverlays")
+@io.wispforest.owo.config.annotation.Config(name = "moreoverlays", wrapperName = "MoreOverlaysConfig")
 public class Config {
 
-    public static int light_UpRange;
-    public static int light_DownRange;
-    public static int light_HRange;
-    public static boolean light_IgnoreLayer;
-    public static boolean light_IgnoreSpawnList;
-    public static boolean light_SimpleEntityCheck;
-    public static int light_SaveLevel;
-    public static boolean light_FinishedMigration;
+    @SectionHeader("light")
+    @RangeConstraint(min = 0, max = 32)
+    public int light_UpRange = 4;
+    @RangeConstraint(min = 0, max = 512)
+    public int light_DownRange = 16;
+    @RangeConstraint(min = 0, max = 512)
+    public int light_HRange = 16;
+    public boolean light_IgnoreLayer = false;
+    public boolean light_IgnoreSpawnList = false;
+    public boolean light_SimpleEntityCheck = false;
+    @RangeConstraint(min = 0, max = 15)
+    public int light_SaveLevel = 1;
+    public boolean light_FinishedMigration = true;
 
-    public static int chunk_EdgeRadius;
-    public static boolean chunk_ShowMiddle;
+    @SectionHeader("chunkbounds")
+    @RangeConstraint(min = 0, max = 15)
+    public int chunk_EdgeRadius = 1;
+    public boolean chunk_ShowMiddle = true;
 
-    public static int render_chunkEdgeColor;
-    public static int render_chunkGridColor;
-    public static int render_chunkMiddleColor;
-    public static double render_chunkLineWidth;
-    public static int render_spawnAColor;
-    public static int render_spawnNColor;
-    public static double render_spawnLineWidth;
+    @SectionHeader("rendering")
+    public Color render_chunkEdgeColor = Color.ofRgb(0xFF0000);
+    public Color render_chunkGridColor = Color.ofRgb(0x00FF00);
+    public Color render_chunkMiddleColor = Color.ofRgb(0xFFFF00);
+    @RangeConstraint(min = 0, max = 100, decimalPlaces = 2)
+    public double render_chunkLineWidth = 1.5;
+    public Color render_spawnAColor = Color.ofRgb(0xFF0000);
+    public Color render_spawnNColor = Color.ofRgb(0xFFFF00);
+    @RangeConstraint(min = 0, max = 400, decimalPlaces = 2)
+    public double render_spawnLineWidth = 2;
 
-    public static boolean search_enabled;
-    public static boolean search_searchCustom;
-    public static int search_searchBoxColor;
-    public static int search_filteredSlotColor;
-    public static double search_filteredSlotTransparancy;
-
-
-    public static void initialize() {
-        // Settings for the light / mobspawn overlay
-        light_UpRange = 4;
-        light_DownRange = 16;
-        light_HRange = 16;
-        light_IgnoreLayer = false;
-        light_IgnoreSpawnList = false;
-        light_SimpleEntityCheck = false;
-        light_SaveLevel = 1;
-        light_FinishedMigration = true;
-
-        // Settings for the chunk bounds overlay
-        chunk_EdgeRadius = 1;
-        chunk_ShowMiddle = true;
-
-        // General render settings.\nLine thickness, Colors, ...
-        render_chunkEdgeColor = 0xFF0000;
-        render_chunkGridColor = 0x00FF00;
-        render_chunkMiddleColor = 0xFFFF00;
-        render_chunkLineWidth = 1.5;
-        render_spawnAColor = 0xFF0000;
-        render_spawnNColor = 0xFFFF00;
-        render_spawnLineWidth = 2;
-
-        // Settings for the search overlay
-        search_enabled = true;
-        search_searchCustom = true;
-        search_searchBoxColor = 0xFFFF00;
-        search_filteredSlotColor = 0x000000;
-        search_filteredSlotTransparancy = 0.5F;
-    }
+    @SectionHeader("search")
+    public boolean search_enabled = true;
+    public boolean search_searchCustom = true;
+    public boolean search_searchTooltip = true;
+    @RangeConstraint(min = 256, max = 271360)
+    public int search_maxResults = 16384;
+    public Color search_searchBoxColor = Color.ofRgb(0xFFFF00);
+    public Color search_filteredSlotColor = Color.ofRgb(0x000000);
+    @RangeConstraint(min = 0, max = 1, decimalPlaces = 2)
+    public double search_filteredSlotTransparancy = 0.5F;
 }
