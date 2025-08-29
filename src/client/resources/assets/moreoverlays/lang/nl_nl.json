@@ -22,6 +22,9 @@
   "text.config.moreoverlays.option.light_SaveLevel": "Minimaal veilig lichtniveau",
   "text.config.moreoverlays.option.light_FinishedMigration": "Migratie voltooid",
 
+  "text.config.moreoverlays.option.render_spawnNumbers": "Nummeroverlay gebruiken",
+  "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Update-interval (frames)",
+
   "text.config.moreoverlays.option.chunk_EdgeRadius": "Randradius (Chunks)",
   "text.config.moreoverlays.option.chunk_ShowMiddle": "Chunkcentrum tonen",
 
@@ -29,9 +32,12 @@
   "text.config.moreoverlays.option.render_chunkGridColor": "Kleur chunkraster",
   "text.config.moreoverlays.option.render_chunkMiddleColor": "Kleur chunkcentrum",
   "text.config.moreoverlays.option.render_chunkLineWidth": "Lijnbreedte (Chunks)",
+  "text.config.moreoverlays.option.render_chunkThick": "Chunk: Dikke lijnen",
   "text.config.moreoverlays.option.render_spawnAColor": "Kleur: altijd spawn mogelijk",
   "text.config.moreoverlays.option.render_spawnNColor": "Kleur: spawn 's nachts",
   "text.config.moreoverlays.option.render_spawnLineWidth": "Lijnbreedte (Spawn)",
+  "text.config.moreoverlays.option.render_spawnNumberScale": "Spawn: Nummergrootte",
+  "text.config.moreoverlays.option.render_spawnSafeColor": "Spawn: Veilige kleur",
 
   "text.config.moreoverlays.option.search_enabled": "Items zoeken inschakelen",
   "text.config.moreoverlays.option.search_searchCustom": "Aangepaste namen zoeken",

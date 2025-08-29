@@ -22,6 +22,9 @@
   "text.config.moreoverlays.option.light_SaveLevel": "Мин. безопасный уровень света",
   "text.config.moreoverlays.option.light_FinishedMigration": "Миграция завершена",
 
+  "text.config.moreoverlays.option.render_spawnNumbers": "Использовать числовую накладку",
+  "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Интервал обновления (кадры)",
+
   "text.config.moreoverlays.option.chunk_EdgeRadius": "Радиус границы (чанки)",
   "text.config.moreoverlays.option.chunk_ShowMiddle": "Показывать центр чанка",
 
@@ -29,9 +32,12 @@
   "text.config.moreoverlays.option.render_chunkGridColor": "Цвет сетки чанка",
   "text.config.moreoverlays.option.render_chunkMiddleColor": "Цвет центра чанка",
   "text.config.moreoverlays.option.render_chunkLineWidth": "Толщина линии (чанки)",
+  "text.config.moreoverlays.option.render_chunkThick": "Чанк: толстые линии",
   "text.config.moreoverlays.option.render_spawnAColor": "Цвет: спавн всегда возможен",
   "text.config.moreoverlays.option.render_spawnNColor": "Цвет: спавн ночью",
   "text.config.moreoverlays.option.render_spawnLineWidth": "Толщина линии (спавн)",
+  "text.config.moreoverlays.option.render_spawnNumberScale": "Спавн: размер чисел",
+  "text.config.moreoverlays.option.render_spawnSafeColor": "Спавн: безопасный цвет",
 
   "text.config.moreoverlays.option.search_enabled": "Включить поиск предметов",
   "text.config.moreoverlays.option.search_searchCustom": "Искать пользовательские имена",

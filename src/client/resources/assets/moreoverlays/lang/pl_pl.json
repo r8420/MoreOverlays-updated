@@ -33,6 +33,9 @@
   "text.config.moreoverlays.option.light_SaveLevel": "Minimalny bezpieczny poziom światła",
   "text.config.moreoverlays.option.light_FinishedMigration": "Migracja zakończona",
 
+  "text.config.moreoverlays.option.render_spawnNumbers": "Używaj nakładki z numerami",
+  "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Interwał aktualizacji (klatki)",
+
   "text.config.moreoverlays.option.chunk_EdgeRadius": "Promień krawędzi (chunki)",
   "text.config.moreoverlays.option.chunk_ShowMiddle": "Pokaż środek chunka",
 
@@ -40,9 +43,12 @@
   "text.config.moreoverlays.option.render_chunkGridColor": "Kolor siatki chunka",
   "text.config.moreoverlays.option.render_chunkMiddleColor": "Kolor środka chunka",
   "text.config.moreoverlays.option.render_chunkLineWidth": "Szerokość linii (chunki)",
+  "text.config.moreoverlays.option.render_chunkThick": "Chunk: grube linie",
   "text.config.moreoverlays.option.render_spawnAColor": "Kolor: zawsze możliwy spawn",
   "text.config.moreoverlays.option.render_spawnNColor": "Kolor: spawn w nocy",
   "text.config.moreoverlays.option.render_spawnLineWidth": "Szerokość linii (spawn)",
+  "text.config.moreoverlays.option.render_spawnNumberScale": "Spawn: rozmiar liczb",
+  "text.config.moreoverlays.option.render_spawnSafeColor": "Spawn: bezpieczny kolor",
 
   "text.config.moreoverlays.option.search_enabled": "Włącz wyszukiwanie przedmiotów",
   "text.config.moreoverlays.option.search_searchCustom": "Szukaj niestandardowych nazw",
