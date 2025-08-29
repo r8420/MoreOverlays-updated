@@ -4,7 +4,6 @@ import io.wispforest.owo.config.annotation.Modmenu;
 import io.wispforest.owo.config.annotation.SectionHeader;
 import io.wispforest.owo.config.annotation.RangeConstraint;
 import io.wispforest.owo.config.annotation.ExcludeFromScreen;
-import io.wispforest.owo.config.annotation.WithAlpha;
 import io.wispforest.owo.ui.core.Color;
 
 @Modmenu(modId = "moreoverlays")

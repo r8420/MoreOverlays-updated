@@ -48,6 +48,10 @@ public abstract class LightScannerBase implements ILightScanner {
                 case WEST:
                     HRangeEast = 5;
                     break;
+                case UP:
+                case DOWN:
+                default:
+                    break;
             }
         }
 

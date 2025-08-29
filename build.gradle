@@ -56,8 +56,8 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // owo-lib for config + UI
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
+    // owo-lib for config + UI (no annotation processing; wrapper is committed in sources)
+    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
     include "io.wispforest:owo-sentinel:${project.owo_version}"
 
 	modCompileOnlyApi("mezz.jei:jei-1.21.1-common-api:19.22.1.316")
