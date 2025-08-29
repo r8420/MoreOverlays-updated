@@ -1,54 +1,36 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Holder;
 
-import at.ridgo8.moreoverlays.MoreOverlays;
+import java.util.List;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-
-public final class ItemUtils {
-
-    private ItemUtils() {
-        //EMPTY
-    }
+public class ItemUtils {
 
     public static boolean ingredientMatches(Object ingredient, ItemStack stack) {
-        if (ingredient instanceof ItemStack) {
-            ItemStack stack1 = (ItemStack) ingredient;
-            return ItemStack.isSameItem(stack, stack1) && JeiModule.areItemsEqualInterpreter(stack1, stack);
-        } else if (ingredient instanceof EnchantmentInstance) {
-            ItemEnchantments tags;
-            tags = stack.getEnchantments();
-            return getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(((EnchantmentInstance) ingredient).enchantment) &&
-                    ench.level == ((EnchantmentInstance) ingredient).level);
+        if (ingredient instanceof ItemStack item) {
+            return ItemStack.isSameItemSameComponents(item, stack);
         }
-
+        if (ingredient instanceof EnchantmentInstance enchInst) {
+            ItemEnchantments tags = stack.getEnchantments();
+            return getEnchantmentData(tags).stream().anyMatch((ench) -> ench.enchantment.equals(enchInst.enchantment()) && ench.level == enchInst.level());
+        }
         return false;
     }
 
-    public static Collection<EnchantmentInstance> getEnchantmentData(ItemEnchantments nbtList) {
-        if (nbtList == null) {
-            return Collections.emptySet();
-        }
-        Collection<EnchantmentInstance> enchantments = new HashSet<>();
-        for (Holder<Enchantment> nbt : nbtList.keySet()) {
-            int level = nbt.value().getMaxLevel();
-           
-            if (nbt.value() != null && level > 0) {
-                enchantments.add(new EnchantmentInstance(nbt, level));
-            }
-        }
-        return enchantments;
+    public static boolean matchNBT(ItemStack a, ItemStack b) {
+        // Fallback: compare items and components including enchantments and custom data
+        return ItemStack.isSameItemSameComponents(a, b);
     }
 
-    public static boolean matchNBT(ItemStack a, ItemStack b) {
-        MoreOverlays.logger.error(a.getTags());
-        return a.getTags() == b.getTags(); //TODO: work on
+    public record EnchantmentData(net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment, int level) {}
+
+    public static List<EnchantmentData> getEnchantmentData(ItemEnchantments tags) {
+        java.util.ArrayList<EnchantmentData> list = new java.util.ArrayList<>();
+        for (var entry : tags.entrySet()) {
+            list.add(new EnchantmentData(entry.getKey(), entry.getIntValue()));
+        }
+        return list;
     }
 }

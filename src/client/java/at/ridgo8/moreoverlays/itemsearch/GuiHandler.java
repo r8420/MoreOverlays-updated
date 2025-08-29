@@ -16,41 +16,34 @@ public class GuiHandler {
     }
 
     private static void registerEvents() {
-        // GUI Init Event
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
             JeiModule.updateModule();
             JeiModule.logMissingSearchTextFieldOnce();
             GuiRenderer.INSTANCE.guiInit(screen);
         });
 
-        // GUI Open Event
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             GuiRenderer.INSTANCE.guiOpen(client.screen);
         });
 
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-                
-            ScreenEvents.beforeRender(screen).register((screen1, matrices, mouseX, mouseY, tickDelta) -> {
-                GuiRenderer.INSTANCE.preDraw(matrices.pose());
+            ScreenEvents.beforeRender(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
+                GuiRenderer.INSTANCE.preDraw(guiGraphics);
             });
-
         });
 
-        // Draw Screen Post Event
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            ScreenEvents.afterRender(screen).register((screen1, matrices, mouseX, mouseY, tickDelta) -> {
-                GuiRenderer.INSTANCE.renderTooltip();
-                GuiRenderer.INSTANCE.postDraw();
+            ScreenEvents.afterRender(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
+                GuiRenderer.INSTANCE.renderTooltip(guiGraphics);
+                GuiRenderer.INSTANCE.postDraw(guiGraphics);
             });
         });
 
-        // Client Tick Event
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (Minecraft.getInstance().player == null) return;
             GuiRenderer.INSTANCE.tick();
         });
         
-        // World unload
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             if(GuiRenderer.INSTANCE.isEnabled()){
                 GuiRenderer.INSTANCE.toggleMode();

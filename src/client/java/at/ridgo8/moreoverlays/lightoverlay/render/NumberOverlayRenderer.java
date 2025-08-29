@@ -3,7 +3,6 @@ package at.ridgo8.moreoverlays.lightoverlay.render;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.ConfigManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
@@ -24,17 +23,9 @@ import java.util.Set;
 
 public class NumberOverlayRenderer implements ILightRenderer {
 
-
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack ignored) {
         PoseStack matrixstack = new PoseStack();
-
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableCull();
-        RenderSystem.enableBlend();
-        RenderSystem.enablePolygonOffset();
-        RenderSystem.polygonOffset(-2f, -4f);
-        RenderSystem.depthMask(false);
 
         final Minecraft mc = Minecraft.getInstance();
         final Font font = mc.font;
@@ -47,11 +38,6 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
         final Player player = mc.player;
         if (player == null || mc.level == null) {
-            // Restore render state on early exit
-            RenderSystem.depthMask(true);
-            RenderSystem.disablePolygonOffset();
-            RenderSystem.enableBlend();
-            RenderSystem.enableCull();
             return;
         }
 
@@ -118,11 +104,6 @@ public class NumberOverlayRenderer implements ILightRenderer {
         }
 
         bufferSource.endBatch();
-        RenderSystem.depthMask(true);
-        RenderSystem.disablePolygonOffset();
-        // Restore render state so later translucent rendering (e.g., water) behaves correctly
-        RenderSystem.enableBlend();
-        RenderSystem.enableCull();
     }
 }
 

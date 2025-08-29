@@ -29,7 +29,7 @@ public class MixinOverlayRenderer {
             if (!ChunkBoundsHandler.regionInfo.isEmpty()) {
                 int y = 0;
                 for (String text : ChunkBoundsHandler.regionInfo) {
-                    guiGraphics.drawString(mc.font, text, 10, y += 10, 0xFFFFFF);
+                    guiGraphics.drawString(mc.font, text, 10, y += 10, 0xFFFFFFFF);
                 }
             }
         } catch (NoSuchMethodError e) {
@@ -52,7 +52,7 @@ public class MixinOverlayRenderer {
                 if (!ChunkBoundsHandler.regionInfo.isEmpty()) {
                     int y = 0;
                     for (String text : ChunkBoundsHandler.regionInfo) {
-                        guiGraphics.drawString(mc.font, text, 10, y += 10, 0xFFFFFF);
+                        guiGraphics.drawString(mc.font, text, 10, y += 10, 0xFFFFFFFF);
                     }
                 }
             } catch(Exception g){
