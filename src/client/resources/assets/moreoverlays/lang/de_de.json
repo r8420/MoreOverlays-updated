@@ -66,7 +66,7 @@
   "text.config.moreoverlays.option.render_spawnNColor.tooltip": "Farbe des X für \"Spawn nachts möglich\"",
   "text.config.moreoverlays.option.render_spawnLineWidth.tooltip": "Linienbreite für Spawn-Markierungen",
 
-  "text.config.moreoverlays.option.search_enabled.tooltip": "Deaktiviert das Doppelklicken auf das JEI-Suchfeld für die Itemsucbe",
+  "text.config.moreoverlays.option.search_enabled.tooltip": "Deaktiviert das Doppelklicken auf das JEI-Suchfeld für die Itemsuche",
   "text.config.moreoverlays.option.search_searchCustom.tooltip": "Durchsucht auch benutzerdefinierte Item-Namen (Anvil)",
   "text.config.moreoverlays.option.search_searchTooltip.tooltip": "Durchsucht auch den Tooltip der Items",
   "text.config.moreoverlays.option.search_maxResults.tooltip": "Maximale Anzahl an Treffern, bis die Suche aktiv ist",

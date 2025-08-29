@@ -35,6 +35,9 @@
   "text.config.moreoverlays.option.render_spawnNumbers": "Użyj nakładki z liczbami",
   "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Interwał aktualizacji (klatki)",
 
+  "text.config.moreoverlays.option.render_spawnNumbers": "Używaj nakładki z numerami",
+  "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Interwał aktualizacji (klatki)",
+
   "text.config.moreoverlays.option.chunk_EdgeRadius": "Promień krawędzi (chunki)",
   "text.config.moreoverlays.option.chunk_ShowMiddle": "Pokaż środek chunka",
 

@@ -45,7 +45,7 @@ public class Config {
     @RangeConstraint(min = 0, max = 400, decimalPlaces = 2)
     public double render_spawnLineWidth = 2;
     public Color render_spawnSafeColor = Color.ofRgb(0x00FF00);
-    @RangeConstraint(min = 0, max = 1, decimalPlaces = 3)
+    @RangeConstraint(min = 0.01, max = 0.13, decimalPlaces = 3)
     public double render_spawnNumberScale = 0.07;
 
     @SectionHeader("search")
