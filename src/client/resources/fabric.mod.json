@@ -15,9 +15,9 @@
 	},
 	"license": "The MIT License (MIT)",
 	"icon": "moreoverlays_icon_small.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
+		"client": [
 			"at.ridgo8.moreoverlays.MoreOverlays"
 		],
 		"jei_mod_plugin": [

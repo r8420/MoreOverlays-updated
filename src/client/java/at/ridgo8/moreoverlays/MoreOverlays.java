@@ -8,14 +8,14 @@ import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.Minecraft;
 
 
 
-public class MoreOverlays implements ModInitializer {
+public class MoreOverlays implements ClientModInitializer {
 
 	public static final String MOD_ID = "moreoverlays";
     public static final String NAME = "MoreOverlays";
@@ -23,7 +23,7 @@ public class MoreOverlays implements ModInitializer {
 	public static Logger logger = LogManager.getLogger(NAME);
 
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 
 		// Correctly register the event
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -34,7 +34,7 @@ public class MoreOverlays implements ModInitializer {
             LightOverlayHandler.onClientTick();
         });
 
-		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+		ClientLifecycleEvents.CLIENT_STOPPING.register(client1 -> {
             LightOverlayHandler.setEnabled(false);
             ChunkBoundsHandler.setMode(RenderMode.NONE);
         });
