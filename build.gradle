@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -74,12 +74,11 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
-
-	
+	inputs.property "minecraft_version", project.minecraft_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-		println "Replacing version in fabric.mod.json with ${project.version}"
+		expand(["version": project.version, "minecraft_version": project.minecraft_version])
+		println "Replacing version in fabric.mod.json with ${project.version} and minecraft_version with ${project.minecraft_version}"
 	}
 }
 
@@ -104,8 +103,17 @@ jar {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+tasks.named('jar') {
+	archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
+}
+
+tasks.named('remapJar') {
+	archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
+}
+
 tasks.named('sourcesJar') {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
 }
 
 // configure the maven publication

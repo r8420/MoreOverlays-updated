@@ -20,6 +20,14 @@ public class LightOverlayHandler {
     public static ILightRenderer renderer = null;
     public static ILightScanner scanner = null;
 
+    // Throttling + mode tracking
+    private static long clientTickCounter = 0L;
+    private static int lastPlayerBlockX = Integer.MIN_VALUE;
+    private static int lastPlayerBlockY = Integer.MIN_VALUE;
+    private static int lastPlayerBlockZ = Integer.MIN_VALUE;
+    private static float lastPlayerYaw = Float.NaN;
+    private static boolean lastRenderNumbers = false;
+
     public static boolean isEnabled() {
         return enabled;
     }
@@ -32,6 +40,16 @@ public class LightOverlayHandler {
         if (enabled) {
             reloadHandlerInternal();
             Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Enabled"), true);
+            if (Minecraft.getInstance().player != null) {
+                scanner.update(Minecraft.getInstance().player);
+                net.minecraft.core.BlockPos bp = Minecraft.getInstance().player.blockPosition();
+                lastPlayerBlockX = bp.getX();
+                lastPlayerBlockY = bp.getY();
+                lastPlayerBlockZ = bp.getZ();
+                lastPlayerYaw = Minecraft.getInstance().player.getYRot();
+                clientTickCounter = 0L;
+                lastRenderNumbers = ConfigManager.CONFIG.render_spawnNumbers();
+            }
         } else {
             scanner.clear();
             Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Disabled"), true);
@@ -47,14 +65,17 @@ public class LightOverlayHandler {
     }
 
     private static void reloadHandlerInternal() {
-        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(ConfigManager.CONFIG.light_IgnoreSpawnList(), LightOverlayRenderer.class, LightScannerVanilla.class);
+        Class<? extends ILightRenderer> rendererCls = ConfigManager.CONFIG.render_spawnNumbers()
+                ? at.ridgo8.moreoverlays.lightoverlay.render.NumberOverlayRenderer.class
+                : at.ridgo8.moreoverlays.lightoverlay.render.CrossOverlayRenderer.class;
+        LightOverlayReloadHandlerEvent event = new LightOverlayReloadHandlerEvent(ConfigManager.CONFIG.light_IgnoreSpawnList(), rendererCls, LightScannerVanilla.class);
 
         if (renderer == null || renderer.getClass() != event.getRenderer()) {
             try {
                 renderer = event.getRenderer().getDeclaredConstructor().newInstance();
             } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightRenderer from type \"%s\"!", event.getRenderer().getName()), e);
-                renderer = new LightOverlayRenderer();
+                renderer = new at.ridgo8.moreoverlays.lightoverlay.render.CrossOverlayRenderer();
             }
         }
 
@@ -68,6 +89,36 @@ public class LightOverlayHandler {
             } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
                 MoreOverlays.logger.warn(new FormattedMessage("Could not create ILightScanner from type \"%s\"!", event.getScanner().getName()), e);
                 scanner = new LightScannerVanilla();
+            }
+        }
+    }
+
+    public static void onClientTick() {
+        if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null && enabled &&
+                (Minecraft.getInstance().screen == null || !Minecraft.getInstance().screen.isPauseScreen())) {
+            clientTickCounter++;
+
+            boolean currentRenderNumbers = ConfigManager.CONFIG.render_spawnNumbers();
+            if (currentRenderNumbers != lastRenderNumbers) {
+                reloadHandlerInternal();
+                lastRenderNumbers = currentRenderNumbers;
+            }
+
+            net.minecraft.world.entity.player.Player player = Minecraft.getInstance().player;
+            net.minecraft.core.BlockPos bp = player.blockPosition();
+
+            boolean movedBlock = (bp.getX() != lastPlayerBlockX) || (bp.getY() != lastPlayerBlockY) || (bp.getZ() != lastPlayerBlockZ);
+            float yaw = player.getYRot();
+            boolean rotated = Float.isNaN(lastPlayerYaw) || Math.abs(yaw - lastPlayerYaw) > 15.0f;
+            int updateInterval = Math.max(1, ConfigManager.CONFIG.light_UpdateIntervalFrames());
+            boolean periodicRefresh = (clientTickCounter % updateInterval) == 0L;
+
+            if (movedBlock || rotated || periodicRefresh) {
+                scanner.update(player);
+                lastPlayerBlockX = bp.getX();
+                lastPlayerBlockY = bp.getY();
+                lastPlayerBlockZ = bp.getZ();
+                lastPlayerYaw = yaw;
             }
         }
     }

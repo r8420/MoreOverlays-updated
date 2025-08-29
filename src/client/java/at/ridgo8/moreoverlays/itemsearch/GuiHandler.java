@@ -26,6 +26,7 @@ public class GuiHandler {
                 return;
             }
             JeiModule.updateModule();
+            JeiModule.logMissingSearchTextFieldOnce();
             GuiRenderer.INSTANCE.guiInit(screen);
         });
 

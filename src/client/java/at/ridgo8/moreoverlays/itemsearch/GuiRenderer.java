@@ -2,6 +2,7 @@ package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.api.itemsearch.SlotHandler;
 import at.ridgo8.moreoverlays.api.itemsearch.SlotViewWrapper;
+import at.ridgo8.moreoverlays.config.ConfigManager;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -14,17 +15,22 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec2;
 
+import java.util.List;
 import java.util.Map;
 
 public class GuiRenderer {
 
     public static final GuiRenderer INSTANCE = new GuiRenderer();
 
-    private static final float OVERLAY_ZLEVEL = 299F;
+    private static final float OVERLAY_ZLEVEL = 300F;
     private static final float FRAME_RADIUS = 1.0F;
 
     private static boolean enabled = false;
@@ -52,6 +58,7 @@ public class GuiRenderer {
     }
 
     public void preDraw(PoseStack matrixstack) {
+        if (!ConfigManager.CONFIG.search_enabled()) return;
         Screen guiscr = Minecraft.getInstance().screen;
 
         EditBox textField = JeiModule.getJEITextField();
@@ -65,6 +72,7 @@ public class GuiRenderer {
     }
 
     public void postDraw() {
+        if (!ConfigManager.CONFIG.search_enabled()) return;
         Screen guiscr = Minecraft.getInstance().screen;
 
         if (allowRender && canShowIn(guiscr)) {
@@ -88,30 +96,31 @@ public class GuiRenderer {
         float width = textField.getWidth() + 8;
         float height = textField.getHeight() - 4;
 
-        float r = ((float) ((0xFFFF00 >> 16) & 0xFF)) / 255F;
-        float g = ((float) ((0xFFFF00 >> 8) & 0xFF)) / 255F;
-        float b = ((float) (0xFFFF00 & 0xFF)) / 255F;
+        int boxColor = ConfigManager.CONFIG.search_searchBoxColor().argb();
+        float r = ((float) ((boxColor >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((boxColor >> 8) & 0xFF)) / 255F;
+        float b = ((float) (boxColor & 0xFF)) / 255F;
 
         renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x, y, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x, y, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x, y + height, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
 
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width, y, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width, y + height, 1000).color(r, g, b, 1F).endVertex();
-        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, 1000).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width, y + height, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
+        renderer.vertex(matrix4f, x + width + FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).color(r, g, b, 1F).endVertex();
 
         tess.end();
 
@@ -121,6 +130,7 @@ public class GuiRenderer {
     }
 
     public void renderTooltip() {
+        if (!ConfigManager.CONFIG.search_enabled()) return;
         Screen guiscr = Minecraft.getInstance().screen;
         if (allowRender && canShowIn(guiscr)) {
             allowRender = false;
@@ -137,16 +147,18 @@ public class GuiRenderer {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder renderer = tess.getBuilder();
 
+        RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        float r = ((float) ((0x000000 >> 16) & 0xFF)) / 255F;
-        float g = ((float) ((0x000000 >> 8) & 0xFF)) / 255F;
-        float b = ((float) (0x000000 & 0xFF)) / 255F;
-        float a = 0.5F;
+        int filteredColor = ConfigManager.CONFIG.search_filteredSlotColor().argb();
+        float r = ((float) ((filteredColor >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((filteredColor >> 8) & 0xFF)) / 255F;
+        float b = ((float) (filteredColor & 0xFF)) / 255F;
+        float a = (float) ConfigManager.CONFIG.search_filteredSlotTransparancy();
 
         for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
             if (slot.getValue().isEnableOverlay()) {
@@ -192,15 +204,40 @@ public class GuiRenderer {
     private boolean isSearchedItem(ItemStack stack) {
         if (emptyFilter) return true;
         else if (stack.isEmpty()) return false;
+        int checked = 0;
+        int max = Math.max(1, ConfigManager.CONFIG.search_maxResults());
         for (Object ingredient : JeiModule.filter.getFilteredIngredients(VanillaTypes.ITEM_STACK)) {
             if (ItemUtils.ingredientMatches(ingredient, stack)) {
                 return true;
             }
+            checked++;
+            if (checked >= max) break;
         }
-        return true && stack.getDisplayName().getString().toLowerCase().contains(JeiModule.getJEITextField().getValue().toLowerCase());
+        EditBox tf = JeiModule.getJEITextField();
+        String q = tf != null ? tf.getValue().toLowerCase() : lastFilterText.toLowerCase();
+        if (ConfigManager.CONFIG.search_searchCustom()) {
+            if (stack.getDisplayName().getString().toLowerCase().contains(q)) {
+                return true;
+            }
+        }
+        if (ConfigManager.CONFIG.search_searchTooltip()) {
+            try {
+                Player player = Minecraft.getInstance().player;
+                TooltipFlag flag = TooltipFlag.NORMAL;
+                List<Component> lines = stack.getTooltipLines(player, flag);
+                for (Component comp : lines) {
+                    if (comp.getString().toLowerCase().contains(q)) {
+                        return true;
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return false;
     }
 
     public void tick() {
+        if (!ConfigManager.CONFIG.search_enabled()) return;
         final Screen screen = Minecraft.getInstance().screen;
         if (!canShowIn(screen))
             return;
@@ -221,6 +258,10 @@ public class GuiRenderer {
 
     public void toggleMode() {
         if(!true){
+            enabled = false;
+            return;
+        }
+        if (!ConfigManager.CONFIG.search_enabled()) {
             enabled = false;
             return;
         }

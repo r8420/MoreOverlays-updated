@@ -21,6 +21,8 @@
   "text.config.moreoverlays.option.light_SimpleEntityCheck": "Vereinfachte Entity-Prüfung",
   "text.config.moreoverlays.option.light_SaveLevel": "Minimale sichere Lichtstufe",
   "text.config.moreoverlays.option.light_FinishedMigration": "Migration abgeschlossen",
+  "text.config.moreoverlays.option.render_spawnNumbers": "Zahlen-Overlay verwenden",
+  "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Aktualisierungsintervall (Frames)",
 
   "text.config.moreoverlays.option.chunk_EdgeRadius": "Kantenradius (Chunks)",
   "text.config.moreoverlays.option.chunk_ShowMiddle": "Chunk-Mitte anzeigen",
@@ -29,9 +31,12 @@
   "text.config.moreoverlays.option.render_chunkGridColor": "Farbe für Chunk-Gitter",
   "text.config.moreoverlays.option.render_chunkMiddleColor": "Farbe für Chunk-Mitte",
   "text.config.moreoverlays.option.render_chunkLineWidth": "Linienbreite (Chunks)",
+  "text.config.moreoverlays.option.render_chunkThick": "Chunk: Dicke Linien",
   "text.config.moreoverlays.option.render_spawnAColor": "Farbe: Spawn immer möglich",
   "text.config.moreoverlays.option.render_spawnNColor": "Farbe: Spawn nachts möglich",
   "text.config.moreoverlays.option.render_spawnLineWidth": "Linienbreite (Spawn)",
+  "text.config.moreoverlays.option.render_spawnNumberScale": "Spawn: Zahlengröße",
+  "text.config.moreoverlays.option.render_spawnSafeColor": "Spawn: Sichere Farbe",
 
   "text.config.moreoverlays.option.search_enabled": "Itemsuche aktivieren",
   "text.config.moreoverlays.option.search_searchCustom": "Benutzerdefinierte Namen durchsuchen",

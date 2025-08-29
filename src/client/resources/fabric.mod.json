@@ -3,7 +3,7 @@
 	"id": "moreoverlays",
 	"version": "${version}",
 	"name": "MoreOverlays",
-	"description": "This mod adds some of the overlays back from NEI",
+	"description": "This mod adds some of the overlays back from NEI\nBuilt for MC ${minecraft_version} (Fabric)",
 	"authors": [
 		"feldim2425",
 		"RiDGo8 / R8420"
