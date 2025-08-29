@@ -32,10 +32,7 @@ public class MoreOverlays implements ModInitializer {
             if (mc.player == null) return; // Ensures the player is not null
 			ChunkBoundsHandler.updateRegionInfo();
 
-			if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null && LightOverlayHandler.isEnabled() &&
-                (Minecraft.getInstance().screen == null || !Minecraft.getInstance().screen.isPauseScreen())) {
-            LightOverlayHandler.scanner.update(Minecraft.getInstance().player);
-        }
+            LightOverlayHandler.onClientTick();
         });
 
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {

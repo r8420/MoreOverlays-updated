@@ -12,6 +12,7 @@ import io.wispforest.owo.ui.core.Color;
 public class Config {
 
     @SectionHeader("light")
+    public boolean render_spawnNumbers = false;
     @RangeConstraint(min = 0, max = 32)
     public int light_UpRange = 4;
     @RangeConstraint(min = 0, max = 512)
@@ -25,6 +26,8 @@ public class Config {
     public int light_SaveLevel = 1;
     @ExcludeFromScreen
     public boolean light_FinishedMigration = true;
+    @RangeConstraint(min = 1, max = 100)
+    public int light_UpdateIntervalFrames = 1;
 
     @SectionHeader("chunkbounds")
     @RangeConstraint(min = 0, max = 15)
@@ -37,10 +40,14 @@ public class Config {
     public Color render_chunkMiddleColor = Color.ofRgb(0xFFFF00);
     @RangeConstraint(min = 0, max = 100, decimalPlaces = 2)
     public double render_chunkLineWidth = 1.5;
+    public boolean render_chunkThick = false;
     public Color render_spawnAColor = Color.ofRgb(0xFF0000);
     public Color render_spawnNColor = Color.ofRgb(0xFFFF00);
     @RangeConstraint(min = 0, max = 400, decimalPlaces = 2)
     public double render_spawnLineWidth = 2;
+    public Color render_spawnSafeColor = Color.ofRgb(0x00FF00);
+    @RangeConstraint(min = 0, max = 1, decimalPlaces = 3)
+    public double render_spawnNumberScale = 0.07;
 
     @SectionHeader("search")
     public boolean search_enabled = true;

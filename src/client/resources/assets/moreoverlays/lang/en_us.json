@@ -21,6 +21,8 @@
   "text.config.moreoverlays.option.light_SimpleEntityCheck": "Simple Entity Check",
   "text.config.moreoverlays.option.light_SaveLevel": "Minimum Safe Light Level",
   "text.config.moreoverlays.option.light_FinishedMigration": "Finished Migration",
+  "text.config.moreoverlays.option.render_spawnNumbers": "Use Number Overlay",
+  "text.config.moreoverlays.option.light_UpdateIntervalFrames": "Update Interval (Frames)",
 
   "text.config.moreoverlays.option.chunk_EdgeRadius": "Edge Radius (Chunks)",
   "text.config.moreoverlays.option.chunk_ShowMiddle": "Show Chunk Center",
@@ -29,9 +31,12 @@
   "text.config.moreoverlays.option.render_chunkGridColor": "Chunk Grid Color",
   "text.config.moreoverlays.option.render_chunkMiddleColor": "Chunk Center Color",
   "text.config.moreoverlays.option.render_chunkLineWidth": "Chunk Line Width",
+  "text.config.moreoverlays.option.render_chunkThick": "Chunk: Thick Lines",
   "text.config.moreoverlays.option.render_spawnAColor": "Unsafe Spawn Color",
   "text.config.moreoverlays.option.render_spawnNColor": "Safe Spawn Color (Night)",
   "text.config.moreoverlays.option.render_spawnLineWidth": "Spawn Line Width",
+  "text.config.moreoverlays.option.render_spawnNumberScale": "Spawn: Number Size",
+  "text.config.moreoverlays.option.render_spawnSafeColor": "Spawn: Safe Color",
 
   "text.config.moreoverlays.option.search_enabled": "Enable Item Search",
   "text.config.moreoverlays.option.search_searchCustom": "Search Custom Item Names",

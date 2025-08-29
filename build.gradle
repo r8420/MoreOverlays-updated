@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -60,10 +60,10 @@ dependencies {
     annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
     include "io.wispforest:owo-sentinel:${project.owo_version}"
 
-	modCompileOnlyApi("mezz.jei:jei-1.20.4-common-api:17.3.0.52")
-	modCompileOnlyApi("mezz.jei:jei-1.20.4-fabric-api:17.3.0.52")
+	modCompileOnlyApi("mezz.jei:jei-1.21.1-common-api:19.22.1.316")
+	modCompileOnlyApi("mezz.jei:jei-1.21.1-fabric-api:19.22.1.316")
 	// at runtime, use the full JEI jar for Fabric
-	modRuntimeOnly("mezz.jei:jei-1.20.4-fabric:17.3.0.52")
+	modRuntimeOnly("mezz.jei:jei-1.21.1-fabric:19.22.1.316")
 	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
@@ -73,12 +73,11 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
-
-	
+	inputs.property "minecraft_version", project.minecraft_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-		println "Replacing version in fabric.mod.json with ${project.version}"
+		expand(["version": project.version, "minecraft_version": project.minecraft_version])
+		println "Replacing version in fabric.mod.json with ${project.version} and minecraft_version with ${project.minecraft_version}"
 	}
 }
 
@@ -103,8 +102,17 @@ jar {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+tasks.named('jar') {
+	archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
+}
+
+tasks.named('remapJar') {
+	archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
+}
+
 tasks.named('sourcesJar') {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
 }
 
 // configure the maven publication
