@@ -1,9 +1,6 @@
 package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.ClientRegistrationHandler;
-import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
-import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler.RenderMode;
-import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -21,10 +18,6 @@ public class GuiHandler {
     private static void registerEvents() {
         // GUI Init Event
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            if (false) {
-                toggleMode();
-                return;
-            }
             JeiModule.updateModule();
             JeiModule.logMissingSearchTextFieldOnce();
             GuiRenderer.INSTANCE.guiInit(screen);

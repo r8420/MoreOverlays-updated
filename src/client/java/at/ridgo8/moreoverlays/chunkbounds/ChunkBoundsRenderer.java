@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
-import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Player;
@@ -22,11 +21,8 @@ public class ChunkBoundsRenderer {
         RenderSystem.lineWidth(1.0f);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-
-        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.depthMask(false);
-            RenderSystem.enableCull();
-        } 
+        RenderSystem.depthMask(false);
+        RenderSystem.enableCull();
 
         final int h = player.level().getHeight();
         final int h0 = (int) player.getY();
@@ -121,12 +117,9 @@ public class ChunkBoundsRenderer {
 
         // restore render settings
         RenderSystem.depthMask(true);
-        if (Minecraft.getInstance().options.graphicsMode().get() != GraphicsStatus.FABULOUS) {
-            RenderSystem.disableCull();
-        } else {
-            RenderSystem.lineWidth(1.0F);
-            RenderSystem.enableBlend();
-        }
+        RenderSystem.lineWidth(1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.enableCull();
     }
 
     public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {

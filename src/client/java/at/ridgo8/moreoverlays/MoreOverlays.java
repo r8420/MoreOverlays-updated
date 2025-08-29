@@ -3,7 +3,6 @@ package at.ridgo8.moreoverlays;
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler.RenderMode;
 import at.ridgo8.moreoverlays.config.ConfigManager;
-import at.ridgo8.moreoverlays.itemsearch.GuiRenderer;
 import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
 
 import org.apache.logging.log4j.LogManager;

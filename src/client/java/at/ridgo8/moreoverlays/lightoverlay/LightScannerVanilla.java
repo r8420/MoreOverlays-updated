@@ -2,7 +2,6 @@ package at.ridgo8.moreoverlays.lightoverlay;
 
 import at.ridgo8.moreoverlays.api.lightoverlay.LightScannerBase;
 import at.ridgo8.moreoverlays.config.ConfigManager;
-import com.google.common.collect.Lists;
 
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.MobCategory;
@@ -40,13 +39,13 @@ public class LightScannerVanilla extends LightScannerBase {
             return true;
 
         AABB bb = TEST_BB.move(pos.getX(), pos.getY(), pos.getZ());
-        boolean hasCollision = world.getBlockCollisions(null, bb).iterator().hasNext();
+        boolean hasCollision = !world.noCollision(bb);
         if (!hasCollision && !world.containsAnyLiquid(bb)) {
             if (ConfigManager.CONFIG.light_IgnoreLayer())
                 return true;
             else {
                 AABB bb2 = bb.move(0, 1, 0);
-                boolean hasCollision2 = world.getBlockCollisions(null, bb2).iterator().hasNext();
+                boolean hasCollision2 = !world.noCollision(bb2);
                 return !hasCollision2 && !world.containsAnyLiquid(bb2);
             }
         }

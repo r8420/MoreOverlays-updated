@@ -24,6 +24,7 @@ import java.util.Set;
 
 public class NumberOverlayRenderer implements ILightRenderer {
 
+
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack poseStack) {
 
@@ -45,7 +46,11 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
         final Player player = mc.player;
         if (player == null || mc.level == null) {
+            // Restore render state on early exit
+            RenderSystem.depthMask(true);
             RenderSystem.disablePolygonOffset();
+            RenderSystem.enableBlend();
+            RenderSystem.enableCull();
             return;
         }
 
@@ -114,6 +119,9 @@ public class NumberOverlayRenderer implements ILightRenderer {
         bufferSource.endBatch();
         RenderSystem.depthMask(true);
         RenderSystem.disablePolygonOffset();
+        // Restore render state so later translucent rendering (e.g., water) behaves correctly
+        RenderSystem.enableBlend();
+        RenderSystem.enableCull();
     }
 }
 

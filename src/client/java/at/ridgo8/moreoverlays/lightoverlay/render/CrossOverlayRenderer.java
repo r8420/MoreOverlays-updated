@@ -17,8 +17,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class CrossOverlayRenderer implements ILightRenderer {
 
+
     private static Tesselator tess = Tesselator.getInstance();
-    private static BufferBuilder renderer = tess.getBuilder();
+    private static BufferBuilder renderer = Tesselator.getInstance().getBuilder();
     private static Minecraft minecraft = Minecraft.getInstance();
 
     private static void drawVertex(org.joml.Matrix4f matrix, double x, double y, double z, float r, float g, float b) {
@@ -239,12 +240,10 @@ public class CrossOverlayRenderer implements ILightRenderer {
         BufferUploader.drawWithShader(renderer.end());
 
         RenderSystem.depthMask(true);
-        if (notFabulous) {
-            RenderSystem.disableCull();
-        } else {
-            RenderSystem.lineWidth(1.0F);
-            RenderSystem.enableBlend();
-        }
+        // Restore render state so later translucent rendering (e.g., water) behaves correctly
+        RenderSystem.lineWidth(1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.enableCull();
     }
 }
 

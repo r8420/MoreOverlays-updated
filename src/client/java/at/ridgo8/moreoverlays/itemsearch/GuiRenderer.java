@@ -257,10 +257,7 @@ public class GuiRenderer {
     }
 
     public void toggleMode() {
-        if(!true){
-            enabled = false;
-            return;
-        }
+        // no-op gate removed; simply toggle when invoked
         if (!ConfigManager.CONFIG.search_enabled()) {
             enabled = false;
             return;
