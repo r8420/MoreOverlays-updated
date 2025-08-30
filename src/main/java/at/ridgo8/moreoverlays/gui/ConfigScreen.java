@@ -109,11 +109,6 @@ public class ConfigScreen extends Screen {
             Minecraft.getInstance().setScreen(modListScreen);
         }
     }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        
-    }
     
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
