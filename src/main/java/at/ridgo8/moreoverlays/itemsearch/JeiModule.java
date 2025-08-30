@@ -23,22 +23,40 @@ public class JeiModule implements IModPlugin {
     public static IIngredientFilter filter;
     private static IJeiHelpers jeiHelpers;
     private static EditBox textField;
+    private static boolean missingTextFieldLogged = false;
 
     public static void updateModule() {
         if (overlay != null) {
-            textField = ReflectionUtil.findFieldsWithClass(overlay, EditBox.class)
+            EditBox found = ReflectionUtil.findFieldsWithClass(overlay, EditBox.class)
                 .findFirst()
-                .orElseGet(() -> {
-                    MoreOverlays.logger.error("Something went wrong. Could not find JEI Search Text Field object");
-                    return null;
-                });
+                .orElse(null);
+            if (found == null) {
+                textField = null;
+                if (!missingTextFieldLogged) {
+                    MoreOverlays.logger.warn("JEI search text field not found via reflection (possibly due to other UI mods). Using fallback: no text field.");
+                    missingTextFieldLogged = true;
+                }
+            } else {
+                textField = found;
+                missingTextFieldLogged = false;
+            }
         } else {
             textField = null;
+            missingTextFieldLogged = false;
         }
     }
 
     public static EditBox getJEITextField() {
         return textField;
+    }
+
+    public static boolean logMissingSearchTextFieldOnce() {
+        if (overlay != null && textField == null && !missingTextFieldLogged) {
+            MoreOverlays.logger.warn("JEI search text field not found via reflection (possibly due to other UI mods). Using fallback: no text field.");
+            missingTextFieldLogged = true;
+            return true;
+        }
+        return false;
     }
 
     public static boolean areItemsEqualInterpreter(ItemStack stack1, ItemStack stack2) {
@@ -52,6 +70,7 @@ public class JeiModule implements IModPlugin {
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         overlay = jeiRuntime.getIngredientListOverlay();
         filter = jeiRuntime.getIngredientFilter();
+        missingTextFieldLogged = false;
         updateModule();
     }
 

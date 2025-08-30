@@ -54,12 +54,15 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
     @Override
     protected int getScrollbarPosition() {
-        return super.getScrollbarPosition() + 15 + 20;
+        return super.getScrollbarPosition() + 15 + 20 + 43;
+        // Keep scrollbar within the visible list bounds
+        // return super.getScrollbarPosition();
     }
 
     @Override
     public int getRowWidth() {
-        return super.getRowWidth() + 64;
+        // Expand row width to preserve previous control width after increasing label column
+        return super.getRowWidth() + 64 + 80;
     }
 
     public void updateGui() {
@@ -166,6 +169,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             tmp.remove(tmp.size() - 1);
         }
         setPath(tmp);
+        // Do not force-clear focus here; Reset scroll position to the top when navigating back
+        this.setScrollAmount(0.0D);
     }
 
     @Override
@@ -188,6 +193,13 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             fullPath.addAll(this.configPath);
             fullPath.add(cEntry.getKey());
 
+            // Hide internal migration flags from the visual config screen
+            if (fullPath.size() == 2
+                    && "lightoverlay".equals(fullPath.get(0))
+                    && "finishedMigration".equalsIgnoreCase(fullPath.get(1))) {
+                continue;
+            }
+
             String comment = null;
             if (this.comments != null) {
                 comment = this.comments.getComment(fullPath);
@@ -198,6 +210,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
                 this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
             } else if (cEntry.getValue() instanceof ForgeConfigSpec.BooleanValue) {
                 this.addEntry(new OptionBoolean(this, (ForgeConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
+            } else if (cEntry.getValue() instanceof ForgeConfigSpec.IntValue && cEntry.getKey().toLowerCase().contains("color")) {
+                this.addEntry(new OptionColor(this, (ForgeConfigSpec.IntValue) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             } else {
                 this.addEntry(new OptionGeneric<>(this, (ForgeConfigSpec.ConfigValue<?>) cEntry.getValue(), (ForgeConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
             }
@@ -287,12 +301,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             this.mouseY = mouseY;
             this.mouseOver = mouseOver;
 
-            mouseX -= rowLeft;
-            mouseY -= rowTop;
-            guiGraphics.pose().translate(rowLeft, rowTop, 0);
+            // Render controls in absolute screen coordinates; controls position themselves using rowLeft/rowTop
             renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
-
-            guiGraphics.pose().translate(-rowLeft, -rowTop, 0);
         }
 
         protected abstract void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
@@ -327,17 +337,17 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return super.mouseClicked(mouseX - this.rowLeft, mouseY - this.rowTop, button);
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         @Override
         public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            return super.mouseReleased(mouseX - this.rowLeft, mouseY - this.rowTop, button);
+            return super.mouseReleased(mouseX, mouseY, button);
         }
 
         @Override
         public boolean mouseDragged(double fromX, double fromY, int button, double toX, double toY) {
-            return super.mouseDragged(fromX - this.rowLeft, fromY - this.rowTop, button, toX - this.rowLeft, toY - this.rowTop);
+            return super.mouseDragged(fromX, fromY, button, toX, toY);
         }
 
         @Override
@@ -352,7 +362,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-            return super.mouseScrolled(mouseX - this.rowLeft, mouseY - this.rowTop, amount);
+            return super.mouseScrolled(mouseX, mouseY, amount);
         }
 
         public boolean isValid() {

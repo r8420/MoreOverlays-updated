@@ -22,6 +22,8 @@
   "config.moreoverlays.lightoverlay.simplecheck": "Простая проверка",
   "config.moreoverlays.lightoverlay.savelevel": "Безоп. уровень св.",
   "config.moreoverlays.lightoverlay.finishedmigration": "Миграция 1.18",
+  "config.moreoverlays.lightoverlay.spawn_numbers": "Использовать цифры",
+  "config.moreoverlays.lightoverlay.update_interval_frames": "Интервал обновления (кадры)",
 
   "config.moreoverlays.chunkbounds.radius": "Радиус границы",
   "config.moreoverlays.chunkbounds.middle": "Показать центр",
@@ -30,9 +32,12 @@
   "config.moreoverlays.rendersettings.chunk_grid_color": "Цвет сетки",
   "config.moreoverlays.rendersettings.chunk_mid_color": "Цвет центра",
   "config.moreoverlays.rendersettings.chunk_line_width": "Ширина линии",
+  "config.moreoverlays.rendersettings.chunk_line_thick": "Chunk: Толстые линии",
   "config.moreoverlays.rendersettings.spawn_always_color": "Цвет спавна",
   "config.moreoverlays.rendersettings.spawn_night_color": "Цвет ноч. спавн",
   "config.moreoverlays.rendersettings.spawn_line_width": "Шир. линии спавна",
+  "config.moreoverlays.rendersettings.spawn_number_scale": "Спавн: Размер цифр",
+  "config.moreoverlays.rendersettings.spawn_safe_color": "Спавн: Безопасный цвет",
 
   "config.moreoverlays.searchoverlay.search_enabled": "Вкл. поиск",
   "config.moreoverlays.searchoverlay.custom_search": "Свой поиск",
