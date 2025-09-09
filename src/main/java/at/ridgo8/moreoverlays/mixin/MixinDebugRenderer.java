@@ -1,10 +1,5 @@
 package at.ridgo8.moreoverlays.mixin;
 
-import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
-import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsRenderer;
-import at.ridgo8.moreoverlays.lightoverlay.LightOverlayHandler;
-import net.minecraft.client.GraphicsStatus;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;

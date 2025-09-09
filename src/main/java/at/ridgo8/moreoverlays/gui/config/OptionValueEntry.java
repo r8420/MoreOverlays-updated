@@ -12,7 +12,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
@@ -169,7 +168,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     @Override
     public List<? extends GuiEventListener> children() {
         // Return child widgets in z-order; interactive row controls first so they receive events properly
-        return Arrays.asList(this.btnReset, this.btnUndo);
+        return java.util.List.of(this.btnReset, this.btnUndo);
     }
 
     @Override

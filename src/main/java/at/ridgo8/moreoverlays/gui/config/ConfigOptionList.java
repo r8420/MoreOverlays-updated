@@ -88,7 +88,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         if (path.isEmpty()) {
             return null;
         }
-        return "config." + this.modId + ".category." + path.stream().collect(Collectors.joining("."));
+        return "config." + this.modId + ".category." + String.join(".", path);
     }
 
     public void setConfiguration(ModConfigSpec rootConfig) {

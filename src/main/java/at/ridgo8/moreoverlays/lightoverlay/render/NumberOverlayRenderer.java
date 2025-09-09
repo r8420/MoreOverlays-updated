@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
 import java.util.Objects;
-import java.util.HashSet;
 import java.util.Set;
 
 public class NumberOverlayRenderer implements ILightRenderer {
@@ -63,7 +62,7 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
         // Build a set of positions the cross renderer would draw (spawnable spots),
         // so we can filter level-0 numbers to only those valid spawn positions.
-        final Set<BlockPos> spawnablePositions = new HashSet<>();
+        final Set<BlockPos> spawnablePositions = new java.util.HashSet<>();
         for (var pair : scanner.getLightModes()) {
             if (pair.getRight() != null && pair.getRight() != 0) {
                 spawnablePositions.add(pair.getLeft());

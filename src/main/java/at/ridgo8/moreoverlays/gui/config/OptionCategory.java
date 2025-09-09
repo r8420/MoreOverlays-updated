@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OptionCategory extends ConfigOptionList.OptionEntry {
@@ -57,7 +56,7 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     @Override
     public List<? extends GuiEventListener> children() {
-        return Arrays.asList(this.btnOpen);
+        return java.util.List.of(this.btnOpen);
     }
 
     @Override
