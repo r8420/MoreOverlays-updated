@@ -6,16 +6,13 @@ import at.ridgo8.moreoverlays.config.Config;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import net.minecraft.world.item.Item;
-import org.joml.Matrix4f;
 import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import com.mojang.blaze3d.platform.Lighting;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -29,7 +26,6 @@ public class GuiRenderer {
 
     public static final GuiRenderer INSTANCE = new GuiRenderer();
 
-    private static final float OVERLAY_ZLEVEL = 299F;
     private static final float FRAME_RADIUS = 1.0F;
 
     private static boolean enabled = false;
@@ -41,6 +37,8 @@ public class GuiRenderer {
     private boolean allowRender = false;
     private int guiOffsetX = 0;
     private int guiOffsetY = 0;
+    private boolean drewOverlayInTooltipPhase = false;
+    private boolean drewFrameInTooltipPhase = false;
 
     public void guiInit(Screen gui) {
         if (!canShowIn(gui)) {
@@ -56,122 +54,110 @@ public class GuiRenderer {
 
     }
 
-    public void preDraw(PoseStack matrixstack) {
+    public void preDraw(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
-
-        EditBox textField = JeiModule.getJEITextField();
-
         if (canShowIn(guiscr)) {
             allowRender = true;
-            if (textField != null && enabled) {
-                drawSearchFrame(textField, matrixstack);
+        }
+    }
+
+    public void postDraw(GuiGraphics guiGraphics) {
+        Screen guiscr = Minecraft.getInstance().screen;
+
+        if (allowRender && canShowIn(guiscr)) {
+            allowRender = false;
+            if (enabled) {
+                EditBox textField = JeiModule.getJEITextField();
+                if (textField != null) {
+                    if (!drewFrameInTooltipPhase) {
+                        drawSearchFrame(textField, guiGraphics);
+                    }
+                }
             }
+            if (!drewOverlayInTooltipPhase) {
+                drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
+            }
+            drewOverlayInTooltipPhase = false;
+            drewFrameInTooltipPhase = false;
         }
     }
 
-    public void postDraw() {
-        Screen guiscr = Minecraft.getInstance().screen;
+    private void drawSearchFrame(EditBox textField, GuiGraphics guiGraphics) {
+        // Render the border at a high z to ensure it appears above items/JEI widgets
+        var poseStack = guiGraphics.pose();
+        poseStack.pushPose();
+        poseStack.translate(0, 0, 350.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
 
-        if (allowRender && canShowIn(guiscr)) {
-            allowRender = false;
-            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
-        }
-    }
+        int x = textField.getX() - 2;
+        int y = textField.getY() - 4;
+        int width = textField.getWidth() + 8;
+        int height = textField.getHeight() - 4;
 
-    private void drawSearchFrame(EditBox textField, PoseStack matrixstack) {
-        Matrix4f matrix4f = matrixstack.last().pose();
+        int rgb = Config.search_searchBoxColor.get() & 0xFFFFFF;
+        int color = 0xFF000000 | rgb;
+
+        int left = x - (int) FRAME_RADIUS;
+        int top = y - (int) FRAME_RADIUS;
+        int right = x + width + (int) FRAME_RADIUS;
+        int bottom = y + height + (int) FRAME_RADIUS;
+
+        guiGraphics.fill(left, top, right, y, color);
+        guiGraphics.fill(left, y + height, right, bottom, color);
+        guiGraphics.fill(left, y, x, y + height, color);
+        guiGraphics.fill(x + width, y, right, y + height, color);
 
         RenderSystem.enableDepthTest();
-
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-
-        Tesselator tess = Tesselator.getInstance();
-
-        float x = textField.getX() - 2;
-        float y = textField.getY() - 4;
-        float width = textField.getWidth() + 8;
-        float height = textField.getHeight() - 4;
-
-        float r = ((float) ((Config.search_searchBoxColor.get() >> 16) & 0xFF)) / 255F;
-        float g = ((float) ((Config.search_searchBoxColor.get() >> 8) & 0xFF)) / 255F;
-        float b = ((float) (Config.search_searchBoxColor.get() & 0xFF)) / 255F;
-
-        BufferBuilder renderer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y - FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y - FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-
-        renderer.addVertex(matrix4f, x, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x - FRAME_RADIUS, y + height + FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height + FRAME_RADIUS, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width, y, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-        renderer.addVertex(matrix4f, x + width + FRAME_RADIUS, y + height, OVERLAY_ZLEVEL).setColor(r, g, b, 1F);
-
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
-
         RenderSystem.disableBlend();
-        RenderSystem.enableDepthTest();
-        RenderSystem.depthMask(true);
+        poseStack.popPose();
     }
 
-    public void renderTooltip(ItemStack stack) {
+    public void renderTooltip(GuiGraphics guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
-        if (allowRender && canShowIn(guiscr)) {
-            allowRender = false;
-            drawSlotOverlay((AbstractContainerScreen<?>) guiscr);
+        if (enabled && canShowIn(guiscr)) {
+            EditBox textField = JeiModule.getJEITextField();
+            if (textField != null) {
+                drawSearchFrame(textField, guiGraphics);
+                drewFrameInTooltipPhase = true;
+            }
+            drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
+            drewOverlayInTooltipPhase = true;
         }
     }
 
-    private void drawSlotOverlay(AbstractContainerScreen<?> gui) {
-        Lighting.setupForFlatItems();
-
+    private void drawSlotOverlay(GuiGraphics guiGraphics, AbstractContainerScreen<?> gui) {
         if (!enabled || views == null || views.isEmpty())
             return;
-
-        Tesselator tess = Tesselator.getInstance();
-
+        // Draw overlays above items, below tooltips
+        var poseStack = guiGraphics.pose();
+        poseStack.pushPose();
+        poseStack.translate(0, 0, 300.0F);
         RenderSystem.enableBlend();
-
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-
-        BufferBuilder renderer = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
 
         float r = ((float) ((Config.search_filteredSlotColor.get() >> 16) & 0xFF)) / 255F;
         float g = ((float) ((Config.search_filteredSlotColor.get() >> 8) & 0xFF)) / 255F;
         float b = ((float) (Config.search_filteredSlotColor.get() & 0xFF)) / 255F;
         float a = Config.search_filteredSlotTransparancy.get().floatValue();
 
-        for (Map.Entry<Slot, SlotViewWrapper> slot : views.entrySet()) {
-            if (slot.getValue().isEnableOverlay()) {
-                Vec2 posvec = slot.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
-                float px = posvec.x;
-                float py = posvec.y;
-                renderer.addVertex(px + 16 + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
-                renderer.addVertex(px + guiOffsetX, py + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
-                renderer.addVertex(px + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
-                renderer.addVertex(px + 16 + guiOffsetX, py + 16 + guiOffsetY, OVERLAY_ZLEVEL).setColor(r, g, b, a);
+        for (Map.Entry<Slot, SlotViewWrapper> entry : views.entrySet()) {
+            if (entry.getValue().isEnableOverlay()) {
+                Vec2 pos = entry.getValue().getView().getRenderPos(guiOffsetX, guiOffsetY);
+                int left = Math.round(pos.x) + guiOffsetX;
+                int top = Math.round(pos.y) + guiOffsetY;
+                int right = left + 16;
+                int bottom = top + 16;
+                int argb = ((int)(a * 255.0f) << 24) | ((int)(r * 255.0f) << 16) | ((int)(g * 255.0f) << 8) | (int)(b * 255.0f);
+                guiGraphics.fill(left, top, right, bottom, argb);
             }
         }
-
-        MeshData meshData = renderer.build();
-        if (meshData != null) {
-            BufferUploader.drawWithShader(meshData);
-        }
-
+        RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
+        poseStack.popPose();
+        
     }
 
     public boolean canShowIn(Screen gui) {

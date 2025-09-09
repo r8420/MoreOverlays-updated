@@ -67,19 +67,19 @@ public class GuiHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onDrawScreen(ScreenEvent.Render.Pre event) {
-        GuiRenderer.INSTANCE.preDraw(event.getGuiGraphics().pose());
+        GuiRenderer.INSTANCE.preDraw(event.getGuiGraphics());
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onDrawScreen(ScreenEvent.Render.Post event) {
-        GuiRenderer.INSTANCE.postDraw();
+        GuiRenderer.INSTANCE.postDraw(event.getGuiGraphics());
     }
 
     @SubscribeEvent
     public void onRenderTooltip(RenderTooltipEvent.Pre event) {
-        GuiRenderer.INSTANCE.renderTooltip(event.getItemStack());
+        GuiRenderer.INSTANCE.renderTooltip(event.getGraphics());
     }
 
     @SubscribeEvent
