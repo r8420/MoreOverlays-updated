@@ -1,6 +1,7 @@
 package at.ridgo8.moreoverlays;
 
 import at.ridgo8.moreoverlays.config.Config;
+import at.ridgo8.moreoverlays.KeyBindings;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -22,6 +23,8 @@ public class MoreOverlays {
     public MoreOverlays(final IEventBus modBus, final ModContainer modContainer) {
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             modBus.addListener(this::onClientInit);
+            // Register key mappings on the mod event bus in 1.21.9
+            modBus.addListener(KeyBindings::registerKeyMappings);
             Config.initialize();
             modContainer.registerConfig(ModConfig.Type.CLIENT, Config.config_client, MOD_ID + ".toml");
         }

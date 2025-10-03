@@ -7,6 +7,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Player;
@@ -14,8 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import net.minecraft.client.renderer.debug.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.CameraRenderState;
 
 public class CrossOverlayRenderer implements ILightRenderer {
 
@@ -144,7 +144,7 @@ public class CrossOverlayRenderer implements ILightRenderer {
     }
     
     @Override
-    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeCollector collector, CameraRenderState cameraState) {
+    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeStorage submitNodes, net.minecraft.client.renderer.state.CameraRenderState cameraState) {
         // State managed by RenderType in 1.21.5
         // no explicit depth/cull toggling
 
@@ -185,12 +185,13 @@ public class CrossOverlayRenderer implements ILightRenderer {
             if (dot < cullCos) continue;
 
             if (useDebugLines) {
-                VertexConsumer consumer = collector.getBuffer(renderType);
-                if (mode == 1) {
-                    renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
-                } else if (mode == 2) {
-                    renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
-                }
+                float red = (mode == 1) ? nr : ar;
+                float green = (mode == 1) ? ng : ag;
+                float blue = (mode == 1) ? nb : ab;
+                submitNodes.submitCustomGeometry(matrixstack, renderType, (localPose, buffer) -> {
+                    Matrix4f matrix = localPose.pose();
+                    renderCross(buffer, matrixstack, matrix, cameraX, cameraY, cameraZ, bp, red, green, blue);
+                });
             } else {
                 // Thick cross using camera-facing quads
                 float r = (mode == 1) ? nr : ar;
@@ -221,9 +222,11 @@ public class CrossOverlayRenderer implements ILightRenderer {
                 }
 
                 double desiredPixelWidth = 1.0 + Math.max(0.0, configuredWidth - 2.0) * 0.10;
-                VertexConsumer consumer = collector.getBuffer(renderType);
-                addThickLine(consumer, currentMatrix, look, cameraX, cameraY, cameraZ, x0, y, z0, x1, y, z1, r, g, b, desiredPixelWidth);
-                addThickLine(consumer, currentMatrix, look, cameraX, cameraY, cameraZ, x1, y, z0, x0, y, z1, r, g, b, desiredPixelWidth);
+                submitNodes.submitCustomGeometry(matrixstack, renderType, (pose, buffer) -> {
+                    Matrix4f matrix = pose.pose();
+                    addThickLine(buffer, matrix, look, cameraX, cameraY, cameraZ, x0, y, z0, x1, y, z1, r, g, b, desiredPixelWidth);
+                    addThickLine(buffer, matrix, look, cameraX, cameraY, cameraZ, x1, y, z0, x0, y, z1, r, g, b, desiredPixelWidth);
+                });
             }
         }
     }

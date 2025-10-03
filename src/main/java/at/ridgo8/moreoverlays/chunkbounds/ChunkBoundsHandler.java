@@ -1,15 +1,14 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.neoforged.neoforge.client.event.ExtractRenderStateEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,16 +49,21 @@ public class ChunkBoundsHandler {
     }
 
     @SubscribeEvent
-    public void onExtractLevelRenderState(final ExtractRenderStateEvent event) {
+    public void onRenderLevelAfterEntities(RenderLevelStageEvent.AfterEntities event) {
         if (mode == RenderMode.NONE) {
             return;
         }
-
-        if (event.getPoseStack() == null) {
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) {
             return;
         }
 
-        ChunkBoundsRenderer.renderOverlays(event.getPoseStack(), event.getSubmitNodeCollector(), event.getCamera());
+        // Submit custom geometry via submit node storage in 1.21.9
+        ChunkBoundsRenderer.renderOverlays(
+            event.getPoseStack(),
+            mc.gameRenderer.getSubmitNodeStorage(),
+            event.getCamera()
+        );
     }
 
     @SubscribeEvent

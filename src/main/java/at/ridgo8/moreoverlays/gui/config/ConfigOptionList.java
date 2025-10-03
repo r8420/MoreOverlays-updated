@@ -6,7 +6,6 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
  
@@ -65,14 +64,15 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     }
 
 
-    @Override
-    protected void renderDecorations(GuiGraphics guiGraphics, int p_renderDecorations_1_, int p_renderDecorations_2_) {
+    // AbstractSelectionList no longer exposes renderDecorations for override; we emulate tooltip pass
+    public void renderTooltips(GuiGraphics guiGraphics) {
         int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
             int l = this.getRowTop(j) + ITEM_HEIGHT;
             if (l >= this.getY() && k <= this.getBottom()) {
-                ConfigOptionList.OptionEntry e = this.getEntry(j);
+                // Access entries by children() in 1.21.9
+                OptionEntry e = this.children().get(j);
                 e.runRenderTooltip(guiGraphics);
             }
         }
@@ -105,38 +105,32 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     }
 
     private void setPath(List<String> path) {
-        Object val;
-        if (path.isEmpty()) {
-            val = this.rootConfig.getValues();
-        } else {
-            val = this.rootConfig.getValues().getRaw(path);
-        }
+        // Always resolve against spec for structure, values for actual ConfigValue instances
+        UnmodifiableConfig specNode = (path.isEmpty() ? this.rootConfig.getSpec() : (UnmodifiableConfig) this.rootConfig.getSpec().getRaw(path));
+        UnmodifiableConfig valuesNode = (path.isEmpty() ? this.rootConfig.getValues() : (UnmodifiableConfig) this.rootConfig.getValues().getRaw(path));
 
-        if (val instanceof UnmodifiableConfig) {
+        if (specNode instanceof UnmodifiableConfig && valuesNode instanceof UnmodifiableConfig) {
             this.configPath = path;
-            this.currentMap = ((UnmodifiableConfig) val).valueMap();
+            // Prefer structure from spec to avoid empty maps from valuesNode in 21.9
+            this.currentMap = ((UnmodifiableConfig) specNode).valueMap();
             this.refreshEntries();
             this.parent.updatePath(this.getCurrentPath());
-        } else {
-
-            // There's a bug where we end up with a duplicate path here,
-            // which seems to be related to keyboard race conditions allowing
-            // us to 'double' select a child path.
-            // In this event, we attempt to fail gracefully.
-            int n = path.size();
-            if (n > 1) {
-                if (path.get(n - 1) == path.get(n - 2)) {
-                    MoreOverlays.logger.error("Attempting to load duplicate path:", path);
-                    MoreOverlays.logger.warn("This could be caused by key event race condition");
-                    // Trim and reload
-                    path.remove(n - 1);
-                    this.setPath(path);
-                    return;
-                }
-            }
-
-            throw new IllegalArgumentException("Path in config list has to point to another config object");
+            return;
         }
+
+        // Fallback: handle duplicate path selection gracefully
+        int n = path.size();
+        if (n > 1) {
+            if (path.get(n - 1) == path.get(n - 2)) {
+                MoreOverlays.logger.error("Attempting to load duplicate path:", path);
+                MoreOverlays.logger.warn("This could be caused by key event race condition");
+                path.remove(n - 1);
+                this.setPath(path);
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException("Path in config list has to point to another config object");
     }
 
     public void updatePath(List<String> path) {
@@ -168,31 +162,26 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         this.setScrollAmount(0.0D);
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // Only handle clicks that are within the list's vertical bounds to avoid eating clicks for bottom buttons
-        if (mouseY < this.getY() || mouseY > this.getBottom()) {
-            return false;
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (mouseY < this.getY() || mouseY > this.getBottom()) {
-            return false;
-        }
-        return super.mouseReleased(mouseX, mouseY, button);
-    }
+    // 1.21.9 input events are handled by AbstractContainerWidget/ContainerEventHandler via MouseButtonEvent.
+    // Keep bounds checks by relying on default dispatch; no overrides needed here.
 
     // Removed duplicate mouseClicked override (handled above), to avoid consuming clicks for bottom buttons
 
     public void refreshEntries() {
         this.clearEntries();
-        for (final Map.Entry<String, Object> cEntry : this.currentMap.entrySet()) {
+
+        // Enumerate structure from spec to avoid empty maps on values in 21.9
+        UnmodifiableConfig specNode = (UnmodifiableConfig) (this.configPath.isEmpty() ? this.rootConfig.getSpec() : this.rootConfig.getSpec().getRaw(this.configPath));
+        UnmodifiableConfig valuesNode = (UnmodifiableConfig) (this.configPath.isEmpty() ? this.rootConfig.getValues() : this.rootConfig.getValues().getRaw(this.configPath));
+
+        Map<String, Object> specChildren = specNode.valueMap();
+        for (final Map.Entry<String, Object> specEntry : specChildren.entrySet()) {
+            final String key = specEntry.getKey();
+            final Object specVal = specEntry.getValue();
+
             final List<String> fullPath = new ArrayList<>(this.configPath.size() + 1);
             fullPath.addAll(this.configPath);
-            fullPath.add(cEntry.getKey());
+            fullPath.add(key);
 
             // Hide internal migration flags from the visual config screen
             if (fullPath.size() == 2
@@ -206,15 +195,19 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
                 comment = this.comments.getComment(fullPath);
             }
 
-            if (cEntry.getValue() instanceof UnmodifiableConfig) {
+            if (specVal instanceof UnmodifiableConfig) {
                 final String name = I18n.get(categoryTitleKey(fullPath));
-                this.addEntry(new OptionCategory(this, Arrays.asList(cEntry.getKey()), name, comment));
-            } else if (cEntry.getValue() instanceof ModConfigSpec.BooleanValue) {
-                this.addEntry(new OptionBoolean(this, (ModConfigSpec.BooleanValue) cEntry.getValue(), rootConfig.getSpec().get(fullPath)));
-            } else if (cEntry.getValue() instanceof ModConfigSpec.IntValue && cEntry.getKey().toLowerCase().contains("color")) {
-                this.addEntry(new OptionColor(this, (ModConfigSpec.IntValue) cEntry.getValue(), (ModConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
-            } else {
-                this.addEntry(new OptionGeneric<>(this, (ModConfigSpec.ConfigValue<?>) cEntry.getValue(), (ModConfigSpec.ValueSpec) rootConfig.getSpec().get(fullPath)));
+                this.addEntry(new OptionCategory(this, Arrays.asList(key), name, comment));
+            } else if (specVal instanceof ModConfigSpec.ValueSpec) {
+                // Find the corresponding ConfigValue in values tree
+                Object v = valuesNode.getRaw(List.of(key));
+                if (v instanceof ModConfigSpec.BooleanValue) {
+                    this.addEntry(new OptionBoolean(this, (ModConfigSpec.BooleanValue) v, (ModConfigSpec.ValueSpec) specVal));
+                } else if (v instanceof ModConfigSpec.IntValue && key.toLowerCase().contains("color")) {
+                    this.addEntry(new OptionColor(this, (ModConfigSpec.IntValue) v, (ModConfigSpec.ValueSpec) specVal));
+                } else if (v instanceof ModConfigSpec.ConfigValue<?> cv) {
+                    this.addEntry(new OptionGeneric<>(this, cv, (ModConfigSpec.ValueSpec) specVal));
+                }
             }
         }
         this.setFocused(null);
@@ -279,7 +272,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
         }
     }
 
-    public abstract static class OptionEntry extends ContainerObjectSelectionList.Entry<ConfigOptionList.OptionEntry> implements ContainerEventHandler {
+    public abstract static class OptionEntry extends ContainerObjectSelectionList.Entry<ConfigOptionList.OptionEntry> {
         private final ConfigOptionList optionList;
 
         protected int rowTop, rowLeft;
@@ -291,7 +284,6 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             this.optionList = list;
         }
 
-        @Override
         public void render(GuiGraphics guiGraphics, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                            boolean mouseOver, float partialTick) {
             this.rowTop = rowTop;
@@ -334,20 +326,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             return this.optionList;
         }
 
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return super.mouseClicked(mouseX, mouseY, button);
-        }
-
-        @Override
-        public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            return super.mouseReleased(mouseX, mouseY, button);
-        }
-
-        @Override
-        public boolean mouseDragged(double fromX, double fromY, int button, double toX, double toY) {
-            return super.mouseDragged(fromX, fromY, button, toX, toY);
-        }
+        // Use default ContainerEventHandler MouseButtonEvent routing; no double-based overrides
 
         @Override
         public boolean isDragging() {

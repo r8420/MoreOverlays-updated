@@ -57,6 +57,11 @@ public class OptionGeneric<V>
     }
 
     @Override
+    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+        this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
+    }
+
+    @Override
     public List<? extends NarratableEntry> narratables()
     {
         return ImmutableList.of(new NarratableEntry()
@@ -75,8 +80,8 @@ public class OptionGeneric<V>
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean keyReleased(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        final boolean flag = super.keyReleased(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+    public boolean keyReleased(net.minecraft.client.input.KeyEvent event) {
+        final boolean flag = super.keyReleased(event);
 
         try {
             if (this.spec.getClazz() == String.class) {

@@ -132,6 +132,8 @@ public class ConfigScreen extends Screen {
         this.renderMenuBackground(guiGraphics);
         this.renderBlurredBackground(guiGraphics);
         this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
+        // Render tooltips after entries to ensure they appear above the list content
+        this.optionList.renderTooltips(guiGraphics);
         guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, 8, 0xFFFFFFFF);
         if (this.categoryTitle != null) {
             guiGraphics.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 0xFFFFFFFF);
@@ -176,12 +178,11 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int key, int p_keyPressed_2_, int p_keyPressed_3_) {
-        if (key == 256) {
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+        if (event.isEscape()) {
             this.back();
             return true;
-        } else {
-            return super.keyPressed(key, p_keyPressed_2_, p_keyPressed_3_);
         }
+        return super.keyPressed(event);
     }
 }

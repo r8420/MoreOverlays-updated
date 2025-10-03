@@ -2,7 +2,6 @@ package at.ridgo8.moreoverlays.gui.config;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -45,8 +44,8 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
 
     @Override
     public void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
-        // Absolute positioning so hover area matches rendering
-        btnOpen.setPosition(this.rowLeft, this.rowTop);
+        // Absolute positioning within the provided row geometry
+        btnOpen.setPosition(rowLeft, rowTop);
         btnOpen.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
@@ -82,5 +81,10 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
                 output.add(NarratedElementType.TITLE, "");
             }
         });
+    }
+
+    @Override
+    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+        this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
     }
 }

@@ -5,14 +5,15 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.api.lightoverlay.LightOverlayReloadHandlerEvent;
 import at.ridgo8.moreoverlays.config.Config;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 // import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
-import net.neoforged.neoforge.client.event.ExtractRenderStateEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import at.ridgo8.moreoverlays.lightoverlay.render.CrossOverlayRenderer;
 import at.ridgo8.moreoverlays.lightoverlay.render.NumberOverlayRenderer;
 
@@ -119,17 +120,18 @@ public class LightOverlayHandler {
     }
 
     @SubscribeEvent
-    public void onExtractLevelRenderState(final ExtractRenderStateEvent event) {
-        if (!enabled) {
+    public void onRenderLevelAfterEntities(RenderLevelStageEvent.AfterEntities event) {
+        if (!enabled || scanner == null || renderer == null) {
             return;
         }
 
         PoseStack poseStack = event.getPoseStack();
-        if (poseStack == null) {
-            return;
-        }
-
-        renderer.renderOverlays(scanner, poseStack, event.getSubmitNodeCollector(), event.getCamera());
+        renderer.renderOverlays(
+            scanner,
+            poseStack,
+            Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(),
+            event.getCamera()
+        );
     }
 
     @SubscribeEvent

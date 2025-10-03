@@ -50,6 +50,12 @@ public class OptionBoolean
     }
 
     @Override
+    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+        // Delegate to existing absolute-position renderer
+        this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
+    }
+
+    @Override
     public List<? extends GuiEventListener> children() {
         List<GuiEventListener> childs = new ArrayList<>(super.children());
         childs.add(this.btnChange);

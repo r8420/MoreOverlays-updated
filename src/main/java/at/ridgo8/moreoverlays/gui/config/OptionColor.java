@@ -103,8 +103,8 @@ public class OptionColor extends OptionValueEntry<Integer> {
     }
 
     @Override
-    public boolean keyReleased(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        boolean flag = super.keyReleased(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+    public boolean keyReleased(net.minecraft.client.input.KeyEvent event) {
+        boolean flag = super.keyReleased(event);
 
         String raw = this.tfHex.getValue().trim();
         try {
@@ -137,6 +137,11 @@ public class OptionColor extends OptionValueEntry<Integer> {
         }
 
         throw new NumberFormatException("invalid color format");
+    }
+
+    @Override
+    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+        this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
     }
 }
 

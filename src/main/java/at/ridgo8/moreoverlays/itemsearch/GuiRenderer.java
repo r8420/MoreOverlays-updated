@@ -12,8 +12,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
-import com.mojang.blaze3d.platform.Lighting;
-// import at.ridgo8.moreoverlays.util.RenderTypes;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;

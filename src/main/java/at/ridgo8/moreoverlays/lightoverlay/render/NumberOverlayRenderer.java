@@ -3,27 +3,28 @@ package at.ridgo8.moreoverlays.lightoverlay.render;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.debug.SubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
-import java.util.Objects;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-import net.minecraft.client.renderer.debug.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.CameraRenderState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.state.CameraRenderState;
 
 public class NumberOverlayRenderer implements ILightRenderer {
 
@@ -31,10 +32,11 @@ public class NumberOverlayRenderer implements ILightRenderer {
     // private final static ResourceLocation BLANK_TEX = ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
 
     @Override
-    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeCollector collector, CameraRenderState cameraState) {
+    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeStorage submitNodes, CameraRenderState cameraState) {
         // State for numbers now managed by font/buffer sources and internal pipelines in 1.21.5
 
         final Minecraft mc = Minecraft.getInstance();
+        final Font font = mc.font;
 
         final Camera camera = mc.gameRenderer.getMainCamera();
         final double cameraX = camera.getPosition().x;
@@ -105,10 +107,10 @@ public class NumberOverlayRenderer implements ILightRenderer {
                     // Use negative Y scale to correct mirroring when laying flat on the ground
                     matrixstack.scale(scale, -scale, scale);
 
-                    float xoff = -font.width(text) / 2.0f;
+                    FormattedCharSequence visual = Component.literal(text).getVisualOrderText();
+                    float xoff = -font.width(visual) / 2.0f;
                     float yoff = -font.lineHeight / 2.0f;
-                    Matrix4f pose = matrixstack.last().pose();
-                    collector.submitText(matrixstack, 0, text, false, Font.DisplayMode.NORMAL, 0xF000F0, color, 0, 0);
+                    submitNodes.submitText(matrixstack, xoff, yoff, visual, false, Font.DisplayMode.NORMAL, 0xF000F0, color, 0, 0);
                     matrixstack.popPose();
                 }
             }
