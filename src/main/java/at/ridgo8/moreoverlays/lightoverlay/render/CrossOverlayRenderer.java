@@ -4,7 +4,6 @@ import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -15,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import net.minecraft.client.renderer.debug.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.CameraRenderState;
 
 public class CrossOverlayRenderer implements ILightRenderer {
 
@@ -143,7 +144,7 @@ public class CrossOverlayRenderer implements ILightRenderer {
     }
     
     @Override
-    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
+    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeCollector collector, CameraRenderState cameraState) {
         // State managed by RenderType in 1.21.5
         // no explicit depth/cull toggling
 
@@ -157,11 +158,9 @@ public class CrossOverlayRenderer implements ILightRenderer {
 
         double configuredWidth = Config.render_spawnLineWidth.get();
         boolean useDebugLines = configuredWidth <= 2.0;
-        MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
         final var renderType = useDebugLines
                 ? at.ridgo8.moreoverlays.util.RenderTypes.LIGHT_OVERLAY_LINES
                 : at.ridgo8.moreoverlays.util.RenderTypes.LIGHT_OVERLAY_TRIANGLES;
-        VertexConsumer consumer = bufferSource.getBuffer(renderType);
         
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
@@ -186,10 +185,12 @@ public class CrossOverlayRenderer implements ILightRenderer {
             if (dot < cullCos) continue;
 
             if (useDebugLines) {
-                if (mode == 1)
+                VertexConsumer consumer = collector.getBuffer(renderType);
+                if (mode == 1) {
                     renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, nr, ng, nb);
-                else if (mode == 2)
+                } else if (mode == 2) {
                     renderCross(consumer, matrixstack, currentMatrix, cameraX, cameraY, cameraZ, bp, ar, ag, ab);
+                }
             } else {
                 // Thick cross using camera-facing quads
                 float r = (mode == 1) ? nr : ar;
@@ -220,13 +221,11 @@ public class CrossOverlayRenderer implements ILightRenderer {
                 }
 
                 double desiredPixelWidth = 1.0 + Math.max(0.0, configuredWidth - 2.0) * 0.10;
+                VertexConsumer consumer = collector.getBuffer(renderType);
                 addThickLine(consumer, currentMatrix, look, cameraX, cameraY, cameraZ, x0, y, z0, x1, y, z1, r, g, b, desiredPixelWidth);
                 addThickLine(consumer, currentMatrix, look, cameraX, cameraY, cameraZ, x1, y, z0, x0, y, z1, r, g, b, desiredPixelWidth);
             }
         }
-
-        bufferSource.endBatch(renderType);
-        // no explicit restore needed
     }
 }
 

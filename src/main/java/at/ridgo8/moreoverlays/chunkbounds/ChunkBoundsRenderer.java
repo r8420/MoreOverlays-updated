@@ -6,15 +6,16 @@ import org.joml.Matrix4d;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import at.ridgo8.moreoverlays.util.RenderTypes;
-import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.renderer.debug.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.CameraRenderState;
 import org.joml.Vector4d;
 import org.joml.Vector3f;
 
 public class ChunkBoundsRenderer {
 
-    public static void renderOverlays(PoseStack matrixstack) {
+    public static void renderOverlays(PoseStack matrixstack, SubmitNodeCollector collector, CameraRenderState cameraState) {
         Player player = Minecraft.getInstance().player;
         if (player == null) {
             return;
@@ -83,39 +84,39 @@ public class ChunkBoundsRenderer {
         for (int xo = -16 - radius; xo <= radius; xo += 16) {
             for (int yo = -16 - radius; yo <= radius; yo += 16) {
                 if (useDebugLines) {
-                    renderEdge(matrixstack, x0 - xo, z0 - yo, h3, h, renderColorEdge);
+                    renderEdge(matrixstack, collector, x0 - xo, z0 - yo, h3, h, renderColorEdge);
                 } else {
-                    renderEdgeThick(matrixstack, x0 - xo, z0 - yo, h3, h, renderColorEdge, camera, look, desiredPixelWidth);
+                    renderEdgeThick(matrixstack, collector, x0 - xo, z0 - yo, h3, h, renderColorEdge, camera, look, desiredPixelWidth);
                 }
             }
         }
 
         if (Config.chunk_ShowMiddle.get()) {
             if (useDebugLines) {
-                renderEdge(matrixstack, x2, z2, h3, h, renderColorMiddle);
+                renderEdge(matrixstack, collector, x2, z2, h3, h, renderColorMiddle);
             } else {
-                renderEdgeThick(matrixstack, x2, z2, h3, h, renderColorMiddle, camera, look, desiredPixelWidth);
+                renderEdgeThick(matrixstack, collector, x2, z2, h3, h, renderColorMiddle, camera, look, desiredPixelWidth);
             }
         }
 
         if (ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.GRID) {
             if (useDebugLines) {
-                renderGrid(matrixstack, x0, h1, z0 - 0.005f, x0, h2, z1 + 0.005f, 1.0f, renderColorGrid);
-                renderGrid(matrixstack, x1, h1, z0 - 0.005f, x1, h2, z1 + 0.005f, 1.0f, renderColorGrid);
-                renderGrid(matrixstack, x0 - 0.005f, h1, z0, x1 + 0.005f, h2, z0, 1.0f, renderColorGrid);
-                renderGrid(matrixstack, x0 - 0.005f, h1, z1, x1 + 0.005f, h2, z1, 1.0f, renderColorGrid);
+                renderGrid(matrixstack, collector, x0, h1, z0 - 0.005f, x0, h2, z1 + 0.005f, 1.0f, renderColorGrid);
+                renderGrid(matrixstack, collector, x1, h1, z0 - 0.005f, x1, h2, z1 + 0.005f, 1.0f, renderColorGrid);
+                renderGrid(matrixstack, collector, x0 - 0.005f, h1, z0, x1 + 0.005f, h2, z0, 1.0f, renderColorGrid);
+                renderGrid(matrixstack, collector, x0 - 0.005f, h1, z1, x1 + 0.005f, h2, z1, 1.0f, renderColorGrid);
             } else {
-                renderGridThick(matrixstack, x0, h1, z0 - 0.005f, x0, h2, z1 + 0.005f, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
-                renderGridThick(matrixstack, x1, h1, z0 - 0.005f, x1, h2, z1 + 0.005f, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
-                renderGridThick(matrixstack, x0 - 0.005f, h1, z0, x1 + 0.005f, h2, z0, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
-                renderGridThick(matrixstack, x0 - 0.005f, h1, z1, x1 + 0.005f, h2, z1, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
+                renderGridThick(matrixstack, collector, x0, h1, z0 - 0.005f, x0, h2, z1 + 0.005f, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
+                renderGridThick(matrixstack, collector, x1, h1, z0 - 0.005f, x1, h2, z1 + 0.005f, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
+                renderGridThick(matrixstack, collector, x0 - 0.005f, h1, z0, x1 + 0.005f, h2, z0, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
+                renderGridThick(matrixstack, collector, x0 - 0.005f, h1, z1, x1 + 0.005f, h2, z1, 1.0f, renderColorGrid, camera, look, desiredPixelWidth);
             }
         } else if (ChunkBoundsHandler.getMode() == ChunkBoundsHandler.RenderMode.REGIONS) {
             if (useDebugLines) {
-                renderGrid(matrixstack, regionBorderX0 - 0.005f, regionBorderY0 - 0.005f, regionBorderZ0 - 0.005f, regionBorderX1 + 0.005f,
+                renderGrid(matrixstack, collector, regionBorderX0 - 0.005f, regionBorderY0 - 0.005f, regionBorderZ0 - 0.005f, regionBorderX1 + 0.005f,
                         regionBorderY1 + 0.005f, regionBorderZ1 + 0.005f, 16.0f, renderColorGrid);
             } else {
-                renderGridThick(matrixstack, regionBorderX0 - 0.005f, regionBorderY0 - 0.005f, regionBorderZ0 - 0.005f, regionBorderX1 + 0.005f,
+                renderGridThick(matrixstack, collector, regionBorderX0 - 0.005f, regionBorderY0 - 0.005f, regionBorderZ0 - 0.005f, regionBorderX1 + 0.005f,
                         regionBorderY1 + 0.005f, regionBorderZ1 + 0.005f, 16.0f, renderColorGrid, camera, look, desiredPixelWidth);
             }
         }
@@ -123,7 +124,7 @@ public class ChunkBoundsRenderer {
         // No explicit state restoration required with RenderType-based drawing
     }
 
-    public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {
+    public static void renderEdge(PoseStack matrixstack, SubmitNodeCollector collector, double x, double z, double h3, double h, int color) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         Minecraft minecraft = Minecraft.getInstance();
@@ -140,18 +141,16 @@ public class ChunkBoundsRenderer {
 
         z -= cameraZ;
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer consumer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer consumer = collector.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
 
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
 
         addLine(consumer, matrix4d, x, h3, z, x, h, z, r, g, b);
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
-    public static void renderGrid(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1, double step, int color) {
+    public static void renderGrid(PoseStack matrixstack, SubmitNodeCollector collector, double x0, double y0, double z0, double x1, double y1, double z1, double step, int color) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         Minecraft minecraft = Minecraft.getInstance();
@@ -162,8 +161,7 @@ public class ChunkBoundsRenderer {
         double cameraZ = camera.getPosition().z;
 
         
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer renderer = collector.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
@@ -210,7 +208,6 @@ public class ChunkBoundsRenderer {
             drawVertex(renderer, matrix4d, x1 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
         }
 
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
     private static void addLine(VertexConsumer consumer, Matrix4d matrix, double ax, double ay, double az, double bx, double by, double bz, float r, float g, float b) {
@@ -301,12 +298,11 @@ public class ChunkBoundsRenderer {
         drawVertex(renderer, matrix4d, a2x - cameraX, a2y - cameraY, a2z - cameraZ, r, g, b);
     }
 
-    private static void renderEdgeThick(PoseStack matrixstack, double x, double z, double h3, double h, int color,
+    private static void renderEdgeThick(PoseStack matrixstack, SubmitNodeCollector collector, double x, double z, double h3, double h, int color,
                                         Camera camera, Vector3f look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
+        VertexConsumer bufferBuilder = collector.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -318,15 +314,13 @@ public class ChunkBoundsRenderer {
 
         addThickLine(bufferBuilder, matrix4d, look, cameraX, cameraY, cameraZ, x, h3, z, x, h, z, r, g, b, desiredPixelWidth);
 
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
     }
 
-    private static void renderGridThick(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1,
+    private static void renderGridThick(PoseStack matrixstack, SubmitNodeCollector collector, double x0, double y0, double z0, double x1, double y1, double z1,
                                         double step, int color, Camera camera, Vector3f look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
+        VertexConsumer renderer = collector.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -366,10 +360,9 @@ public class ChunkBoundsRenderer {
             addThickLine(renderer, matrix4d, look, cameraX, cameraY, cameraZ, x1, y0, z, x1, y1, z, r, g, b, desiredPixelWidth);
         }
 
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
     }
 
-    public static void renderChunkBounds(PoseStack matrixstack, int chunkX, int chunkZ, int color) {
+    public static void renderChunkBounds(PoseStack matrixstack, SubmitNodeCollector collector, int chunkX, int chunkZ, int color) {
         System.out.println("ChunkBoundsRenderer: Starting to render chunk bounds at (" + chunkX + ", " + chunkZ + ") with color " + color);
         
         Matrix4d matrix4d = new Matrix4d();
@@ -391,8 +384,7 @@ public class ChunkBoundsRenderer {
         h -= cameraY;
         z -= cameraZ;
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer consumer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer consumer = collector.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
 
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
@@ -405,7 +397,6 @@ public class ChunkBoundsRenderer {
         addLine(consumer, matrix4d, x, h3, z + 16, x, h, z + 16, r, g, b);
         addLine(consumer, matrix4d, x + 16, h3, z + 16, x + 16, h, z + 16, r, g, b);
 
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
         System.out.println("ChunkBoundsRenderer: Finished rendering chunk bounds");
     }
 }

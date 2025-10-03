@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.debug.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -22,18 +22,19 @@ import java.util.Objects;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minecraft.client.renderer.debug.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.CameraRenderState;
+
 public class NumberOverlayRenderer implements ILightRenderer {
 
     // Intentionally unused: placeholder for future texture-based digits if needed
     // private final static ResourceLocation BLANK_TEX = ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
 
     @Override
-    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack) {
+    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeCollector collector, CameraRenderState cameraState) {
         // State for numbers now managed by font/buffer sources and internal pipelines in 1.21.5
 
         final Minecraft mc = Minecraft.getInstance();
-        final Font font = mc.font;
-        final MultiBufferSource.BufferSource bufferSource = Objects.requireNonNull(mc.renderBuffers().bufferSource());
 
         final Camera camera = mc.gameRenderer.getMainCamera();
         final double cameraX = camera.getPosition().x;
@@ -107,13 +108,11 @@ public class NumberOverlayRenderer implements ILightRenderer {
                     float xoff = -font.width(text) / 2.0f;
                     float yoff = -font.lineHeight / 2.0f;
                     Matrix4f pose = matrixstack.last().pose();
-                    font.drawInBatch(text, xoff, yoff, color, false, pose, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                    collector.submitText(matrixstack, 0, text, false, Font.DisplayMode.NORMAL, 0xF000F0, color, 0, 0);
                     matrixstack.popPose();
                 }
             }
         }
-
-        bufferSource.endBatch();
     }
 }
 

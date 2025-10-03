@@ -8,7 +8,7 @@ import at.ridgo8.moreoverlays.config.Config;
 import net.minecraft.ChatFormatting;
 // import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.ExtractRenderStateEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -119,10 +119,17 @@ public class LightOverlayHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelStageEvent.AfterParticles event) {
-        if (enabled) {
-            renderer.renderOverlays(scanner, event.getPoseStack());
+    public void onExtractLevelRenderState(final ExtractRenderStateEvent event) {
+        if (!enabled) {
+            return;
         }
+
+        PoseStack poseStack = event.getPoseStack();
+        if (poseStack == null) {
+            return;
+        }
+
+        renderer.renderOverlays(scanner, poseStack, event.getSubmitNodeCollector(), event.getCamera());
     }
 
     @SubscribeEvent

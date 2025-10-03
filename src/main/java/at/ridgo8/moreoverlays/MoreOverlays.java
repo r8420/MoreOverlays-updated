@@ -20,7 +20,7 @@ public class MoreOverlays {
     public static Logger logger = LogManager.getLogger(NAME);
 
     public MoreOverlays(final IEventBus modBus, final ModContainer modContainer) {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             modBus.addListener(this::onClientInit);
             Config.initialize();
             modContainer.registerConfig(ModConfig.Type.CLIENT, Config.config_client, MOD_ID + ".toml");

@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.ExtractRenderStateEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.minecraft.network.chat.Component;
 
@@ -50,10 +50,16 @@ public class ChunkBoundsHandler {
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelStageEvent.AfterParticles event) {
-        if (mode != RenderMode.NONE) {
-            ChunkBoundsRenderer.renderOverlays(event.getPoseStack());
+    public void onExtractLevelRenderState(final ExtractRenderStateEvent event) {
+        if (mode == RenderMode.NONE) {
+            return;
         }
+
+        if (event.getPoseStack() == null) {
+            return;
+        }
+
+        ChunkBoundsRenderer.renderOverlays(event.getPoseStack(), event.getSubmitNodeCollector(), event.getCamera());
     }
 
     @SubscribeEvent
