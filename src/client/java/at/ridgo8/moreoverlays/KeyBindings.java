@@ -1,5 +1,6 @@
 package at.ridgo8.moreoverlays;
 
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -13,19 +14,24 @@ import net.minecraft.client.KeyMapping;
 public class KeyBindings {
 
     public static void init() {
-        
+
+		// Create a custom category for your mod's keybindings
+		KeyMapping.Category category = new KeyMapping.Category(
+				ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "category")
+		);
+
 		KeyMapping lightOverlayKeyMapping = KeyBindingHelper.registerKeyBinding(new KeyMapping(
 			"key." + MoreOverlays.MOD_ID + ".lightoverlay.desc", // The translation key of the keybinding's name
 			InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
 			GLFW.GLFW_KEY_F7, // The keycode of the key
-			"key." + MoreOverlays.MOD_ID + ".category" // The translation key of the keybinding's category.
+			category // The translation key of the keybinding's category.
 		));
 	
 		KeyMapping chunkBoundsKeyMapping = KeyBindingHelper.registerKeyBinding(new KeyMapping(
 			"key." + MoreOverlays.MOD_ID + ".chunkbounds.desc", // The translation key of the keybinding's name
 			InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
 			GLFW.GLFW_KEY_F9, // The keycode of the key
-			"key." + MoreOverlays.MOD_ID + ".category" // The translation key of the keybinding's category.
+			category // The translation key of the keybinding's category.
 		));
 
 

@@ -83,7 +83,7 @@ public abstract class LightScannerBase implements ILightScanner {
     }
 
     public boolean shouldCheck(BlockPos pos, Level world) {
-        if(world.isClientSide){
+        if(world.isClientSide()){
             return true;
         }
         if (ConfigManager.CONFIG.light_IgnoreSpawnList()) {

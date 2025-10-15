@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 @Mixin(DebugRenderer.class)
 public class MixinDebugRenderer {
     @Inject(method = "render", at = @At("HEAD"))
-    private void render(PoseStack poseStack, net.minecraft.client.renderer.culling.Frustum frustum, MultiBufferSource.BufferSource buffers, double x, double y, double z, CallbackInfo ci) {
+    private void render(PoseStack poseStack, net.minecraft.client.renderer.culling.Frustum frustum, MultiBufferSource.BufferSource buffers, double x, double y, double z, boolean b, CallbackInfo ci) {
         if (ChunkBoundsHandler.getMode() != ChunkBoundsHandler.RenderMode.NONE ) {
             ChunkBoundsRenderer.renderOverlays(poseStack);
         }
