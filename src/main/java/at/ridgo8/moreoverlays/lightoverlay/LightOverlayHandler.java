@@ -130,7 +130,7 @@ public class LightOverlayHandler {
             scanner,
             poseStack,
             Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(),
-            event.getCamera()
+            event.getLevelRenderState().cameraRenderState
         );
     }
 

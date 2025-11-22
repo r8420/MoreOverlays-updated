@@ -62,7 +62,7 @@ public class ChunkBoundsHandler {
         ChunkBoundsRenderer.renderOverlays(
             event.getPoseStack(),
             mc.gameRenderer.getSubmitNodeStorage(),
-            event.getCamera()
+            event.getLevelRenderState().cameraRenderState
         );
     }
 
