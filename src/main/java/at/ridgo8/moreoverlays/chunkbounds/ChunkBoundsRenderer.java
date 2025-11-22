@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix4f;
 
@@ -22,81 +21,97 @@ public final class ChunkBoundsRenderer {
             return;
         }
 
-        switch (ChunkBoundsHandler.getMode()) {
-            case NONE -> { }
-            case CORNERS -> renderChunkCorners(poseStack, submitNodes, cameraState, player);
-            case GRID -> renderChunkGrid(poseStack, submitNodes, cameraState, player);
-            case REGIONS -> renderRegionBounds(poseStack, submitNodes, cameraState, player);
+        ChunkBoundsHandler.RenderMode mode = ChunkBoundsHandler.getMode();
+        if (mode == ChunkBoundsHandler.RenderMode.NONE) {
+            return;
         }
-    }
 
-    private static void renderChunkCorners(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState, Player player) {
-        int chunkX = player.chunkPosition().x;
-        int chunkZ = player.chunkPosition().z;
-        drawVerticalEdges(poseStack, submitNodes, cameraState, chunkX, chunkZ, Config.render_chunkEdgeColor.get());
-        if (Config.chunk_ShowMiddle.get()) {
-            drawVerticalEdges(poseStack, submitNodes, cameraState, chunkX + 1, chunkZ + 1, Config.render_chunkMiddleColor.get());
+        final int h = player.level().getHeight();
+        final int h0 = (int) player.getY();
+        final int h1 = Math.min(h, h0 - 16);
+        final int h2 = Math.min(h, h0 + 16);
+        final int h3 = Math.min(h1, 0);
+
+        final int x0 = player.chunkPosition().x * 16;
+        final int x1 = x0 + 16;
+        final int x2 = x0 + 8;
+        final int z0 = player.chunkPosition().z * 16;
+        final int z1 = z0 + 16;
+        final int z2 = z0 + 8;
+
+        int regionX;
+        int regionY = player.chunkPosition().getWorldPosition().getY() / ChunkBoundsHandler.REGION_SIZEY_CUBIC;
+        int regionZ;
+
+        if (player.chunkPosition().x < 0) {
+            regionX = (player.chunkPosition().x + 1) / ChunkBoundsHandler.REGION_SIZEX;
+            regionX--;
+        } else {
+            regionX = player.chunkPosition().x / ChunkBoundsHandler.REGION_SIZEX;
         }
-    }
+        if (player.chunkPosition().getWorldPosition().getY() < 0) {
+            regionY--;
+        }
+        if (player.chunkPosition().z < 0) {
+            regionZ = (player.chunkPosition().z + 1) / ChunkBoundsHandler.REGION_SIZEZ;
+            regionZ--;
+        } else {
+            regionZ = player.chunkPosition().z / ChunkBoundsHandler.REGION_SIZEZ;
+        }
 
-    private static void renderChunkGrid(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState, Player player) {
-        int radius = Math.max(0, Config.chunk_EdgeRadius.get()) + 1;
-        int chunkX = player.chunkPosition().x;
-        int chunkZ = player.chunkPosition().z;
-        for (int dx = -radius; dx <= radius; dx++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                drawVerticalEdges(poseStack, submitNodes, cameraState, chunkX + dx, chunkZ + dz, Config.render_chunkGridColor.get());
+        final int regionBorderX0 = regionX * ChunkBoundsHandler.REGION_SIZEX * 16;
+        final int regionBorderY0 = (regionY * ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16) - 64;
+        final int regionBorderZ0 = regionZ * ChunkBoundsHandler.REGION_SIZEZ * 16;
+        final int regionBorderX1 = regionBorderX0 + (ChunkBoundsHandler.REGION_SIZEX * 16);
+        final int regionBorderY1 = regionBorderY0 + (ChunkBoundsHandler.REGION_SIZEY_CUBIC * 16) - 128;
+        final int regionBorderZ1 = regionBorderZ0 + (ChunkBoundsHandler.REGION_SIZEZ * 16);
+
+        final int radius = Math.max(0, Config.chunk_EdgeRadius.get()) * 16;
+        final int renderColorEdge = Config.render_chunkEdgeColor.get();
+        final int renderColorMiddle = Config.render_chunkMiddleColor.get();
+        final int renderColorGrid = Config.render_chunkGridColor.get();
+
+        for (int xo = -16 - radius; xo <= radius; xo += 16) {
+            for (int zo = -16 - radius; zo <= radius; zo += 16) {
+                double ex = x0 - xo;
+                double ez = z0 - zo;
+                renderLine(poseStack, submitNodes, cameraState, ex, h3, ez, ex, h, ez, renderColorEdge);
             }
         }
-    }
 
-    private static void renderRegionBounds(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState, Player player) {
-        int regionX = Math.floorDiv(player.chunkPosition().x, ChunkBoundsHandler.REGION_SIZEX);
-        int regionZ = Math.floorDiv(player.chunkPosition().z, ChunkBoundsHandler.REGION_SIZEZ);
-        int minChunkX = regionX * ChunkBoundsHandler.REGION_SIZEX;
-        int minChunkZ = regionZ * ChunkBoundsHandler.REGION_SIZEZ;
-        int maxChunkX = minChunkX + ChunkBoundsHandler.REGION_SIZEX;
-        int maxChunkZ = minChunkZ + ChunkBoundsHandler.REGION_SIZEZ;
+        // Single yellow line in the center of the current chunk
+        if (Config.chunk_ShowMiddle.get()) {
+            renderLine(poseStack, submitNodes, cameraState, x2, h3, z2, x2, h, z2, renderColorMiddle);
+        }
 
-        double camY = cameraState.pos.y;
-        renderBox(poseStack, submitNodes, cameraState,
-            minChunkX * 16, camY - 64, minChunkZ * 16,
-            maxChunkX * 16, camY + 64, maxChunkZ * 16,
-            Config.render_chunkGridColor.get());
-    }
-
-    private static void drawVerticalEdges(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState, int chunkX, int chunkZ, int color) {
-        double minX = chunkX * 16;
-        double minZ = chunkZ * 16;
-        double maxX = minX + 16;
-        double maxZ = minZ + 16;
-        double minY = cameraState.pos.y - 16;
-        double maxY = cameraState.pos.y + 16;
-
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, minZ, minX, maxY, minZ, color);
-        renderLine(poseStack, submitNodes, cameraState, maxX, minY, minZ, maxX, maxY, minZ, color);
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, maxZ, minX, maxY, maxZ, color);
-        renderLine(poseStack, submitNodes, cameraState, maxX, minY, maxZ, maxX, maxY, maxZ, color);
-    }
-
-    private static void renderBox(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState,
-                                  double minX, double minY, double minZ,
-                                  double maxX, double maxY, double maxZ,
-                                  int argb) {
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, minZ, maxX, minY, minZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, maxZ, maxX, minY, maxZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, minX, maxY, minZ, maxX, maxY, minZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, minX, maxY, maxZ, maxX, maxY, maxZ, argb);
-
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, minZ, minX, maxY, minZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, maxX, minY, minZ, maxX, maxY, minZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, maxZ, minX, maxY, maxZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, maxX, minY, maxZ, maxX, maxY, maxZ, argb);
-
-        renderLine(poseStack, submitNodes, cameraState, minX, minY, minZ, minX, minY, maxZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, minX, maxY, minZ, minX, maxY, maxZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, maxX, minY, minZ, maxX, minY, maxZ, argb);
-        renderLine(poseStack, submitNodes, cameraState, maxX, maxY, minZ, maxX, maxY, maxZ, argb);
+        // Extra overlays depending on mode
+        if (mode == ChunkBoundsHandler.RenderMode.GRID) {
+            double eps = 0.005;
+            // Four green grid faces around the current chunk
+            renderGrid(poseStack, submitNodes, cameraState,
+                x0, h1, z0 - eps,
+                x0, h2, z1 + eps,
+                1.0, renderColorGrid);
+            renderGrid(poseStack, submitNodes, cameraState,
+                x1, h1, z0 - eps,
+                x1, h2, z1 + eps,
+                1.0, renderColorGrid);
+            renderGrid(poseStack, submitNodes, cameraState,
+                x0 - eps, h1, z0,
+                x1 + eps, h2, z0,
+                1.0, renderColorGrid);
+            renderGrid(poseStack, submitNodes, cameraState,
+                x0 - eps, h1, z1,
+                x1 + eps, h2, z1,
+                1.0, renderColorGrid);
+        } else if (mode == ChunkBoundsHandler.RenderMode.REGIONS) {
+            double eps = 0.005;
+            // Full region grid box, fixed to region top/bottom and independent of player Y
+            renderGrid(poseStack, submitNodes, cameraState,
+                regionBorderX0 - eps, regionBorderY0 - eps, regionBorderZ0 - eps,
+                regionBorderX1 + eps, regionBorderY1 + eps, regionBorderZ1 + eps,
+                16.0, renderColorGrid);
+        }
     }
 
     private static void renderLine(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState,
@@ -119,6 +134,50 @@ public final class ChunkBoundsRenderer {
             Matrix4f matrix = localPose.pose();
             addLineSegment(buffer, matrix, cameraX, cameraY, cameraZ, ax, ay, az, bx, by, bz, r, g, b, a);
         });
+    }
+
+    private static void renderGrid(PoseStack poseStack, SubmitNodeStorage submitNodes, CameraRenderState cameraState,
+                                   double x0, double y0, double z0,
+                                   double x1, double y1, double z1,
+                                   double step, int argb) {
+        double sx = Math.max(1.0e-6, step);
+        double sy = Math.max(1.0e-6, step);
+        double sz = Math.max(1.0e-6, step);
+
+        // Clamp ordering
+        double minX = Math.min(x0, x1);
+        double maxX = Math.max(x0, x1);
+        double minY = Math.min(y0, y1);
+        double maxY = Math.max(y0, y1);
+        double minZ = Math.min(z0, z1);
+        double maxZ = Math.max(z0, z1);
+
+        // Lines parallel to Y at Z surfaces over X steps
+        for (double x = minX; x <= maxX + 1.0e-6; x += sx) {
+            renderLine(poseStack, submitNodes, cameraState, x, minY, minZ, x, maxY, minZ, argb);
+            renderLine(poseStack, submitNodes, cameraState, x, minY, maxZ, x, maxY, maxZ, argb);
+            // Lines parallel to Z at Y min/max over X steps
+            renderLine(poseStack, submitNodes, cameraState, x, minY, minZ, x, minY, maxZ, argb);
+            renderLine(poseStack, submitNodes, cameraState, x, maxY, minZ, x, maxY, maxZ, argb);
+        }
+
+        // Lines parallel to X at Z surfaces over Y steps
+        for (double y = minY; y <= maxY + 1.0e-6; y += sy) {
+            renderLine(poseStack, submitNodes, cameraState, minX, y, minZ, maxX, y, minZ, argb);
+            renderLine(poseStack, submitNodes, cameraState, minX, y, maxZ, maxX, y, maxZ, argb);
+            // Lines parallel to Z at X min/max over Y steps
+            renderLine(poseStack, submitNodes, cameraState, minX, y, minZ, minX, y, maxZ, argb);
+            renderLine(poseStack, submitNodes, cameraState, maxX, y, minZ, maxX, y, maxZ, argb);
+        }
+
+        // Lines parallel to X at Y planes over Z steps
+        for (double z = minZ; z <= maxZ + 1.0e-6; z += sz) {
+            renderLine(poseStack, submitNodes, cameraState, minX, minY, z, maxX, minY, z, argb);
+            renderLine(poseStack, submitNodes, cameraState, minX, maxY, z, maxX, maxY, z, argb);
+            // Lines parallel to Y at X min/max over Z steps
+            renderLine(poseStack, submitNodes, cameraState, minX, minY, z, minX, maxY, z, argb);
+            renderLine(poseStack, submitNodes, cameraState, maxX, minY, z, maxX, maxY, z, argb);
+        }
     }
 
     private static void addLineSegment(VertexConsumer consumer, Matrix4f matrix,
@@ -145,6 +204,4 @@ public final class ChunkBoundsRenderer {
         consumer.addVertex(atx, aty, atz).setColor(r, g, b, a);
         consumer.addVertex(btx, bty, btz).setColor(r, g, b, a);
     }
-
-    // Debug overlay helper removed in 1.21.9; kept out to avoid stale API references.
 }
