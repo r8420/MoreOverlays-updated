@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+	id 'fabric-loom' version '1.13-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -60,10 +60,10 @@ dependencies {
     modImplementation "io.wispforest:owo-lib:${project.owo_version}"
     include "io.wispforest:owo-sentinel:${project.owo_version}"
 
-	modCompileOnlyApi("mezz.jei:jei-1.21.1-common-api:19.22.1.316")
-	modCompileOnlyApi("mezz.jei:jei-1.21.1-fabric-api:19.22.1.316")
+	modCompileOnlyApi("mezz.jei:jei-1.21.10-common-api:26.1.1.21")
+	modCompileOnlyApi("mezz.jei:jei-1.21.10-fabric-api:26.1.1.21")
 	// at runtime, use the full JEI jar for Fabric
-	// modRuntimeOnly("mezz.jei:jei-1.21.1-fabric:19.22.1.316")
+	modRuntimeOnly("mezz.jei:jei-1.21.10-fabric:26.1.1.21")
 	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
