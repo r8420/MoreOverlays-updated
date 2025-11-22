@@ -78,7 +78,7 @@ public class ChunkBoundsHandler {
 
         int y = 0;
         for (String text : regionInfo) {
-            event.getGuiGraphics().drawString(mc.font, text, 10, y += 10, 0xFFFFFF);
+            event.getGuiGraphics().drawString(mc.font, text, 10, y += 10, 0xFFFFFFFF);
         }
     }
 
