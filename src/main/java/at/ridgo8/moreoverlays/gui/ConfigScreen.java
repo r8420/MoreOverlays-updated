@@ -131,14 +131,18 @@ public class ConfigScreen extends Screen {
         }
         this.renderMenuBackground(guiGraphics);
         this.renderBlurredBackground(guiGraphics);
-        this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
-        // Render tooltips after entries to ensure they appear above the list content
-        this.optionList.renderTooltips(guiGraphics);
+
+        // Let the base Screen render all child widgets (option list + bottom buttons)
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+        // Draw titles on top of the child widgets
         guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, 8, 0xFFFFFFFF);
         if (this.categoryTitle != null) {
             guiGraphics.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 0xFFFFFFFF);
         }
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+        // Finally, render config entry tooltips so they appear above everything else
+        this.optionList.renderTooltips(guiGraphics, mouseX, mouseY);
     }
 
     private void save() {

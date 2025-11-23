@@ -64,16 +64,16 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     }
 
 
-    // AbstractSelectionList no longer exposes renderDecorations for override; we emulate tooltip pass
-    public void renderTooltips(GuiGraphics guiGraphics) {
+    // AbstractSelectionList no longer exposes renderDecorations for override; we emulate a second tooltip pass
+    public void renderTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
-            int l = this.getRowTop(j) + ITEM_HEIGHT;
+            int l = this.getRowBottom(j);
             if (l >= this.getY() && k <= this.getBottom()) {
-                // Access entries by children() in 1.21.9
+                // Visible entry, delegate tooltip rendering using current mouse position
                 OptionEntry e = this.children().get(j);
-                e.runRenderTooltip(guiGraphics);
+                e.runRenderTooltip(guiGraphics, mouseX, mouseY);
             }
         }
     }
@@ -275,27 +275,8 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
     public abstract static class OptionEntry extends ContainerObjectSelectionList.Entry<ConfigOptionList.OptionEntry> {
         private final ConfigOptionList optionList;
 
-        protected int rowTop, rowLeft;
-
-        private int rowWidth, itemHeight, mouseX, mouseY;
-        private boolean mouseOver;
-
         public OptionEntry(ConfigOptionList list) {
             this.optionList = list;
-        }
-
-        public void render(GuiGraphics guiGraphics, int itemindex, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
-                           boolean mouseOver, float partialTick) {
-            this.rowTop = rowTop;
-            this.rowLeft = rowLeft;
-            this.rowWidth = rowWidth;
-            this.itemHeight = itemHeight;
-            this.mouseX = mouseX;
-            this.mouseY = mouseY;
-            this.mouseOver = mouseOver;
-
-            // No pose translation; controls must position themselves in absolute screen space
-            renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
         }
 
         protected abstract void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
@@ -303,15 +284,22 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
         /*
          * This is part of the "hacky" way to render tooltips above the other entries.
-         * The values to render are stored by the render() method and after that the ConfigOptionList iterates over the entries again
-         * to call this runRenderTooltip() which calls the renderTooltip() method with the stored parameters.
-         * Not the best way but AbstractOptionList doesn't seem to have any better hooks to do that.
-         * A custom Implementation would be better but I'm too lazy to do that
+         * We let the list render all rows normally, then the screen calls back into
+         * {@link ConfigOptionList#renderTooltips} which in turn calls this method.
+         * We recompute the current row geometry from the entry itself and only render
+         * a tooltip when the mouse is actually over this entry.
          */
-        public void runRenderTooltip(GuiGraphics guiGraphics) {
-            if (this.mouseOver) {
-                this.renderTooltip(guiGraphics, this.rowTop, this.rowLeft, this.rowWidth, this.itemHeight, this.mouseX, this.mouseY);
+        public void runRenderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+            if (!this.isMouseOver(mouseX, mouseY)) {
+                return;
             }
+
+            int rowTop = this.getContentY();
+            int rowLeft = this.getContentX();
+            int rowWidth = this.getContentWidth();
+            int itemHeight = this.getContentHeight();
+
+            this.renderTooltip(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
         }
 
         protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
