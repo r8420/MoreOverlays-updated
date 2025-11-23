@@ -22,7 +22,6 @@ public class Config {
     public static ModConfigSpec.IntValue render_chunkEdgeColor;
     public static ModConfigSpec.IntValue render_chunkGridColor;
     public static ModConfigSpec.IntValue render_chunkMiddleColor;
-    public static ModConfigSpec.BooleanValue render_chunkThick;
     public static ModConfigSpec.IntValue render_spawnAColor;
     public static ModConfigSpec.IntValue render_spawnNColor;
     public static ModConfigSpec.IntValue render_spawnSafeColor;
@@ -64,7 +63,6 @@ public class Config {
         render_chunkEdgeColor = builder.comment("Color for the chunk edge").defineInRange("chunk_edge_color", 0xFF0000, 0, 0xFFFFFF);
         render_chunkGridColor = builder.comment("Color for the chunk grid").defineInRange("chunk_grid_color", 0x00FF00, 0, 0xFFFFFF);
         render_chunkMiddleColor = builder.comment("Color for the middle chunk line").defineInRange("chunk_mid_color", 0xFFFF00, 0, 0xFFFFFF);
-        render_chunkThick = builder.comment("Use thicker lines for chunk boundaries").define("chunk_line_thick", false);
         render_spawnAColor = builder.comment("Color the X that marks \"Spawns always possible\"").defineInRange("spawn_always_color", 0xFF0000, 0, 0xFFFFFF);
         render_spawnNColor = builder.comment("Color the X that marks \"Spawns at night possible\"").defineInRange("spawn_night_color", 0xFFFF00, 0, 0xFFFFFF);
         render_spawnSafeColor = builder.comment("Color for the number that marks \"No spawns possible\"").defineInRange("spawn_safe_color", 0x00FF00, 0, 0xFFFFFF);
