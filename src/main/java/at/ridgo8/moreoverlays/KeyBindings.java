@@ -5,15 +5,15 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.KeyMapping.Category;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.util.Lazy;
-import net.neoforged.bus.api.SubscribeEvent;
 
 public class KeyBindings {
 
     // Lazy initialization for key mappings
-    private static final Category CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "main"));
+    private static final Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MoreOverlays.MOD_ID, "main"));
 
     public static final Lazy<KeyMapping> lightOverlayKeyMapping = Lazy.of(() ->
         new KeyMapping("key." + MoreOverlays.MOD_ID + ".lightoverlay.desc",

@@ -3,12 +3,13 @@ package at.ridgo8.moreoverlays.lightoverlay.render;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.Config;
-import com.mojang.math.Axis;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -17,19 +18,16 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Matrix4f;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.state.CameraRenderState;
-
 public class NumberOverlayRenderer implements ILightRenderer {
 
     // Intentionally unused: placeholder for future texture-based digits if needed
-    // private final static ResourceLocation BLANK_TEX = ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
+    // private static final net.minecraft.resources.Identifier BLANK_TEX =
+    //     net.minecraft.resources.Identifier.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
 
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeStorage submitNodes, CameraRenderState cameraState) {
@@ -39,9 +37,9 @@ public class NumberOverlayRenderer implements ILightRenderer {
         final Font font = mc.font;
 
         final Camera camera = mc.gameRenderer.getMainCamera();
-        final double cameraX = camera.getPosition().x;
-        final double cameraY = camera.getPosition().y;
-        final double cameraZ = camera.getPosition().z;
+        final double cameraX = camera.position().x();
+        final double cameraY = camera.position().y();
+        final double cameraZ = camera.position().z();
 
         final Player player = mc.player;
         if (player == null || mc.level == null) {

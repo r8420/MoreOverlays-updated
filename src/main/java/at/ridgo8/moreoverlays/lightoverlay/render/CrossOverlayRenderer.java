@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -15,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class CrossOverlayRenderer implements ILightRenderer {
 
@@ -90,7 +89,7 @@ public class CrossOverlayRenderer implements ILightRenderer {
         return Math.max(widthWorld, 0.01);
     }
 
-    private static void addThickLine(VertexConsumer consumer, Matrix4f currentMatrix, Vector3f cameraLook,
+    private static void addThickLine(VertexConsumer consumer, Matrix4f currentMatrix, Vector3fc cameraLook,
                                      double cameraX, double cameraY, double cameraZ,
                                      double ax, double ay, double az, double bx, double by, double bz,
                                      float r, float g, float b, double desiredPixelWidth) {
@@ -109,9 +108,9 @@ public class CrossOverlayRenderer implements ILightRenderer {
         float vy = (float) (by - ay);
         float vz = (float) (bz - az);
 
-        float px = vy * cameraLook.z - vz * cameraLook.y;
-        float py = vz * cameraLook.x - vx * cameraLook.z;
-        float pz = vx * cameraLook.y - vy * cameraLook.x;
+        float px = vy * cameraLook.z() - vz * cameraLook.y();
+        float py = vz * cameraLook.x() - vx * cameraLook.z();
+        float pz = vx * cameraLook.y() - vy * cameraLook.x();
         float plen = (float) Math.sqrt(px * px + py * py + pz * pz);
         if (plen < 1.0e-4f) {
             float ux = 0f, uy = 1f, uz = 0f;
@@ -164,11 +163,10 @@ public class CrossOverlayRenderer implements ILightRenderer {
         
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
-        double cameraX = camera.getPosition().x;
-        double cameraY = camera.getPosition().y;
-        double cameraZ = camera.getPosition().z;
-        Matrix4f currentMatrix = matrixstack.last().pose();
-        Vector3f look = camera.getLookVector();
+        double cameraX = camera.position().x();
+        double cameraY = camera.position().y();
+        double cameraZ = camera.position().z();
+        Vector3fc look = camera.forwardVector();
         float cullCos = (float)Math.cos(Math.toRadians(105.0));
 
         for (Pair<BlockPos, Byte> entry : scanner.getLightModes()) {
@@ -180,7 +178,7 @@ public class CrossOverlayRenderer implements ILightRenderer {
             float vy = (float)((bp.getY() + 0.5) - cameraY);
             float vz = (float)((bp.getZ() + 0.5) - cameraZ);
             float vLenInv = 1.0f / (float)Math.max(1e-6, Math.sqrt(vx*vx + vy*vy + vz*vz));
-            float dot = (vx * look.x) + (vy * look.y) + (vz * look.z);
+            float dot = (float) ((vx * look.x()) + (vy * look.y()) + (vz * look.z()));
             dot *= vLenInv;
             if (dot < cullCos) continue;
 

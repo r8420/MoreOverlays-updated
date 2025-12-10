@@ -5,18 +5,19 @@ import at.ridgo8.moreoverlays.api.itemsearch.SlotViewWrapper;
 import at.ridgo8.moreoverlays.config.Config;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.world.item.Item;
 import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec2;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -156,6 +157,11 @@ public class GuiRenderer {
             views.clear();
         }
 
+        if (JeiModule.filter == null) {
+            // JEI runtime not available (e.g., on MC 1.21.11 before JEI is updated); skip overlay rendering.
+            return;
+        }
+
         List<ItemStack> filteredIngredients = JeiModule.filter.getFilteredIngredients(VanillaTypes.ITEM_STACK);
         if(filteredIngredients.size() > Config.search_maxResults.get()) return;
 
@@ -204,9 +210,16 @@ public class GuiRenderer {
         final Screen screen = Minecraft.getInstance().screen;
         if (!canShowIn(screen))
             return;
-        if (enabled && !JeiModule.filter.getFilterText().equals(lastFilterText)) {
-            lastFilterText = JeiModule.filter.getFilterText();
-            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
+        if (enabled && JeiModule.filter != null) {
+            String currentFilterText = JeiModule.filter.getFilterText();
+            if (!currentFilterText.equals(lastFilterText)) {
+                lastFilterText = currentFilterText;
+                emptyFilter = lastFilterText.replace(" ", "").isEmpty();
+            }
+        } else {
+            // No JEI filter available; treat as empty search so overlays are disabled.
+            lastFilterText = "";
+            emptyFilter = true;
         }
 
 
@@ -226,8 +239,13 @@ public class GuiRenderer {
         }
         enabled = !enabled;
         if (enabled) {
-            lastFilterText = JeiModule.filter.getFilterText();
-            emptyFilter = lastFilterText.replace(" ", "").isEmpty();
+            if (JeiModule.filter != null) {
+                lastFilterText = JeiModule.filter.getFilterText();
+                emptyFilter = lastFilterText.replace(" ", "").isEmpty();
+            } else {
+                lastFilterText = "";
+                emptyFilter = true;
+            }
         } else {
             lastFilterText = "";
         }
