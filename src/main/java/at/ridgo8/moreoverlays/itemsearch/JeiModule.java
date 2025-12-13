@@ -2,14 +2,20 @@ package at.ridgo8.moreoverlays.itemsearch;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.util.ReflectionUtil;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.subtypes.UidContext;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.runtime.IIngredientFilter;
 import mezz.jei.api.runtime.IIngredientListOverlay;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
-public class JeiModule {
+@JeiPlugin
+public class JeiModule implements IModPlugin {
 
     public static IIngredientListOverlay overlay;
     public static IIngredientFilter filter;
@@ -57,5 +63,32 @@ public class JeiModule {
             return ItemUtils.matchNBT(stack1, stack2);
         }
         return jeiHelpers.getStackHelper().isEquivalent(stack1, stack2, UidContext.Ingredient);
+    }
+
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        overlay = jeiRuntime.getIngredientListOverlay();
+        filter = jeiRuntime.getIngredientFilter();
+        jeiHelpers = jeiRuntime.getJeiHelpers();
+        missingTextFieldLogged = false;
+        updateModule();
+    }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
+        jeiHelpers = registration.getJeiHelpers();
+    }
+
+    @Override
+    public void onRuntimeUnavailable() {
+        overlay = null;
+        filter = null;
+        textField = null;
+        missingTextFieldLogged = false;
+    }
+
+    @Override
+    public Identifier getPluginUid() {
+        return Identifier.fromNamespaceAndPath(MoreOverlays.MOD_ID, "jei_module");
     }
 }
