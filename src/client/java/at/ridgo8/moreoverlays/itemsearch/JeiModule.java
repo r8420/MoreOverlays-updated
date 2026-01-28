@@ -11,7 +11,7 @@ import mezz.jei.api.runtime.IIngredientFilter;
 import mezz.jei.api.runtime.IIngredientListOverlay;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 @JeiPlugin
@@ -78,7 +78,7 @@ public class JeiModule implements IModPlugin {
     }
 
     @Override
-    public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "jei_module");
+    public Identifier getPluginUid() {
+        return Identifier.fromNamespaceAndPath(MoreOverlays.MOD_ID, "jei_module");
     }
 }

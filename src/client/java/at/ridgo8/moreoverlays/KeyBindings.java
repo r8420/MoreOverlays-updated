@@ -1,6 +1,6 @@
 package at.ridgo8.moreoverlays;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -17,7 +17,7 @@ public class KeyBindings {
 
 		// Create a custom category for your mod's keybindings
 		KeyMapping.Category category = new KeyMapping.Category(
-				ResourceLocation.fromNamespaceAndPath(MoreOverlays.MOD_ID, "category")
+				Identifier.fromNamespaceAndPath(MoreOverlays.MOD_ID, "category")
 		);
 
 		KeyMapping lightOverlayKeyMapping = KeyBindingHelper.registerKeyBinding(new KeyMapping(

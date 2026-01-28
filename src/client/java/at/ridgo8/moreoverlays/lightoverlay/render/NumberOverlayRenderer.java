@@ -32,9 +32,9 @@ public class NumberOverlayRenderer implements ILightRenderer {
         final MultiBufferSource.BufferSource bufferSource = Objects.requireNonNull(mc.renderBuffers().bufferSource());
 
         final Camera camera = mc.gameRenderer.getMainCamera();
-        final double cameraX = camera.getPosition().x;
-        final double cameraY = camera.getPosition().y;
-        final double cameraZ = camera.getPosition().z;
+        final double cameraX = camera.position().x;
+        final double cameraY = camera.position().y;
+        final double cameraZ = camera.position().z;
 
         final Player player = mc.player;
         if (player == null || mc.level == null) {

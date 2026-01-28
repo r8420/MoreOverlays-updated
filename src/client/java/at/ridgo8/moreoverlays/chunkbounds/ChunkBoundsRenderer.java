@@ -9,7 +9,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector4d;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class ChunkBoundsRenderer {
 
@@ -66,7 +66,7 @@ public class ChunkBoundsRenderer {
 
         boolean useDebugLines = !ConfigManager.CONFIG.render_chunkThick();
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        org.joml.Vector3f look = camera.getLookVector();
+        org.joml.Vector3fc look = camera.forwardVector();
         double desiredPixelWidth = Math.max(0.1, (double) ConfigManager.CONFIG.render_chunkLineWidth());
 
         for (int xo = -16 - radius; xo <= radius; xo += 16) {
@@ -116,9 +116,9 @@ public class ChunkBoundsRenderer {
         Minecraft minecraft = Minecraft.getInstance();
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
-        double cameraX = camera.getPosition().x;
-        double cameraY = camera.getPosition().y;
-        double cameraZ = camera.getPosition().z;
+        double cameraX = camera.position().x;
+        double cameraY = camera.position().y;
+        double cameraZ = camera.position().z;
 
         x -= cameraX;
         h3 -= cameraY;
@@ -142,9 +142,9 @@ public class ChunkBoundsRenderer {
         Minecraft minecraft = Minecraft.getInstance();
 
         Camera camera = minecraft.gameRenderer.getMainCamera();
-        double cameraX = camera.getPosition().x;
-        double cameraY = camera.getPosition().y;
-        double cameraZ = camera.getPosition().z;
+        double cameraX = camera.position().x;
+        double cameraY = camera.position().y;
+        double cameraZ = camera.position().z;
 
         net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
@@ -225,7 +225,7 @@ public class ChunkBoundsRenderer {
         return Math.max(widthWorld, 0.01);
     }
 
-    private static void addThickLine(VertexConsumer renderer, Matrix4d matrix4d, org.joml.Vector3f cameraLook,
+    private static void addThickLine(VertexConsumer renderer, Matrix4d matrix4d, org.joml.Vector3fc cameraLook,
                                      double cameraX, double cameraY, double cameraZ,
                                      double ax, double ay, double az, double bx, double by, double bz,
                                      float r, float g, float b, double desiredPixelWidth) {
@@ -244,9 +244,9 @@ public class ChunkBoundsRenderer {
         float vy = (float) (by - ay);
         float vz = (float) (bz - az);
 
-        float px = vy * cameraLook.z - vz * cameraLook.y;
-        float py = vz * cameraLook.x - vx * cameraLook.z;
-        float pz = vx * cameraLook.y - vy * cameraLook.x;
+        float px = vy * cameraLook.z() - vz * cameraLook.y();
+        float py = vz * cameraLook.x() - vx * cameraLook.z();
+        float pz = vx * cameraLook.y() - vy * cameraLook.x();
         float plen = (float) Math.sqrt(px * px + py * py + pz * pz);
         if (plen < 1.0e-4f) {
             float ux = 0f, uy = 1f, uz = 0f;
@@ -278,15 +278,15 @@ public class ChunkBoundsRenderer {
     }
 
     private static void renderEdgeThick(PoseStack matrixstack, double x, double z, double h3, double h, int color,
-                                        Camera camera, org.joml.Vector3f look, double desiredPixelWidth) {
+                                        Camera camera, org.joml.Vector3fc look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
-        double cameraX = camera.getPosition().x;
-        double cameraY = camera.getPosition().y;
-        double cameraZ = camera.getPosition().z;
+        double cameraX = camera.position().x;
+        double cameraY = camera.position().y;
+        double cameraZ = camera.position().z;
 
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
@@ -298,15 +298,15 @@ public class ChunkBoundsRenderer {
     }
 
     private static void renderGridThick(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1,
-                                        double step, int color, Camera camera, org.joml.Vector3f look, double desiredPixelWidth) {
+                                        double step, int color, Camera camera, org.joml.Vector3fc look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
         net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
-        double cameraX = camera.getPosition().x;
-        double cameraY = camera.getPosition().y;
-        double cameraZ = camera.getPosition().z;
+        double cameraX = camera.position().x;
+        double cameraY = camera.position().y;
+        double cameraZ = camera.position().z;
 
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
