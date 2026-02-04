@@ -1,5 +1,6 @@
 package at.ridgo8.moreoverlays;
 
+import at.ridgo8.moreoverlays.compatibility.IrisCompatibility;
 import at.ridgo8.moreoverlays.itemsearch.GuiHandler;
 import at.ridgo8.moreoverlays.itemsearch.GuiUtils;
 import net.fabricmc.loader.api.FabricLoader;
@@ -22,5 +23,6 @@ public final class ClientRegistrationHandler {
         KeyBindings.init();
         GuiUtils.initUtil();
         GuiHandler.init();
+        IrisCompatibility.assignPipelines();
     }
 }

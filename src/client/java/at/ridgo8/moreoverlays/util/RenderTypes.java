@@ -19,7 +19,7 @@ public final class RenderTypes {
             .buildSnippet();
 
 
-    private static final RenderPipeline LINE_PIPELINE =
+    public static final RenderPipeline LINE_PIPELINE =
         RenderPipeline.builder(new RenderPipeline.Snippet[]{MATRICES_PROJECTION_SNIPPET})
             .withLocation("pipeline/debug_lines")
             .withVertexShader("core/position_color")
@@ -33,7 +33,7 @@ public final class RenderTypes {
             .bufferSize(256)
             .createRenderSetup();
 
-    private static final RenderPipeline TRIANGLE_PIPELINE =
+    public static final RenderPipeline TRIANGLE_PIPELINE =
         RenderPipeline.builder(new RenderPipeline.Snippet[]{MATRICES_PROJECTION_SNIPPET})
             .withVertexShader("core/position_color")
             .withLocation("position_color")
