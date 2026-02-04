@@ -1,6 +1,7 @@
 package at.ridgo8.moreoverlays;
 
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
+import at.ridgo8.moreoverlays.compatibility.IrisCompatibility;
 import at.ridgo8.moreoverlays.config.Config;
 import at.ridgo8.moreoverlays.gui.ConfigScreen;
 import at.ridgo8.moreoverlays.itemsearch.GuiHandler;
@@ -42,6 +43,7 @@ public final class ClientRegistrationHandler {
         AlternateLightHandler.init();
 
         GuiHandler.init();
+        IrisCompatibility.assignPipelines();
 
         // Quick fix for light level in 1.18 (need better fix)
         if (!Config.light_FinishedMigration.get()) {
