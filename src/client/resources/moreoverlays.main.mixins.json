@@ -5,7 +5,8 @@
 	"client": [
 		"MixinLevelRenderer",
 		"MixinOverlayRenderer",
-		"MixinEditBox"
+		"MixinEditBox",
+		"MixinScreen"
 	],
 	"injectors": {
 		"defaultRequire": 1

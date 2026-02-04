@@ -34,7 +34,6 @@ public class GuiHandler {
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
             ScreenEvents.afterRender(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
-                GuiRenderer.INSTANCE.renderTooltip(guiGraphics);
                 GuiRenderer.INSTANCE.postDraw(guiGraphics);
             });
         });
