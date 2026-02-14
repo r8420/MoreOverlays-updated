@@ -1,5 +1,6 @@
 package at.ridgo8.moreoverlays.mixin.client;
 
+import at.ridgo8.moreoverlays.ClientRegistrationHandler;
 import at.ridgo8.moreoverlays.itemsearch.GuiRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,6 +26,9 @@ public abstract class MixinScreen {
         float partialTick,
         CallbackInfo ci
     ) {
+        if (!ClientRegistrationHandler.isJeiInstalled()) {
+            return;
+        }
         GuiRenderer.INSTANCE.renderTooltip(guiGraphics);
     }
 }
