@@ -8,16 +8,14 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4f;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -25,25 +23,21 @@ import java.util.Set;
 
 public class NumberOverlayRenderer implements ILightRenderer {
 
-    // Intentionally unused: placeholder for future texture-based digits if needed
-    // private static final net.minecraft.resources.Identifier BLANK_TEX =
-    //     net.minecraft.resources.Identifier.fromNamespaceAndPath(MoreOverlays.MOD_ID, "textures/blank.png");
-
     @Override
-    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeStorage submitNodes, CameraRenderState cameraState) {
-        // State for numbers now managed by font/buffer sources and internal pipelines in 1.21.5
+    public void renderOverlays(ILightScanner scanner, PoseStack ignored) {
+        PoseStack matrixstack = new PoseStack();
 
         final Minecraft mc = Minecraft.getInstance();
         final Font font = mc.font;
+        final MultiBufferSource.BufferSource bufferSource = Objects.requireNonNull(mc.renderBuffers().bufferSource());
 
         final Camera camera = mc.gameRenderer.getMainCamera();
-        final double cameraX = camera.position().x();
-        final double cameraY = camera.position().y();
-        final double cameraZ = camera.position().z();
+        final double cameraX = camera.position().x;
+        final double cameraY = camera.position().y;
+        final double cameraZ = camera.position().z;
 
         final Player player = mc.player;
         if (player == null || mc.level == null) {
-            // no-op
             return;
         }
 
@@ -55,8 +49,6 @@ public class NumberOverlayRenderer implements ILightRenderer {
         final float scale = (float) (double) Config.render_spawnNumberScale.get();
         final int save = Config.light_SaveLevel.get();
 
-        // Build a set of positions the cross renderer would draw (spawnable spots),
-        // so we can filter level-0 numbers to only those valid spawn positions.
         final Set<BlockPos> spawnablePositions = new HashSet<>();
         for (var pair : scanner.getLightModes()) {
             if (pair.getRight() != null && pair.getRight() != 0) {
@@ -72,12 +64,10 @@ public class NumberOverlayRenderer implements ILightRenderer {
                     BlockState belowState = world.getBlockState(belowPos);
                     if (!belowState.isFaceSturdy(world, belowPos, Direction.UP)) continue;
                     BlockState airState = world.getBlockState(airPos);
-                    // Avoid rendering inside solid/full-collision blocks above (e.g., stacked glass)
                     if (airState.isCollisionShapeFullBlock(world, airPos)) continue;
 
                     int blockLight = world.getBrightness(LightLayer.BLOCK, airPos);
                     int skyLight = world.getBrightness(LightLayer.SKY, airPos);
-                    // If absolute darkness, only render number where cross renderer would render (spawnable)
                     if (blockLight == 0 && !spawnablePositions.contains(airPos)) {
                         continue;
                     }
@@ -94,26 +84,25 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
                     float y;
                     if (airState.is(BlockTags.SNOW)) {
-                        y = airPos.getY() + 0.125f + 0.02f; // snow layer sits in the air block
+                        y = airPos.getY() + 0.125f + 0.02f;
                     } else {
-                        y = belowPos.getY() + 1.0f + 0.02f; // top face of the solid block
+                        y = belowPos.getY() + 1.0f + 0.02f;
                     }
 
                     matrixstack.pushPose();
                     matrixstack.translate(airPos.getX() + 0.5 + 0.045 - cameraX, y - cameraY, airPos.getZ() + 0.5 + 0.088 - cameraZ);
                     matrixstack.mulPose(Axis.XP.rotationDegrees(-90f));
-                    // Use negative Y scale to correct mirroring when laying flat on the ground
                     matrixstack.scale(scale, -scale, scale);
 
-                    FormattedCharSequence visual = Component.literal(text).getVisualOrderText();
-                    float xoff = -font.width(visual) / 2.0f;
+                    float xoff = -font.width(text) / 2.0f;
                     float yoff = -font.lineHeight / 2.0f;
-                    submitNodes.submitText(matrixstack, xoff, yoff, visual, false, Font.DisplayMode.NORMAL, 0xF000F0, color, 0, 0);
+                    Matrix4f pose = matrixstack.last().pose();
+                    font.drawInBatch(text, xoff, yoff, color, false, pose, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
                     matrixstack.popPose();
                 }
             }
         }
+
+        bufferSource.endBatch();
     }
 }
-
-

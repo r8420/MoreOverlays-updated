@@ -2,13 +2,9 @@ package at.ridgo8.moreoverlays.chunkbounds;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.common.NeoForge;
+
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +18,11 @@ public class ChunkBoundsHandler {
 
     private static RenderMode mode = RenderMode.NONE;
 
-    private final List<String> regionInfo = new ArrayList<>();
+    public static final List<String> regionInfo = new ArrayList<>();
 
-    private int playerPrevRegionPosX = Integer.MIN_VALUE;
-    private int playerPrevRegionPosZ = Integer.MIN_VALUE;
+    private static int playerPrevRegionPosX = Integer.MIN_VALUE;
+    private static int playerPrevRegionPosZ = Integer.MIN_VALUE;
 
-    public ChunkBoundsHandler() {
-    }
-
-    public static void init() {
-        NeoForge.EVENT_BUS.register(new ChunkBoundsHandler());
-    }
 
     public static RenderMode getMode() {
         return mode;
@@ -48,42 +38,8 @@ public class ChunkBoundsHandler {
         Minecraft.getInstance().player.sendOverlayMessage(Component.nullToEmpty(ChatFormatting.RED + "Chunk Border Overlay: " + mode.name()));
     }
 
-    @SubscribeEvent
-    public void onRenderLevelAfterEntities(RenderLevelStageEvent.AfterTranslucentBlocks event) {
-        if (mode == RenderMode.NONE) {
-            return;
-        }
-        final Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null) {
-            return;
-        }
 
-        // Submit custom geometry via submit node storage in 1.21.9
-        ChunkBoundsRenderer.renderOverlays(
-            event.getPoseStack(),
-            mc.gameRenderer.getSubmitNodeStorage(),
-            event.getLevelRenderState().cameraRenderState
-        );
-    }
-
-    @SubscribeEvent
-    public void onRenderOverlay(RenderGuiEvent.Post event) {
-        if (regionInfo.isEmpty()) {
-            return;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.getDebugOverlay().showDebugScreen()) {
-            return;
-        }
-
-        int y = 0;
-        for (String text : regionInfo) {
-            event.getGuiGraphics().text(mc.font, text, 10, y += 10, 0xFFFFFFFF);
-        }
-    }
-
-    @SubscribeEvent
-    public void onClientTick(ClientTickEvent.Post event) {
+    public static void updateRegionInfo(){
         Minecraft instance = Minecraft.getInstance();
         if (instance.player == null) {
             return;

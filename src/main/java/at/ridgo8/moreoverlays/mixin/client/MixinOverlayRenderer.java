@@ -1,0 +1,64 @@
+package at.ridgo8.moreoverlays.mixin.client;
+
+
+import java.lang.reflect.Field;
+
+import net.minecraft.client.DeltaTracker;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
+
+
+@Mixin(Gui.class)
+public class MixinOverlayRenderer {
+    @Inject(at = @At("TAIL"), method = "extractRenderState")
+    private void onRender(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        Minecraft mc = Minecraft.getInstance();
+        try {
+            if (mc.getDebugOverlay().showDebugScreen()) {
+                return;
+            }
+            // Checks if the debug screen is not shown
+            if (!ChunkBoundsHandler.regionInfo.isEmpty()) {
+                int y = 0;
+                for (String text : ChunkBoundsHandler.regionInfo) {
+                    guiGraphics.text(mc.font, text, 10, y += 10, 0xFFFFFFFF);
+                }
+            }
+        } catch (NoSuchMethodError e) {
+            try{
+                Field renderDebugField = null;
+                // Use reflection to check if the renderDebug field exists in mc.options. Note: remove this for future versions
+                try{
+                    renderDebugField = mc.options.getClass().getDeclaredField("field_1866");
+                    renderDebugField.setAccessible(true);
+                } catch(Exception o){
+                    renderDebugField = mc.options.getClass().getField("renderDebug");
+                }
+                
+                boolean renderDebug = renderDebugField.getBoolean(mc.options);
+
+                if (renderDebug) {
+                    return;
+                }
+
+                if (!ChunkBoundsHandler.regionInfo.isEmpty()) {
+                    int y = 0;
+                    for (String text : ChunkBoundsHandler.regionInfo) {
+                        guiGraphics.text(mc.font, text, 10, y += 10, 0xFFFFFFFF);
+                    }
+                }
+            } catch(Exception g){
+                // Ignore
+            }
+            
+        }
+    }
+}
