@@ -49,7 +49,7 @@ public final class ItemUtils {
     }
 
     public static boolean matchNBT(ItemStack a, ItemStack b) {
-        MoreOverlays.logger.error(a.getTags());
-        return a.getTags() == b.getTags(); //TODO: work on
+        MoreOverlays.logger.error(a.tags());
+        return a.tags() == b.tags(); //TODO: work on
     }
 }

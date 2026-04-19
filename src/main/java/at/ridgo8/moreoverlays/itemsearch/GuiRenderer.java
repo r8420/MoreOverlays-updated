@@ -7,7 +7,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import mezz.jei.api.constants.VanillaTypes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -59,7 +59,7 @@ public class GuiRenderer {
 
     }
 
-    public void preDraw(GuiGraphics guiGraphics) {
+    public void preDraw(GuiGraphicsExtractor guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (canShowIn(guiscr)) {
             allowRender = true;
@@ -67,7 +67,7 @@ public class GuiRenderer {
         }
     }
 
-    public void postDraw(GuiGraphics guiGraphics) {
+    public void postDraw(GuiGraphicsExtractor guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
 
         if (allowRender && canShowIn(guiscr)) {
@@ -88,7 +88,7 @@ public class GuiRenderer {
         }
     }
 
-    private void drawSearchFrame(EditBox textField, GuiGraphics guiGraphics) {
+    private void drawSearchFrame(EditBox textField, GuiGraphicsExtractor guiGraphics) {
         int x = textField.getX() - 2;
         int y = textField.getY() - 4;
         int width = textField.getWidth() + 8;
@@ -109,7 +109,7 @@ public class GuiRenderer {
         
     }
 
-    public void renderTooltip(GuiGraphics guiGraphics) {
+    public void renderTooltip(GuiGraphicsExtractor guiGraphics) {
         Screen guiscr = Minecraft.getInstance().screen;
         if (enabled && canShowIn(guiscr)) {
             EditBox textField = JeiModule.getJEITextField();
@@ -122,7 +122,7 @@ public class GuiRenderer {
         }
     }
 
-    private void drawSlotOverlay(GuiGraphics guiGraphics, AbstractContainerScreen<?> gui) {
+    private void drawSlotOverlay(GuiGraphicsExtractor guiGraphics, AbstractContainerScreen<?> gui) {
         if (!enabled || views == null || views.isEmpty())
             return;
         // Draw overlays directly on the GUI via GuiGraphics.fill

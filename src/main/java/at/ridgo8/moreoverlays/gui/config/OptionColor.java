@@ -2,7 +2,7 @@ package at.ridgo8.moreoverlays.gui.config;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -35,7 +35,7 @@ public class OptionColor extends OptionValueEntry<Integer> {
     }
 
     @Override
-    protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+    protected void renderControls(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
 
@@ -49,7 +49,7 @@ public class OptionColor extends OptionValueEntry<Integer> {
         this.tfHex.setX(controlsLeft);
         this.tfHex.setY(rowTop + 2);
         this.tfHex.setWidth(editWidth);
-        this.tfHex.render(guiGraphics, mouseX, mouseY, 0);
+        this.tfHex.extractRenderState(guiGraphics, mouseX, mouseY, 0);
 
         int swatchX1 = controlsRight - swatchWidth;
         int swatchY1 = rowTop + 2;
@@ -140,7 +140,7 @@ public class OptionColor extends OptionValueEntry<Integer> {
     }
 
     @Override
-    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+    public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
         this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
     }
 }

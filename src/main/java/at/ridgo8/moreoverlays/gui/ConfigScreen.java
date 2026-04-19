@@ -4,7 +4,7 @@ import at.ridgo8.moreoverlays.MoreOverlays;
 import at.ridgo8.moreoverlays.gui.config.ConfigOptionList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.resources.language.I18n;
@@ -120,25 +120,25 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+
     }
-    
+
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (Minecraft.getInstance().level == null) {
-            this.renderPanorama(guiGraphics, partialTicks);
+            this.extractPanorama(guiGraphics, partialTicks);
         }
-        this.renderMenuBackground(guiGraphics);
-        this.renderBlurredBackground(guiGraphics);
+        this.extractMenuBackground(guiGraphics);
+        this.extractBlurredBackground(guiGraphics);
 
         // Let the base Screen render all child widgets (option list + bottom buttons)
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
         // Draw titles on top of the child widgets
-        guiGraphics.drawCenteredString(this.font, this.getTitle(), this.width / 2, 8, 0xFFFFFFFF);
+        guiGraphics.centeredText(this.font, this.getTitle(), this.width / 2, 8, 0xFFFFFFFF);
         if (this.categoryTitle != null) {
-            guiGraphics.drawCenteredString(this.font, this.categoryTitle, this.width / 2, 24, 0xFFFFFFFF);
+            guiGraphics.centeredText(this.font, this.categoryTitle, this.width / 2, 24, 0xFFFFFFFF);
         }
 
         // Finally, render config entry tooltips so they appear above everything else

@@ -3,7 +3,7 @@ package at.ridgo8.moreoverlays.gui.config;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -28,14 +28,14 @@ public class OptionGeneric<V>
     }
 
     @Override
-    protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+    protected void renderControls(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
         // Absolute positioning: set field position/size within this row
         this.tfConfigEntry.setX(rowLeft + OptionValueEntry.TITLE_WIDTH + 5);
         this.tfConfigEntry.setY(rowTop + 2);
         this.tfConfigEntry.setWidth(rowWidth - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR);
-        this.tfConfigEntry.render(guiGraphics, mouseX, mouseY, 0);
+        this.tfConfigEntry.extractRenderState(guiGraphics, mouseX, mouseY, 0);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class OptionGeneric<V>
     }
 
     @Override
-    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+    public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
         this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
     }
 

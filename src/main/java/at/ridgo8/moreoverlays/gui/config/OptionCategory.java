@@ -2,7 +2,7 @@ package at.ridgo8.moreoverlays.gui.config;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -43,14 +43,14 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
+    public void renderControls(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
         // Absolute positioning within the provided row geometry
         btnOpen.setPosition(rowLeft, rowTop);
-        btnOpen.render(guiGraphics, mouseX, mouseY, partialTick);
+        btnOpen.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         // Category tooltip only when hovering the button label area (not strictly needed as the entire row is the button)
         if (this.btnOpen.isMouseOver(mouseX, mouseY) && !this.tooltip.isEmpty()) {
             List<Component> converted = new ArrayList<>(this.tooltip.size());
@@ -84,7 +84,7 @@ public class OptionCategory extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+    public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
         this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
     }
 }

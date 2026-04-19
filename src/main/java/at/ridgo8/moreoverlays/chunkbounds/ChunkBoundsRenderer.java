@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix4f;
 
@@ -32,10 +32,10 @@ public final class ChunkBoundsRenderer {
         final int h2 = Math.min(h, h0 + 16);
         final int h3 = Math.min(h1, 0);
 
-        final int x0 = player.chunkPosition().x * 16;
+        final int x0 = player.chunkPosition().x() * 16;
         final int x1 = x0 + 16;
         final int x2 = x0 + 8;
-        final int z0 = player.chunkPosition().z * 16;
+        final int z0 = player.chunkPosition().z() * 16;
         final int z1 = z0 + 16;
         final int z2 = z0 + 8;
 
@@ -43,20 +43,20 @@ public final class ChunkBoundsRenderer {
         int regionY = player.chunkPosition().getWorldPosition().getY() / ChunkBoundsHandler.REGION_SIZEY_CUBIC;
         int regionZ;
 
-        if (player.chunkPosition().x < 0) {
-            regionX = (player.chunkPosition().x + 1) / ChunkBoundsHandler.REGION_SIZEX;
+        if (player.chunkPosition().x() < 0) {
+            regionX = (player.chunkPosition().x() + 1) / ChunkBoundsHandler.REGION_SIZEX;
             regionX--;
         } else {
-            regionX = player.chunkPosition().x / ChunkBoundsHandler.REGION_SIZEX;
+            regionX = player.chunkPosition().x() / ChunkBoundsHandler.REGION_SIZEX;
         }
         if (player.chunkPosition().getWorldPosition().getY() < 0) {
             regionY--;
         }
-        if (player.chunkPosition().z < 0) {
-            regionZ = (player.chunkPosition().z + 1) / ChunkBoundsHandler.REGION_SIZEZ;
+        if (player.chunkPosition().z() < 0) {
+            regionZ = (player.chunkPosition().z() + 1) / ChunkBoundsHandler.REGION_SIZEZ;
             regionZ--;
         } else {
-            regionZ = player.chunkPosition().z / ChunkBoundsHandler.REGION_SIZEZ;
+            regionZ = player.chunkPosition().z() / ChunkBoundsHandler.REGION_SIZEZ;
         }
 
         final int regionBorderX0 = regionX * ChunkBoundsHandler.REGION_SIZEX * 16;

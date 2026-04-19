@@ -6,7 +6,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
  
 import net.minecraft.client.resources.language.I18n;
@@ -65,7 +65,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
 
 
     // AbstractSelectionList no longer exposes renderDecorations for override; we emulate a second tooltip pass
-    public void renderTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void renderTooltips(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
@@ -279,7 +279,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             this.optionList = list;
         }
 
-        protected abstract void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+        protected abstract void renderControls(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                                boolean mouseOver, float partialTick);
 
         /*
@@ -289,7 +289,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
          * We recompute the current row geometry from the entry itself and only render
          * a tooltip when the mouse is actually over this entry.
          */
-        public void runRenderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        public void runRenderTooltip(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
             if (!this.isMouseOver(mouseX, mouseY)) {
                 return;
             }
@@ -302,7 +302,7 @@ public class ConfigOptionList extends ContainerObjectSelectionList<ConfigOptionL
             this.renderTooltip(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
         }
 
-        protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+        protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         }
 
         @Override

@@ -2,7 +2,7 @@ package at.ridgo8.moreoverlays.gui.config;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -29,13 +29,13 @@ public class OptionBoolean
     }
 
     @Override
-    protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
+    protected void renderControls(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY,
                                   boolean mouseOver, float partialTick) {
         super.renderControls(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY, mouseOver, partialTick);
         // Absolute positioning: place the change button at the row's left/top origin
         this.btnChange.setPosition(rowLeft + OptionValueEntry.TITLE_WIDTH + 5, rowTop + 0);
         this.btnChange.setWidth(rowWidth - OptionValueEntry.TITLE_WIDTH - 5 - OptionValueEntry.CONTROL_WIDTH_VALIDATOR);
-        this.btnChange.render(guiGraphics, mouseX, mouseY, 0);
+        this.btnChange.extractRenderState(guiGraphics, mouseX, mouseY, 0);
 
     }
 
@@ -50,7 +50,7 @@ public class OptionBoolean
     }
 
     @Override
-    public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+    public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
         // Delegate to existing absolute-position renderer
         this.renderControls(guiGraphics, this.getContentY(), this.getContentX(), this.getContentWidth(), this.getContentHeight(), mouseX, mouseY, hovered, partialTick);
     }

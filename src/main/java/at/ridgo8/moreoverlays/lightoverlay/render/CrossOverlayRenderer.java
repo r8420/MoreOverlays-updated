@@ -143,7 +143,7 @@ public class CrossOverlayRenderer implements ILightRenderer {
     }
     
     @Override
-    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeStorage submitNodes, net.minecraft.client.renderer.state.CameraRenderState cameraState) {
+    public void renderOverlays(ILightScanner scanner, PoseStack matrixstack, SubmitNodeStorage submitNodes, net.minecraft.client.renderer.state.level.CameraRenderState cameraState) {
         // State managed by RenderType in 1.21.5
         // no explicit depth/cull toggling
 

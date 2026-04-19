@@ -2,7 +2,7 @@ package at.ridgo8.moreoverlays.gui.config;
 
 import at.ridgo8.moreoverlays.MoreOverlays;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.resources.language.I18n;
@@ -99,13 +99,13 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
     }
 
     @Override
-    protected void renderControls(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
+    protected void renderControls(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick) {
         // Draw label right-aligned within the fixed title column to avoid overlap with controls
         final var font = Minecraft.getInstance().font;
         int rightEdge = rowLeft + TITLE_WIDTH - 5;
         int startX = rightEdge - font.width(this.name);
         if (startX < rowLeft + 4) startX = rowLeft + 4;
-        guiGraphics.drawString(font, this.name, startX, rowTop + 6, 0xFFFFFFFF);
+        guiGraphics.text(font, this.name, startX, rowTop + 6, 0xFFFFFFFF);
         // cache label hover rect
         this.labelX = startX;
         this.labelY = rowTop + 6;
@@ -114,23 +114,23 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         // Position row buttons absolutely so hover matches render
         this.btnReset.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 20, rowTop);
         this.btnUndo.setPosition(rowLeft + this.getConfigOptionList().getRowWidth() - 42, rowTop);
-        this.btnReset.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.btnUndo.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.btnReset.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+        this.btnUndo.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         if (this.showValidity) {
             int validityX = rowLeft + this.getConfigOptionList().getRowWidth() - 53;
             int validityY = rowTop + 6;
             if (this.valid) {
-                guiGraphics.drawCenteredString(font, ConfigOptionList.VALID, validityX, validityY, 0xFF00FF00);
+                guiGraphics.centeredText(font, ConfigOptionList.VALID, validityX, validityY, 0xFF00FF00);
             } else {
-                guiGraphics.drawCenteredString(font, ConfigOptionList.INVALID, validityX, validityY, 0xFFFF0000);
+                guiGraphics.centeredText(font, ConfigOptionList.INVALID, validityX, validityY, 0xFFFF0000);
             }
         }
     }
 
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
+    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int rowTop, int rowLeft, int rowWidth, int itemHeight, int mouseX, int mouseY) {
         super.renderTooltip(guiGraphics, rowTop, rowLeft, rowWidth, itemHeight, mouseX, mouseY);
 
         // Show tooltips contextually: label shows spec tooltip, buttons show their own tooltips
@@ -157,7 +157,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         }
     }
 
-    protected static void drawSimpleTooltip(GuiGraphics guiGraphics, List<Component> lines, int mouseX, int mouseY) {
+    protected static void drawSimpleTooltip(GuiGraphicsExtractor guiGraphics, List<Component> lines, int mouseX, int mouseY) {
         final var font = Minecraft.getInstance().font;
         int maxWidth = 0;
         for (Component c : lines) {
@@ -186,7 +186,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
         int textX = x + padding;
         int textY = y + padding - 1;
         for (Component c : lines) {
-            guiGraphics.drawString(font, c, textX, textY, 0xFFFFFFFF);
+            guiGraphics.text(font, c, textX, textY, 0xFFFFFFFF);
             textY += lineHeight;
         }
     }

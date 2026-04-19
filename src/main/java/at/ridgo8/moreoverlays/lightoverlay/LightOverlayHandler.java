@@ -55,7 +55,7 @@ public class LightOverlayHandler {
 
         if (enabled) {
             reloadHandlerInternal();
-            Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Enabled"), true);
+            Minecraft.getInstance().player.sendOverlayMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Enabled"));
             if (Minecraft.getInstance().player != null) {
                 // Prime cache immediately on enable
                 scanner.update(Minecraft.getInstance().player);
@@ -70,7 +70,7 @@ public class LightOverlayHandler {
             }
         } else {
             scanner.clear();
-            Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Disabled"), true);
+            Minecraft.getInstance().player.sendOverlayMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Disabled"));
         }
         LightOverlayHandler.enabled = enabled;
     }
@@ -120,7 +120,7 @@ public class LightOverlayHandler {
     }
 
     @SubscribeEvent
-    public void onRenderLevelAfterEntities(RenderLevelStageEvent.AfterEntities event) {
+    public void onRenderLevelAfterEntities(RenderLevelStageEvent.AfterTranslucentBlocks event) {
         if (!enabled || scanner == null || renderer == null) {
             return;
         }
