@@ -12,14 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import at.ridgo8.moreoverlays.chunkbounds.ChunkBoundsHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 
 
 @Mixin(Gui.class)
 public class MixinOverlayRenderer {
-    @Inject(at = @At("TAIL"), method = "render")
-    private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "extractRenderState")
+    private void onRender(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         try {
             if (mc.getDebugOverlay().showDebugScreen()) {
@@ -29,7 +29,7 @@ public class MixinOverlayRenderer {
             if (!ChunkBoundsHandler.regionInfo.isEmpty()) {
                 int y = 0;
                 for (String text : ChunkBoundsHandler.regionInfo) {
-                    guiGraphics.drawString(mc.font, text, 10, y += 10, 0xFFFFFFFF);
+                    guiGraphics.text(mc.font, text, 10, y += 10, 0xFFFFFFFF);
                 }
             }
         } catch (NoSuchMethodError e) {
@@ -52,7 +52,7 @@ public class MixinOverlayRenderer {
                 if (!ChunkBoundsHandler.regionInfo.isEmpty()) {
                     int y = 0;
                     for (String text : ChunkBoundsHandler.regionInfo) {
-                        guiGraphics.drawString(mc.font, text, 10, y += 10, 0xFFFFFFFF);
+                        guiGraphics.text(mc.font, text, 10, y += 10, 0xFFFFFFFF);
                     }
                 }
             } catch(Exception g){

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.15-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -11,24 +11,22 @@ base {
 }
 
 repositories {
-  maven {
-    url 'https://maven.wispforest.io/releases/'
-  }
-  maven {
-    // location of the maven that hosts JEI files since January 2023
-    name = "Jared's maven"
-    url = "https://maven.blamejared.com/"
-  }
-  maven {
-    // location of a maven mirror for JEI files, as a fallback
-    name = "ModMaven"
-    url = "https://modmaven.dev"
-  }
-  maven { url 'https://jitpack.io' }
+	maven {
+		url 'https://maven.wispforest.io/releases/'
+	}
+	maven {
+		name = "Jared's maven"
+		url = "https://maven.blamejared.com/"
+	}
+	maven {
+		name = "ModMaven"
+		url = "https://modmaven.dev"
+	}
+	maven { url 'https://jitpack.io' }
 }
 
 loom {
-    splitEnvironmentSourceSets()
+	splitEnvironmentSourceSets()
 
 	mods {
 		"moreoverlays" {
@@ -36,44 +34,30 @@ loom {
 			sourceSet sourceSets.client
 		}
 	}
-
 }
 
 sourceSets {
-    main {
-        resources {
-            // Include the custom resource directory
-            srcDir 'src/client/resources'
-        }
-    }
+	main {
+		resources {
+			srcDir 'src/client/resources'
+		}
+	}
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	
+	implementation "io.wispforest:owo-lib:${project.owo_version}"
+	include "io.wispforest:owo-sentinel:${project.owo_version}"
 
-    // owo-lib for config + UI (no annotation processing; wrapper is committed in sources)
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-    include "io.wispforest:owo-sentinel:${project.owo_version}"
+	compileOnlyApi("mezz.jei:jei-26.1.2-common-api:${project.jei_version}")
+	compileOnlyApi("mezz.jei:jei-26.1.2-fabric-api:${project.jei_version}")
+	runtimeOnly("mezz.jei:jei-26.1.2-fabric:${project.jei_version}")
 
-	modCompileOnlyApi("mezz.jei:jei-1.21.11-common-api:27.4.0.15")
-	modCompileOnlyApi("mezz.jei:jei-1.21.11-fabric-api:27.4.0.15")
-	// at runtime, use the full JEI jar for Fabric
-	modRuntimeOnly("mezz.jei:jei-1.21.11-fabric:27.4.0.15")
-
-	
-	
-	// Uncomment the following line to enable the deprecated Fabric API modules. 
-	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-
-	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+	// implementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_api_version}"
 }
 
 processResources {
@@ -81,28 +65,28 @@ processResources {
 	inputs.property "minecraft_version", project.minecraft_version
 
 	filesMatching("fabric.mod.json") {
-		expand(["version": project.version, "minecraft_version": project.minecraft_version])
-		println "Replacing version in fabric.mod.json with ${project.version} and minecraft_version with ${project.minecraft_version}"
+		expand([
+			"version"           : inputs.properties.version,
+			"minecraft_version" : inputs.properties.minecraft_version,
+		])
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
 	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
+	inputs.property "projectName", project.name
+
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_${project.base.archivesName.get()}" }
 	}
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -111,28 +95,18 @@ tasks.named('jar') {
 	archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
 }
 
-tasks.named('remapJar') {
+tasks.named('sourcesJar') {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
 }
 
-tasks.named('sourcesJar') {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveVersion.set("${project.version}-mc${project.minecraft_version}-fabric")
-}
-
-// configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		create("mavenJava", MavenPublication) {
 			from components.java
 		}
 	}
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
 	}
 }

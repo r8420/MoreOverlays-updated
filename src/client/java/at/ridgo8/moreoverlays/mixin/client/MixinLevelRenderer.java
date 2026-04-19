@@ -11,13 +11,13 @@ import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import org.joml.Matrix4f;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import org.joml.Matrix4fc;
 import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -82,13 +82,12 @@ public class MixinLevelRenderer {
         GraphicsResourceAllocator graphicsResourceAllocator,
         DeltaTracker deltaTracker,
         boolean renderBlockOutline,
-        Camera camera,
-        Matrix4f frustumMatrix,
-        Matrix4f projectionMatrix,
-        Matrix4f cullingProjectionMatrix,
+        CameraRenderState cameraRenderState,
+        Matrix4fc modelViewMatrix,
         GpuBufferSlice shaderFog,
         Vector4f fogColor,
-        boolean renderSky
+        boolean renderSky,
+        ChunkSectionsToRender chunkSectionsToRender
     ) {
         this.moreOverlays$addOverlayPass(frameGraph, shaderFog);
         postChain.addToFrame(frameGraph, width, height, targetBundle);
@@ -99,7 +98,7 @@ public class MixinLevelRenderer {
         FrameGraphBuilder frameGraph,
         CameraRenderState cameraRenderState,
         GpuBufferSlice shaderFog,
-        Matrix4f frustumMatrix,
+        Matrix4fc frustumMatrix,
         CallbackInfo ci
     ) {
         if (this.targets.translucent != null) {

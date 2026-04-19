@@ -39,7 +39,7 @@ public class LightOverlayHandler {
 
         if (enabled) {
             reloadHandlerInternal();
-            Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Enabled"), true);
+            Minecraft.getInstance().player.sendOverlayMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Enabled"));
             if (Minecraft.getInstance().player != null) {
                 scanner.update(Minecraft.getInstance().player);
                 net.minecraft.core.BlockPos bp = Minecraft.getInstance().player.blockPosition();
@@ -52,7 +52,7 @@ public class LightOverlayHandler {
             }
         } else {
             scanner.clear();
-            Minecraft.getInstance().player.displayClientMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Disabled"), true);
+            Minecraft.getInstance().player.sendOverlayMessage(Component.nullToEmpty(ChatFormatting.YELLOW + "Light Overlay Disabled"));
         }
         LightOverlayHandler.enabled = enabled;
     }

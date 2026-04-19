@@ -27,13 +27,13 @@ public class GuiHandler {
         });
 
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            ScreenEvents.beforeRender(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
+            ScreenEvents.beforeExtract(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
                 GuiRenderer.INSTANCE.preDraw(guiGraphics);
             });
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            ScreenEvents.afterRender(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
+            ScreenEvents.afterExtract(screen).register((screen1, guiGraphics, mouseX, mouseY, tickDelta) -> {
                 GuiRenderer.INSTANCE.postDraw(guiGraphics);
             });
         });

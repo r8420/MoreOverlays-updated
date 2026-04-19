@@ -1,6 +1,8 @@
 package at.ridgo8.moreoverlays.util;
 
+import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -11,6 +13,11 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 public final class RenderTypes {
 
     private RenderTypes() {}
+
+    // Standard depth state: occlude by solid geometry (LEQUAL) and write to the depth buffer.
+    // Without this, the pipeline has no depth test and the overlays render through blocks.
+    private static final DepthStencilState OVERLAY_DEPTH_STATE =
+        new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, true, 0f, 0f);
 
     private static final RenderPipeline.Snippet MATRICES_PROJECTION_SNIPPET =
         RenderPipeline.builder(new RenderPipeline.Snippet[0])
@@ -25,6 +32,7 @@ public final class RenderTypes {
             .withVertexShader("core/position_color")
             .withFragmentShader("core/position_color")
             .withCull(false)
+            .withDepthStencilState(OVERLAY_DEPTH_STATE)
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, Mode.DEBUG_LINES)
             .build();
 
@@ -40,6 +48,7 @@ public final class RenderTypes {
             .withFragmentShader("core/position_color")
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
             .withCull(false)
+            .withDepthStencilState(OVERLAY_DEPTH_STATE)
             .build();
 
     private static final RenderSetup TRIANGLE_SETUP =
