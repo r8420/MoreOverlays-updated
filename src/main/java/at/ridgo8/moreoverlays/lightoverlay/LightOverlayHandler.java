@@ -97,7 +97,7 @@ public class LightOverlayHandler {
 
     public static void onClientTick() {
         if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null && enabled &&
-                (Minecraft.getInstance().screen == null || !Minecraft.getInstance().screen.isPauseScreen())) {
+                (Minecraft.getInstance().gui.screen() == null || !Minecraft.getInstance().gui.screen().isPauseScreen())) {
             clientTickCounter++;
 
             boolean currentRenderNumbers = Config.render_spawnNumbers.get();

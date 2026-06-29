@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -66,7 +67,7 @@ public abstract class OptionValueEntry<V> extends ConfigOptionList.OptionEntry {
             btnReset.active = false;
         }
         final String translationKey = "config.moreoverlays." + getTranslationKey().toLowerCase();
-        if(I18n.exists(translationKey)){
+        if(Language.getInstance().has(translationKey)){
             this.name = I18n.get(translationKey);
         } else{
             this.name = this.value.getPath().get(this.value.getPath().size() - 1);

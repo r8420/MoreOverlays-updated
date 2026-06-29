@@ -60,7 +60,7 @@ public class GuiRenderer {
     }
 
     public void preDraw(GuiGraphicsExtractor guiGraphics) {
-        Screen guiscr = Minecraft.getInstance().screen;
+        Screen guiscr = Minecraft.getInstance().gui.screen();
         if (canShowIn(guiscr)) {
             allowRender = true;
             // draw in postDraw to ensure on top
@@ -68,7 +68,7 @@ public class GuiRenderer {
     }
 
     public void postDraw(GuiGraphicsExtractor guiGraphics) {
-        Screen guiscr = Minecraft.getInstance().screen;
+        Screen guiscr = Minecraft.getInstance().gui.screen();
 
         if (allowRender && canShowIn(guiscr)) {
             allowRender = false;
@@ -110,7 +110,7 @@ public class GuiRenderer {
     }
 
     public void renderTooltip(GuiGraphicsExtractor guiGraphics) {
-        Screen guiscr = Minecraft.getInstance().screen;
+        Screen guiscr = Minecraft.getInstance().gui.screen();
         if (enabled && canShowIn(guiscr)) {
             EditBox textField = JeiModule.getJEITextField();
             if (textField != null) {
@@ -207,7 +207,7 @@ public class GuiRenderer {
     }
 
     public void tick() {
-        final Screen screen = Minecraft.getInstance().screen;
+        final Screen screen = Minecraft.getInstance().gui.screen();
         if (!canShowIn(screen))
             return;
         if (enabled && JeiModule.filter != null) {

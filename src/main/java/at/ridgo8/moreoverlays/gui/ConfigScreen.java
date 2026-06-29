@@ -114,7 +114,7 @@ public class ConfigScreen extends Screen {
             clearBottomButtonFocus();
         } else {
             //Minecraft.getInstance().forceSetScreen(modListScreen);
-            Minecraft.getInstance().setScreen(modListScreen);
+            Minecraft.getInstance().gui.setScreen(modListScreen);
             clearBottomButtonFocus();
         }
     }

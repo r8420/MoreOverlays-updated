@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -92,7 +93,7 @@ public class LightScannerVanilla extends LightScannerBase {
             if (!hasSpawnable) {
                 return 0;
             }
-        } else if (!SpawnPlacementTypes.ON_GROUND.isSpawnPositionOk(world, pos, EntityType.ZOMBIE)) {
+        } else if (!SpawnPlacementTypes.ON_GROUND.isSpawnPositionOk(world, pos, EntityTypes.ZOMBIE)) {
             return 0;
         }
 
