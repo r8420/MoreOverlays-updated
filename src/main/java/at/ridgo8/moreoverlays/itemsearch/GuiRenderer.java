@@ -113,12 +113,14 @@ public class GuiRenderer {
         Screen guiscr = Minecraft.getInstance().gui.screen();
         if (enabled && canShowIn(guiscr)) {
             EditBox textField = JeiModule.getJEITextField();
-            if (textField != null) {
+            if (textField != null && !drewFrameInTooltipPhase) {
                 drawSearchFrame(textField, guiGraphics);
                 drewFrameInTooltipPhase = true;
             }
-            drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
-            drewOverlayInTooltipPhase = true;
+            if (!drewOverlayInTooltipPhase) {
+                drawSlotOverlay(guiGraphics, (AbstractContainerScreen<?>) guiscr);
+                drewOverlayInTooltipPhase = true;
+            }
         }
     }
 
