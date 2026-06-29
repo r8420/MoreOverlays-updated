@@ -6,6 +6,7 @@ import at.ridgo8.moreoverlays.config.ConfigManager;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
@@ -94,7 +95,7 @@ public class LightScannerVanilla extends LightScannerBase {
             if (!hasSpawnable) {
                 return 0;
             }
-        } else if (!state.isValidSpawn(world, blockPos, EntityType.ZOMBIE)) {
+        } else if (!state.isValidSpawn(world, blockPos, EntityTypes.ZOMBIE)) {
             return 0;
         }
 

@@ -3,6 +3,7 @@ package at.ridgo8.moreoverlays.lightoverlay.render;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.ConfigManager;
+import at.ridgo8.moreoverlays.util.OverlayBufferSource;
 import at.ridgo8.moreoverlays.util.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -150,11 +151,10 @@ public class CrossOverlayRenderer implements ILightRenderer {
 
         double configuredWidth = (double) ConfigManager.CONFIG.render_spawnLineWidth();
         boolean useDebugLines = configuredWidth <= 2.0;
-        net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
         final var renderType = useDebugLines ? RenderTypes.LIGHT_OVERLAY_LINES : RenderTypes.LIGHT_OVERLAY_TRIANGLES;
-        VertexConsumer consumer = bufferSource.getBuffer(renderType);
+        VertexConsumer consumer = OverlayBufferSource.getBuffer(renderType);
 
-        Camera camera = minecraft.gameRenderer.getMainCamera();
+        Camera camera = minecraft.gameRenderer.mainCamera();
         double cameraX = camera.position().x;
         double cameraY = camera.position().y;
         double cameraZ = camera.position().z;
@@ -214,7 +214,7 @@ public class CrossOverlayRenderer implements ILightRenderer {
             }
         }
 
-        bufferSource.endBatch(renderType);
+        OverlayBufferSource.flush();
     }
 }
 

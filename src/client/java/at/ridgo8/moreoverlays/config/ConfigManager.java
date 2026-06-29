@@ -12,7 +12,7 @@ public final class ConfigManager {
     }
 
     public static void openConfigScreen(Screen parent) {
-        Minecraft.getInstance().setScreen(ConfigScreen.create(CONFIG, parent));
+        Minecraft.getInstance().gui.setScreen(ConfigScreen.create(CONFIG, parent));
     }
 }
 

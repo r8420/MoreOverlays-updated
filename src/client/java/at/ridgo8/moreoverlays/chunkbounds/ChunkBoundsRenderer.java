@@ -1,6 +1,7 @@
 package at.ridgo8.moreoverlays.chunkbounds;
 
 import at.ridgo8.moreoverlays.config.ConfigManager;
+import at.ridgo8.moreoverlays.util.OverlayBufferSource;
 import at.ridgo8.moreoverlays.util.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -65,7 +66,7 @@ public class ChunkBoundsRenderer {
         final int renderColorGrid = ConfigManager.CONFIG.render_chunkGridColor().argb();
 
         boolean useDebugLines = !ConfigManager.CONFIG.render_chunkThick();
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         org.joml.Vector3fc look = camera.forwardVector();
         double desiredPixelWidth = Math.max(0.1, (double) ConfigManager.CONFIG.render_chunkLineWidth());
 
@@ -108,6 +109,8 @@ public class ChunkBoundsRenderer {
                         regionBorderY1 + 0.005f, regionBorderZ1 + 0.005f, 16.0f, renderColorGrid, camera, look, desiredPixelWidth);
             }
         }
+
+        OverlayBufferSource.flush();
     }
 
     public static void renderEdge(PoseStack matrixstack, double x, double z, double h3, double h, int color) {
@@ -115,7 +118,7 @@ public class ChunkBoundsRenderer {
         matrixstack.last().pose().get(matrix4d);
         Minecraft minecraft = Minecraft.getInstance();
 
-        Camera camera = minecraft.gameRenderer.getMainCamera();
+        Camera camera = minecraft.gameRenderer.mainCamera();
         double cameraX = camera.position().x;
         double cameraY = camera.position().y;
         double cameraZ = camera.position().z;
@@ -125,15 +128,13 @@ public class ChunkBoundsRenderer {
         h -= cameraY;
         z -= cameraZ;
 
-        net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer consumer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer consumer = OverlayBufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
 
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
 
         addLine(consumer, matrix4d, x, h3, z, x, h, z, r, g, b);
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
     public static void renderGrid(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1, double step, int color) {
@@ -141,13 +142,12 @@ public class ChunkBoundsRenderer {
         matrixstack.last().pose().get(matrix4d);
         Minecraft minecraft = Minecraft.getInstance();
 
-        Camera camera = minecraft.gameRenderer.getMainCamera();
+        Camera camera = minecraft.gameRenderer.mainCamera();
         double cameraX = camera.position().x;
         double cameraY = camera.position().y;
         double cameraZ = camera.position().z;
 
-        net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
+        VertexConsumer renderer = OverlayBufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_LINES);
         float r = ((float) ((color >> 16) & 0xFF)) / 255F;
         float g = ((float) ((color >> 8) & 0xFF)) / 255F;
         float b = ((float) (color & 0xFF)) / 255F;
@@ -185,8 +185,6 @@ public class ChunkBoundsRenderer {
             drawVertex(renderer, matrix4d, x1 - cameraX, y0 - cameraY, z - cameraZ, r, g, b);
             drawVertex(renderer, matrix4d, x1 - cameraX, y1 - cameraY, z - cameraZ, r, g, b);
         }
-
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_LINES);
     }
 
     private static void addLine(VertexConsumer consumer, Matrix4d matrix, double ax, double ay, double az, double bx, double by, double bz, float r, float g, float b) {
@@ -281,8 +279,7 @@ public class ChunkBoundsRenderer {
                                         Camera camera, org.joml.Vector3fc look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
+        VertexConsumer bufferBuilder = OverlayBufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
         double cameraX = camera.position().x;
         double cameraY = camera.position().y;
@@ -293,16 +290,13 @@ public class ChunkBoundsRenderer {
         float b = ((float) (color & 0xFF)) / 255F;
 
         addThickLine(bufferBuilder, matrix4d, look, cameraX, cameraY, cameraZ, x, h3, z, x, h, z, r, g, b, desiredPixelWidth);
-
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
     }
 
     private static void renderGridThick(PoseStack matrixstack, double x0, double y0, double z0, double x1, double y1, double z1,
                                         double step, int color, Camera camera, org.joml.Vector3fc look, double desiredPixelWidth) {
         Matrix4d matrix4d = new Matrix4d();
         matrixstack.last().pose().get(matrix4d);
-        net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer renderer = bufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
+        VertexConsumer renderer = OverlayBufferSource.getBuffer(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
 
         double cameraX = camera.position().x;
         double cameraY = camera.position().y;
@@ -341,7 +335,5 @@ public class ChunkBoundsRenderer {
             addThickLine(renderer, matrix4d, look, cameraX, cameraY, cameraZ, x0, y0, z, x0, y1, z, r, g, b, desiredPixelWidth);
             addThickLine(renderer, matrix4d, look, cameraX, cameraY, cameraZ, x1, y0, z, x1, y1, z, r, g, b, desiredPixelWidth);
         }
-
-        bufferSource.endBatch(RenderTypes.LIGHT_OVERLAY_TRIANGLES);
     }
 }

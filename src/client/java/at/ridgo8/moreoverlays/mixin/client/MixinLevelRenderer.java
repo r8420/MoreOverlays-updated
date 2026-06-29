@@ -13,9 +13,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.joml.Matrix4fc;
 import org.joml.Vector4f;
@@ -66,7 +66,7 @@ public class MixinLevelRenderer {
     }
 
     @Redirect(
-        method = "renderLevel",
+        method = "render",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/PostChain;addToFrame(Lcom/mojang/blaze3d/framegraph/FrameGraphBuilder;IILnet/minecraft/client/renderer/PostChain$TargetBundle;)V",
@@ -86,19 +86,17 @@ public class MixinLevelRenderer {
         Matrix4fc modelViewMatrix,
         GpuBufferSlice shaderFog,
         Vector4f fogColor,
-        boolean renderSky,
-        ChunkSectionsToRender chunkSectionsToRender
+        boolean renderSky
     ) {
         this.moreOverlays$addOverlayPass(frameGraph, shaderFog);
         postChain.addToFrame(frameGraph, width, height, targetBundle);
     }
 
-    @Inject(method = "addLateDebugPass", at = @At("TAIL"))
+    @Inject(method = "addAlwaysOnTopPass", at = @At("TAIL"))
     private void moreOverlays$addLateDebugPass(
         FrameGraphBuilder frameGraph,
-        CameraRenderState cameraRenderState,
+        FeatureRenderDispatcher.PreparedFrame featureFrame,
         GpuBufferSlice shaderFog,
-        Matrix4fc frustumMatrix,
         CallbackInfo ci
     ) {
         if (this.targets.translucent != null) {

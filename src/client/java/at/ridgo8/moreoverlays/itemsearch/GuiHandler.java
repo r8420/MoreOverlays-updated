@@ -23,7 +23,7 @@ public class GuiHandler {
         });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            GuiRenderer.INSTANCE.guiOpen(client.screen);
+            GuiRenderer.INSTANCE.guiOpen(client.gui.screen());
         });
 
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {

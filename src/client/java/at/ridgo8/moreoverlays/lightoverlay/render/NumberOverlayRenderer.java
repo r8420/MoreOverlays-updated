@@ -3,12 +3,14 @@ package at.ridgo8.moreoverlays.lightoverlay.render;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightRenderer;
 import at.ridgo8.moreoverlays.api.lightoverlay.ILightScanner;
 import at.ridgo8.moreoverlays.config.ConfigManager;
+import at.ridgo8.moreoverlays.util.OverlayBufferSource;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -29,9 +31,8 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
         final Minecraft mc = Minecraft.getInstance();
         final Font font = mc.font;
-        final MultiBufferSource.BufferSource bufferSource = Objects.requireNonNull(mc.renderBuffers().bufferSource());
 
-        final Camera camera = mc.gameRenderer.getMainCamera();
+        final Camera camera = mc.gameRenderer.mainCamera();
         final double cameraX = camera.position().x;
         final double cameraY = camera.position().y;
         final double cameraZ = camera.position().z;
@@ -96,14 +97,24 @@ public class NumberOverlayRenderer implements ILightRenderer {
 
                     float xoff = -font.width(text) / 2.0f;
                     float yoff = -font.lineHeight / 2.0f;
-                    Matrix4f pose = matrixstack.last().pose();
-                    font.drawInBatch(text, xoff, yoff, color, false, pose, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+                    final Matrix4f pose = matrixstack.last().pose();
+
+                    // Font#drawInBatch was removed in 26.2: prepare the text and submit each glyph
+                    // through our immediate-mode buffer source manually.
+                    Font.PreparedText prepared = font.prepareText(text, xoff, yoff, color, false, 0);
+                    prepared.visit(new Font.GlyphVisitor() {
+                        @Override
+                        public void acceptRenderable(TextRenderable renderable) {
+                            VertexConsumer buffer = OverlayBufferSource.getBuffer(renderable.renderType(Font.DisplayMode.NORMAL));
+                            renderable.render(pose, buffer, 0xF000F0, false);
+                        }
+                    });
                     matrixstack.popPose();
                 }
             }
         }
 
-        bufferSource.endBatch();
+        OverlayBufferSource.flush();
     }
 }
 
