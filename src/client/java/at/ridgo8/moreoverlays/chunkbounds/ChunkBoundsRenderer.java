@@ -61,9 +61,9 @@ public class ChunkBoundsRenderer {
         final int regionBorderZ1 = regionBorderZ0 + (ChunkBoundsHandler.REGION_SIZEZ * 16);
 
         final int radius = ConfigManager.CONFIG.chunk_EdgeRadius() * 16;
-        final int renderColorEdge = ConfigManager.CONFIG.render_chunkEdgeColor().argb();
-        final int renderColorMiddle = ConfigManager.CONFIG.render_chunkMiddleColor().argb();
-        final int renderColorGrid = ConfigManager.CONFIG.render_chunkGridColor().argb();
+        final int renderColorEdge = ConfigManager.CONFIG.render_chunkEdgeColor();
+        final int renderColorMiddle = ConfigManager.CONFIG.render_chunkMiddleColor();
+        final int renderColorGrid = ConfigManager.CONFIG.render_chunkGridColor();
 
         boolean useDebugLines = !ConfigManager.CONFIG.render_chunkThick();
         Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();

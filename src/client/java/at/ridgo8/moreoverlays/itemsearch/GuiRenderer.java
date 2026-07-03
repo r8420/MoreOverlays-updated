@@ -91,7 +91,7 @@ public class GuiRenderer {
         int width = textField.getWidth() + 8;
         int height = textField.getHeight() - 4;
 
-        int boxColor = ConfigManager.CONFIG.search_searchBoxColor().argb();
+        int boxColor = ConfigManager.CONFIG.search_searchBoxColor();
         int rgb = boxColor & 0xFFFFFF;
         int color = 0xFF000000 | rgb;
 
@@ -126,9 +126,9 @@ public class GuiRenderer {
         if (!enabled || views == null || views.isEmpty())
             return;
 
-        float r = ((float) ((ConfigManager.CONFIG.search_filteredSlotColor().argb() >> 16) & 0xFF)) / 255F;
-        float g = ((float) ((ConfigManager.CONFIG.search_filteredSlotColor().argb() >> 8) & 0xFF)) / 255F;
-        float b = ((float) (ConfigManager.CONFIG.search_filteredSlotColor().argb() & 0xFF)) / 255F;
+        float r = ((float) ((ConfigManager.CONFIG.search_filteredSlotColor() >> 16) & 0xFF)) / 255F;
+        float g = ((float) ((ConfigManager.CONFIG.search_filteredSlotColor() >> 8) & 0xFF)) / 255F;
+        float b = ((float) (ConfigManager.CONFIG.search_filteredSlotColor() & 0xFF)) / 255F;
         float a = (float) ConfigManager.CONFIG.search_filteredSlotTransparancy();
 
         for (Map.Entry<Slot, SlotViewWrapper> entry : views.entrySet()) {

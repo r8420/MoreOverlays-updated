@@ -22,6 +22,9 @@
 		],
 		"jei_mod_plugin": [
 			"at.ridgo8.moreoverlays.itemsearch.JeiModule"
+		],
+		"modmenu": [
+			"at.ridgo8.moreoverlays.compatibility.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -31,7 +34,6 @@
 		"fabricloader": ">=0.19.3",
 		"minecraft": "~26.2",
 		"java": ">=25",
-		"fabric-api": "*",
-		"owo-lib": "*"
+		"fabric-api": "*"
 	}
 }

@@ -74,11 +74,11 @@ public class NumberOverlayRenderer implements ILightRenderer {
                     }
                     int color;
                     if (blockLight >= save) {
-                        color = 0xFF000000 | ConfigManager.CONFIG.render_spawnSafeColor().argb();
+                        color = 0xFF000000 | ConfigManager.CONFIG.render_spawnSafeColor();
                     } else if (skyLight >= save) {
-                        color = 0xFF000000 | ConfigManager.CONFIG.render_spawnNColor().argb();
+                        color = 0xFF000000 | ConfigManager.CONFIG.render_spawnNColor();
                     } else {
-                        color = 0xFF000000 | ConfigManager.CONFIG.render_spawnAColor().argb();
+                        color = 0xFF000000 | ConfigManager.CONFIG.render_spawnAColor();
                     }
 
                     String text = String.valueOf(blockLight);

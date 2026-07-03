@@ -12,7 +12,8 @@ base {
 
 repositories {
 	maven {
-		url 'https://maven.wispforest.io/releases/'
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/releases/"
 	}
 	maven {
 		name = "Jared's maven"
@@ -50,8 +51,8 @@ dependencies {
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	implementation "io.wispforest:owo-lib:${project.owo_version}"
-	include "io.wispforest:owo-sentinel:${project.owo_version}"
+	// Mod Menu API (compile-time only; optional at runtime)
+	compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	compileOnlyApi("mezz.jei:jei-26.2-common-api:${project.jei_version}")
 	compileOnlyApi("mezz.jei:jei-26.2-fabric-api:${project.jei_version}")

@@ -1,61 +1,89 @@
 package at.ridgo8.moreoverlays.config;
 
-import io.wispforest.owo.config.annotation.Modmenu;
-import io.wispforest.owo.config.annotation.SectionHeader;
-import io.wispforest.owo.config.annotation.RangeConstraint;
-import io.wispforest.owo.config.annotation.ExcludeFromScreen;
-import io.wispforest.owo.ui.core.Color;
+import at.ridgo8.moreoverlays.MoreOverlays;
+import net.fabricmc.loader.api.FabricLoader;
 
-@Modmenu(modId = "moreoverlays")
-@io.wispforest.owo.config.annotation.Config(name = "moreoverlays", wrapperName = "MoreOverlaysConfig")
 public class Config {
+    public static ConfigSpec config_client;
 
-    @SectionHeader("light")
-    public boolean render_spawnNumbers = false;
-    @RangeConstraint(min = 0, max = 32)
-    public int light_UpRange = 4;
-    @RangeConstraint(min = 0, max = 512)
-    public int light_DownRange = 16;
-    @RangeConstraint(min = 0, max = 512)
-    public int light_HRange = 16;
-    public boolean light_IgnoreLayer = false;
-    public boolean light_IgnoreSpawnList = false;
-    public boolean light_SimpleEntityCheck = false;
-    @RangeConstraint(min = 0, max = 15)
-    public int light_SaveLevel = 1;
-    @ExcludeFromScreen
-    public boolean light_FinishedMigration = true;
-    @RangeConstraint(min = 1, max = 100)
-    public int light_UpdateIntervalFrames = 1;
+    public static ConfigSpec.ConfigValue.IntValue light_UpRange;
+    public static ConfigSpec.ConfigValue.IntValue light_DownRange;
+    public static ConfigSpec.ConfigValue.IntValue light_HRange;
+    public static ConfigSpec.ConfigValue.BooleanValue light_IgnoreLayer;
+    public static ConfigSpec.ConfigValue.BooleanValue light_IgnoreSpawnList;
+    public static ConfigSpec.ConfigValue.BooleanValue light_SimpleEntityCheck;
+    public static ConfigSpec.ConfigValue.IntValue light_SaveLevel;
+    public static ConfigSpec.ConfigValue.BooleanValue light_FinishedMigration;
+    public static ConfigSpec.ConfigValue.IntValue light_UpdateIntervalFrames;
 
-    @SectionHeader("chunkbounds")
-    @RangeConstraint(min = 0, max = 15)
-    public int chunk_EdgeRadius = 1;
-    public boolean chunk_ShowMiddle = true;
+    public static ConfigSpec.ConfigValue.IntValue chunk_EdgeRadius;
+    public static ConfigSpec.ConfigValue.BooleanValue chunk_ShowMiddle;
 
-    @SectionHeader("rendering")
-    public Color render_chunkEdgeColor = Color.ofRgb(0xFF0000);
-    public Color render_chunkGridColor = Color.ofRgb(0x00FF00);
-    public Color render_chunkMiddleColor = Color.ofRgb(0xFFFF00);
-    @RangeConstraint(min = 0, max = 100, decimalPlaces = 2)
-    public double render_chunkLineWidth = 1.5;
-    public boolean render_chunkThick = false;
-    public Color render_spawnAColor = Color.ofRgb(0xFF0000);
-    public Color render_spawnNColor = Color.ofRgb(0xFFFF00);
-    @RangeConstraint(min = 0, max = 400, decimalPlaces = 2)
-    public double render_spawnLineWidth = 2;
-    public Color render_spawnSafeColor = Color.ofRgb(0x00FF00);
-    @RangeConstraint(min = 0.01, max = 0.13, decimalPlaces = 3)
-    public double render_spawnNumberScale = 0.07;
+    public static ConfigSpec.ConfigValue.IntValue render_chunkEdgeColor;
+    public static ConfigSpec.ConfigValue.IntValue render_chunkGridColor;
+    public static ConfigSpec.ConfigValue.IntValue render_chunkMiddleColor;
+    public static ConfigSpec.ConfigValue.DoubleValue render_chunkLineWidth;
+    public static ConfigSpec.ConfigValue.BooleanValue render_chunkThick;
+    public static ConfigSpec.ConfigValue.IntValue render_spawnAColor;
+    public static ConfigSpec.ConfigValue.IntValue render_spawnNColor;
+    public static ConfigSpec.ConfigValue.IntValue render_spawnSafeColor;
+    public static ConfigSpec.ConfigValue.DoubleValue render_spawnLineWidth;
+    public static ConfigSpec.ConfigValue.BooleanValue render_spawnNumbers;
+    public static ConfigSpec.ConfigValue.DoubleValue render_spawnNumberScale;
 
-    @SectionHeader("search")
-    public boolean search_enabled = true;
-    public boolean search_searchCustom = true;
-    public boolean search_searchTooltip = true;
-    @RangeConstraint(min = 256, max = 271360)
-    public int search_maxResults = 16384;
-    public Color search_searchBoxColor = Color.ofRgb(0xFFFF00);
-    public Color search_filteredSlotColor = Color.ofRgb(0x000000);
-    @RangeConstraint(min = 0, max = 1, decimalPlaces = 2)
-    public double search_filteredSlotTransparancy = 0.5F;
+    public static ConfigSpec.ConfigValue.BooleanValue search_enabled;
+    public static ConfigSpec.ConfigValue.BooleanValue search_searchCustom;
+    public static ConfigSpec.ConfigValue.BooleanValue search_searchTooltip;
+    public static ConfigSpec.ConfigValue.IntValue search_maxResults;
+    public static ConfigSpec.ConfigValue.IntValue search_searchBoxColor;
+    public static ConfigSpec.ConfigValue.IntValue search_filteredSlotColor;
+    public static ConfigSpec.ConfigValue.DoubleValue search_filteredSlotTransparancy;
+
+    public static void initialize() {
+        final ConfigSpec.Builder builder = new ConfigSpec.Builder();
+
+        builder.comment("Settings for the light / mobspawn overlay").push("lightoverlay");
+        render_spawnNumbers = builder.comment("Render light levels as numbers instead of crosses").define("spawn_numbers", false);
+        light_UpRange = builder.comment("Range of the lightoverlay (positive Y)").defineInRange("uprange", 4, 0, Integer.MAX_VALUE);
+        light_DownRange = builder.comment("Range of the lightoverlay (negative Y)").defineInRange("downrange", 16, 0, Integer.MAX_VALUE);
+        light_HRange = builder.comment("Range of the lightoverlay (Horizontal N,E,S,W)").defineInRange("hrange", 16, 0, Integer.MAX_VALUE);
+        light_IgnoreLayer = builder.comment("Ignore if there in no 2 Block space to spawn. (Less lag if true)").define("ignoreLayer", false);
+        light_IgnoreSpawnList = builder.comment("Ignore if mobs can actually spawn according to other mods and biome spawn lists and just go by light value").define("ignoreSpawnList", false);
+        light_SimpleEntityCheck = builder.comment("Blocks can allow/disallow spawns for different entity types. The check for this isn't very performat.\nSetting this to true will increase performance but decrease accuracy.").define("simpleCheck", false);
+        light_SaveLevel = builder.comment("Minimum save light level where no mobs can spawn").defineInRange("saveLevel", 1, 0, Integer.MAX_VALUE);
+        light_FinishedMigration = builder.comment("Finished 1.18 migration (internal)").define("finishedMigration", false);
+        light_UpdateIntervalFrames = builder.comment("Only update the light scanner every N client ticks/frames. Set to 1 to update every frame (disables throttling).").defineInRange("update_interval_frames", 1, 1, Integer.MAX_VALUE);
+        builder.pop();
+
+        builder.comment("Settings for the chunk bounds overlay").push("chunkbounds");
+        chunk_EdgeRadius = builder.comment("Radius (in Chunks) to show the edges (red line)").defineInRange("radius", 1, 0, Integer.MAX_VALUE);
+        chunk_ShowMiddle = builder.comment("Show the middle of the current Chunk (yellow line)").define("middle", true);
+        builder.pop();
+
+        builder.comment("General render settings.\nLine thickness, Colors, ...").push("rendersettings");
+        render_chunkEdgeColor = builder.comment("Color for the chunk edge").defineInRange("chunk_edge_color", 0xFF0000, 0, 0xFFFFFF);
+        render_chunkGridColor = builder.comment("Color for the chunk grid").defineInRange("chunk_grid_color", 0x00FF00, 0, 0xFFFFFF);
+        render_chunkMiddleColor = builder.comment("Color for the middle chunk line").defineInRange("chunk_mid_color", 0xFFFF00, 0, 0xFFFFFF);
+        render_chunkLineWidth = builder.comment("Line width for chunk boundaries").defineInRange("chunk_line_width", 1.5D, 0D, 100D);
+        render_chunkThick = builder.comment("Render chunk boundaries with thick lines").define("chunk_line_thick", false);
+        render_spawnAColor = builder.comment("Color the X that marks \"Spawns always possible\"").defineInRange("spawn_always_color", 0xFF0000, 0, 0xFFFFFF);
+        render_spawnNColor = builder.comment("Color the X that marks \"Spawns at night possible\"").defineInRange("spawn_night_color", 0xFFFF00, 0, 0xFFFFFF);
+        render_spawnSafeColor = builder.comment("Color for the number that marks \"No spawns possible\"").defineInRange("spawn_safe_color", 0x00FF00, 0, 0xFFFFFF);
+        render_spawnLineWidth = builder.comment("Line width for spawn indication").defineInRange("spawn_line_width", 2D, 0D, Double.MAX_VALUE);
+        render_spawnNumberScale = builder.comment("Scale/size of the number overlay when enabled (world units)").defineInRange("spawn_number_scale", 0.07D, 0.005D, 0.5D);
+        builder.pop();
+
+        builder.comment("Settings for the search overlay").push("searchoverlay");
+        search_enabled = builder.comment("Setting this to false this will disable the functionality to double click the JEI search bar for item searching.").define("search_enabled", true);
+        search_searchCustom = builder.comment("Also searches for the custom name of an item in user inventory (for example items named in anvil)\nSetting this to false will increase performance.").define("custom_search", true);
+        search_searchTooltip = builder.comment("Also searches the tooltip of items in the users inventory\nSetting this to false will increase performance.").define("search_tooltip", true);
+        search_maxResults = builder.comment("Maximum amount of search results for the item searching to be active").defineInRange("search_max_results", 16384, 256, Integer.MAX_VALUE);
+        search_searchBoxColor = builder.comment("Color for the search box when double clicked").defineInRange("search_box_color", 0xFFFF00, 0, 0xFFFFFF);
+        search_filteredSlotColor = builder.comment("Color of the filtered out slots").defineInRange("search_slot_color", 0x000000, 0, 0xFFFFFF);
+        search_filteredSlotTransparancy = builder.comment("Transparancy for the filtered out slots").defineInRange("search_slot_alpha", 0.5D, 0D, 1D);
+        builder.pop();
+
+        config_client = builder.build();
+        config_client.setFilePath(FabricLoader.getInstance().getConfigDir().resolve(MoreOverlays.MOD_ID + ".json"));
+    }
 }

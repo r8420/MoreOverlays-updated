@@ -141,13 +141,13 @@ public class CrossOverlayRenderer implements ILightRenderer {
 
     @Override
     public void renderOverlays(ILightScanner scanner, PoseStack poseStack) {
-        float ar = ((float) ((ConfigManager.CONFIG.render_spawnAColor().argb() >> 16) & 0xFF)) / 255F;
-        float ag = ((float) ((ConfigManager.CONFIG.render_spawnAColor().argb() >> 8) & 0xFF)) / 255F;
-        float ab = ((float) (ConfigManager.CONFIG.render_spawnAColor().argb() & 0xFF)) / 255F;
+        float ar = ((float) ((ConfigManager.CONFIG.render_spawnAColor() >> 16) & 0xFF)) / 255F;
+        float ag = ((float) ((ConfigManager.CONFIG.render_spawnAColor() >> 8) & 0xFF)) / 255F;
+        float ab = ((float) (ConfigManager.CONFIG.render_spawnAColor() & 0xFF)) / 255F;
 
-        float nr = ((float) ((ConfigManager.CONFIG.render_spawnNColor().argb() >> 16) & 0xFF)) / 255F;
-        float ng = ((float) ((ConfigManager.CONFIG.render_spawnNColor().argb() >> 8) & 0xFF)) / 255F;
-        float nb = ((float) (ConfigManager.CONFIG.render_spawnNColor().argb() & 0xFF)) / 255F;
+        float nr = ((float) ((ConfigManager.CONFIG.render_spawnNColor() >> 16) & 0xFF)) / 255F;
+        float ng = ((float) ((ConfigManager.CONFIG.render_spawnNColor() >> 8) & 0xFF)) / 255F;
+        float nb = ((float) (ConfigManager.CONFIG.render_spawnNColor() & 0xFF)) / 255F;
 
         double configuredWidth = (double) ConfigManager.CONFIG.render_spawnLineWidth();
         boolean useDebugLines = configuredWidth <= 2.0;
