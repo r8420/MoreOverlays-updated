@@ -92,7 +92,12 @@ public class MixinLevelRenderer {
         postChain.addToFrame(frameGraph, width, height, targetBundle);
     }
 
-    @Inject(method = "addAlwaysOnTopPass", at = @At("TAIL"))
+    // Injected at HEAD: addAlwaysOnTopPass bails out early when nothing renders
+    // "always on top" (the common case with Fancy graphics), so a TAIL injection
+    // would be skipped entirely. HEAD also runs before vanilla clears the depth
+    // texture for its always-on-top pass, keeping the overlays depth-tested
+    // against the world.
+    @Inject(method = "addAlwaysOnTopPass", at = @At("HEAD"))
     private void moreOverlays$addLateDebugPass(
         FrameGraphBuilder frameGraph,
         FeatureRenderDispatcher.PreparedFrame featureFrame,
